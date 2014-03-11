@@ -1,0 +1,81 @@
+{% extends 'base.html' %}
+{% load humanize %}
+
+{% block title %}
+{{ filer.name }} |
+{% endblock %}
+
+{% block content %}
+<div class="candidate-detail">
+  <div id="candidate-info">
+    <header>
+      <h1>{{ filer.name }}</h1>
+      <dl>
+        <dt>Filer ID</dt>
+        <dd>{{ filer.filer_id }}</dd>
+
+        <dt>Committees</dt>
+        <dd>{{ filer.committee_set.count }}</dd>
+
+        <dt>Years active</dt>
+        <dd>{{ filer.stats_set.all.0.str_year_span }}</dd>
+      </dl>
+    </header>
+  </div>
+  <div class="container">
+    <div class="-table-responsive">
+      <table class="spending-table">
+        <thead>
+          <tr>
+            <th>
+              <p>Committee</p>
+              <span></span>
+            </th>
+            <th id="contribution">
+              <p>Raised</p>
+              <span>${{ filer.total_contributions|intcomma }}</span>
+            </th>
+            <th id="expenditure">
+              <p>Spent</p>
+              <span>${{ filer.total_contributions|intcomma }}</span>
+            </th>
+          </tr>
+        </thead>
+        <tbody>
+        {% for committee in filer.committee_set.all %}
+          <tr> 
+            <td id="committee">
+              <a href="{{ committee.get_absolute_url }}">{{ committee.name }}</a>
+            </td>
+            <td id="contribution" class="table-data">
+              <div class="bar" data-amount="{{ filer.total_contributions|intcomma }}" style="width: {{ committee.percent_of_contribution_from_total }}%;"></div>
+            </td>
+            <td id="expenditure" class="table-data">
+              <div class="bar" data-amount="{{ filer.total_expenditures|intcomma }}" style="width: {{ committee.percent_of_expenditure_from_total }}%;"></div>
+            </td>
+          </tr>
+        {% endfor %}
+        </tbody> 
+      </table>
+    </div>
+  </div>
+</div>
+{% endblock %}
+
+<!-- 
+{{ filer.name }}
+{{ filer.filer_id }}
+{{ filer.total_contributions|intcomma }}
+{{ filer.total_expenditures|intcomma }}
+{{ filer.committee_set.count }}
+{{ filer.stats_set.all.0.str_year_span }}
+-->
+
+<!-- 
+{% for committee in filer.committee_set.all %}
+  {{ committee.name }}
+  {{ committee.total_contributions|intcomma }}
+  {{ committee.total_expenditures|intcomma }}
+  {{ committee.stats_set.all.0.str_year_span }}
+{% endfor %}
+-->

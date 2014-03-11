@@ -1,0 +1,89 @@
+{% extends 'base.html' %}
+{% load humanize %}
+
+{% block title %}
+{{ committee.name }} |
+{% endblock %}
+
+{% block content %}
+<div class="container">
+    <ol class="breadcrumb">
+      <li><a href="/">Home</a></li>
+      <li><a href="{{ committee.filer.get_absolute_url }}">{{ committee.filer.name }}</a></li>
+      <li class="active">{{ committee.name }}</li>
+    </ol>
+    <div class="page-header">
+        <h1>{{ committee.name }} <small></small></h1>
+    </div>
+    <div class="row">
+        <div class="col-lg-12">
+            <table class="table">
+                <thead>
+                    <tr>
+                        <th>Filing ID</th>
+                        <th>Amend ID</th>
+                        <th>Form ID</th>
+                        <th>Start Date</th>
+                        <th>End Date</th>
+                        <th>Cycle</th>
+                    </tr>
+                </thead>
+                <tbody>
+                {% for filing in committee.filing_set.all %}
+                    <tr>
+                        <td>{{ filing.filing_id }}</td>
+                        <td>{{ filing.amend_id }}</td>
+                        <td>{{ filing.form_id }}</td>
+                        <td>{{ filing.start_date }}</td>
+                        <td>{{ filing.end_date }}</td>
+                        <td>{{ filing.cycle.name }}</td>
+                    </tr>
+                {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-md-6">
+            <h2>Contributions <small>${{ committee.total_contributions|intcomma }} received from {{ committee.contribution_set.count }} folks</small></h2>
+            <div id="contributions-heatmap"></div>
+        </div>
+        <div class="col-md-6">
+            <h2>Expenditures <small>${{ committee.total_expenditures|intcomma }} spent on {{ committee.expenditure_set.count }} folks</small></h2>
+            <div id="expenditures-heatmap"></div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block javascript %}
+<script id="committee-data">
+jQuery(document).ready(function($) {
+    window.expenditureData = {
+        startDate: function () {
+            itemDate = '{{ committee.expenditure_set.all.0.expn_date }}'
+            if (itemDate !== 'None') {
+                return new Date(itemDate);
+            } else {
+                return new Date();
+            }
+        },
+        data: {{ committee.get_itemized_json.expenditures }}
+        };
+    window.contributionData = {
+        startDate: function () {
+            itemDate = '{{ committee.contribution_set.all.0.rcpt_date }}'
+            if (itemDate !== 'None') {
+                return new Date(itemDate);
+            } else {
+                return new Date();
+            }
+        },
+        data: {{ committee.get_itemized_json.contributions }}
+    };
+
+    App.createCalendar('#contributions-heatmap', contributionData);
+    App.createCalendar('#expenditures-heatmap', expenditureData);
+});
+</script>
+{% endblock %}
