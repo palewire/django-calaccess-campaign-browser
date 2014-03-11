@@ -1,5 +1,13 @@
+#!/usr/bin/env python
+# -*- coding: utf-8 -*-
+try:
+    from setuptools import setup
+except ImportError:
+    from ez_setup import use_setuptools
+    use_setuptools()
+    from setuptools import setup
+
 import os
-from setuptools import setup
 
 README = open(os.path.join(os.path.dirname(__file__), 'README.rst')).read()
 
@@ -31,10 +39,10 @@ setup(
     ],
 
     # dependencies
-    install_requires=[
-        'django-calaccess-parser==0.1'
-    ],
-    dependency_links=[
-        'git+ssh://git@github.com:california-civic-data-coalition/django-calaccess-parser.git@0.1#egg-django-calaccess-parser-0.1'
-    ]
+    # install_requires=[
+    #     'django-calaccess-parser==0.1'
+    # ],
+    # dependency_links=[
+    #     'git+ssh://git@github.com:california-civic-data-coalition/django-calaccess-parser.git@0.1#egg-django-calaccess-parser-0.1'
+    # ]
 )
