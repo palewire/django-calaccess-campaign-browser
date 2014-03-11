@@ -1,0 +1,221 @@
+@import 'defaults';
+
+// ==================
+// ** Project SCSS **
+// ==================
+
+// Add your code here or create a _*.scss file and import it
+// e.g., @import 'project'
+
+// .navbar {
+//   min-height: 0;
+//   height: 40px;
+// }
+
+#navbar-calaccess {
+  background: transparent;
+  @include min-screen(1024px) {
+    height: 0px;
+  }
+
+  .navbar-brand {
+    @include max-screen(420px) {
+      font-size: 15px;
+    }
+  }
+
+  .navbar-logo {
+    float: left;
+    height: 35px;
+    padding: 5px 5px 10px 10px;
+    box-sizing: initial;
+  }
+}
+
+.main {
+  #main-search {
+    padding: 10px;
+    //margin-top: 100px;
+    background: aliceblue;
+
+    .search-text {
+      display: inline-block;
+    }
+  }
+}
+
+.candidate-detail {
+  //background: aliceblue;
+  //color: white;
+  //padding: 1px;
+
+  header {
+    margin: 0 auto;
+    width: 50%;
+    text-align: center;
+    color: darken(#e2e2e2, 55%);
+    border-bottom: 1px solid #e2e2e2;
+
+    h1 {
+      text-transform: lowercase;
+      font-weight: bold;
+      font-family: '$metaserif';
+
+      &:first-letter {
+        text-transform: uppercase;
+      }
+    }
+
+    dt, dd {
+      display: inline-block;
+      font-family: '$metaserif';
+    }
+
+    dd {
+      margin-right: 10px;
+    }
+  }
+
+  #candidate-data {
+    text-align: center;
+
+    dd {
+      color: $green;
+      font-size: 22px;
+      font-weight: bold;
+      @include max-screen(420px) {
+        font-size: 15px;
+      }
+    }
+  }
+}
+
+.search-input {
+  //width: 500px;
+  font-weight: 200;
+  color: $red;
+  background: rgba(0, 0, 0, 0);
+  border: 0;
+  border-bottom: 2px solid lightgrey;
+  box-sizing: border-box;
+  line-height: 1.8em;
+
+  &:focus {
+    outline: 0;
+  }
+}
+
+.table {
+  a {
+    text-transform: lowercase;
+    color: $red;
+  }
+}
+
+.search-results {
+  .page-header {
+    background: lighten(lightgrey, 15%);
+    padding: 10px;
+
+
+    h3, p { 
+      display: inline-block;
+    }
+  }
+}
+
+.data {
+  font-weight: bold;
+  color: lighten(green, 10%);
+}
+
+.spending-table {
+  margin-top: 50px;
+  display: table;
+  width: 100%;
+
+  thead {
+    th {
+      padding: 10px;
+    }
+  }
+
+  tbody {
+    tr:hover {
+      background: #e2e2e2;
+    }
+  }
+
+  tbody > tr > td {
+    border-top: none;
+  }
+
+  #committee {
+    display: inline-block;
+  }
+
+  .table-data {
+    .bar {
+      display: inline-block;
+      height: 4px;
+    }
+  }
+
+  #contribution {
+    span, p {
+      float: right;
+    }
+
+    span {
+      display: block;
+      clear: both;
+      color: $red;
+    }
+
+    border-right: 1px solid black;
+    .bar {
+      background: $red;
+      float: right;
+    }
+    //width: 100%;
+  }
+
+  #expenditure {
+    span {
+      color: $green;
+    }
+
+    .bar {
+      background: $green;
+      float: left;
+    }
+  }
+}
+
+.breadcrumb {
+  background: transparent;
+}
+
+.timeline {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+
+  height: 10em;
+
+  .bar {
+    height: 8em;
+    width: 1.5em;
+    margin-right: 1px;
+
+    &:hover {
+      background: rgb(239, 239, 239);
+    }
+
+    .count {
+      display: block;
+      text-indent: -9999px;
+      background: #aaa;
+    }
+  }
+}

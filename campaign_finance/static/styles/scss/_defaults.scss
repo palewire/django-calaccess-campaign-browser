@@ -1,0 +1,23 @@
+// Mediaquery presets
+@import '../../bower_components/sass-mediaqueries/media-queries';
+
+// CSS Framework
+@import '../../bower_components/sass-bootstrap/lib/bootstrap';
+
+// Font Awesome Icons
+$fa-font-path: "../bower_components/font-awesome/fonts";
+@import '../../bower_components/font-awesome/scss/font-awesome';
+
+// Typekit classes
+$metaserif: "ff-meta-serif-web-pro", Georgia, serif;
+$proxima-nova: "proxima-nova-condensed", sans-serif;
+
+// ==================
+// ** DEFAULTS **
+// ==================
+$red: #b71234;
+$green: #008542;
+$darkBrown: #584528;
+$lightBrown: #BD8A5E;
+$linen: #f2f2ea;
+$almostWhite: #fcfcfc;
