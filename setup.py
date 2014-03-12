@@ -23,7 +23,11 @@ os.chdir(os.path.normpath(os.path.join(os.path.abspath(__file__), os.pardir)))
 setup(
     name='django-calaccess-browser',
     version='0.1',
-    packages=['campaign_finance'],
+    packages=[
+        'campaign_finance',
+        'campaign_finance.management',
+        'campaign_finance.management.commands'
+    ],
     include_package_data=True,
     license='MIT License',  # example license
     description='A simple Django app browse California campaign finance data from Cal-Access.',
