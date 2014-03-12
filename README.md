@@ -13,7 +13,7 @@ Detailed documentation is in the "docs" directory. *(coming soon)*
 ## Installation
 - Install django-calaccess-browser with pip
 ```bash
-$ pip install https://github.com/california-civic-data-coalition/django-calaccess-browser/archive/0.1-alpha.tar.gz
+$ pip install https://github.com/california-civic-data-coalition/django-calaccess-browser/archive/0.1-alpha.1.tar.gz
 ```
 
 - Add `campaign_finance` to your INSTALLED_APPS setting like this:
