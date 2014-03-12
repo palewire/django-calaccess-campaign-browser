@@ -9,6 +9,7 @@ from django.db import connection, transaction
 from dateutil.relativedelta import relativedelta
 from django.db.models import Sum
 from django.db.models import Q
+from django.conf import settings
 import csv
 
 
@@ -23,18 +24,22 @@ def insert_cmte(filer_obj, filer_id_raw):
         insert_cmtee.xref_filer_id = filer_name_obj.xref_filer_id
     except:
         insert_cmtee.name = None
-    insert_cmtee.save() 
+    insert_cmtee.save()
 
 class Command(BaseCommand):
     help = 'Break out the recipient committee campaign finance data from the CAL-ACCESS dump'
-    
+
     def handle(self, *args, **options):
-        self.load_filers()
-        self.load_filings()
-        self.load_summary()
-        self.load_contributions()
-        self.load_expenditures()
-    
+        # execute the commands if DEBUG is set to False
+        if not settings.DEBUG:
+            self.load_filers()
+            self.load_filings()
+            self.load_summary()
+            self.load_contributions()
+            self.load_expenditures()
+        else:
+            print "DEBUG is not set to False. Please change before running `build_campaign_finance`"
+
     def load_filers(self):
         '''
             Take a look in the Filings table and just load up the filers that have filed a 460 or a 450
@@ -70,11 +75,11 @@ class Command(BaseCommand):
         ## this method should cut through all the crap like
         ### this candidate filer has no committees
         ### or this candidate committee has no associated candidate filer and no name of the committee in FilerNameCD
-        
+
         all_filings = FilerFilingsCd.objects.filter(Q(form_id='F460') | Q(form_id='F450')).values_list('filing_id', flat=True).distinct()
         all_filings_with_data = SmryCd.objects.filter(filing_id__in=all_filings).values_list('filing_id', flat=True).distinct()
         all_filers_with_data = FilerFilingsCd.objects.filter(filing_id__in=all_filings_with_data).values_list('filer_id', flat=True).distinct() # if you swap filing_id for filer_id in the values clause you get the same count of filings as in all_filings_with_data
-        
+
         for filer_id in all_filers_with_data:
             qs_linked = FilerLinksCd.objects.filter(filer_id_b=filer_id)
             if qs_linked.count() == 0:
@@ -91,7 +96,7 @@ class Command(BaseCommand):
                     insert_pac.xref_filer_id = None
                 insert_pac.save()
                 insert_cmte(insert_pac, filer_id)
-                
+
             elif qs_linked.count() == 1:
                 filer_id_type = 'cand'
                 filer_cand_id = qs_linked[0].filer_id_a
@@ -137,12 +142,12 @@ class Command(BaseCommand):
 
     def load_filings(self):
         insert_obj_list = []
-        
+
         for c in Committee.objects.all():
             qs_filings = FilerFilingsCd.objects.filter(Q(form_id='F460') | Q(form_id='F450'), filer_id=c.filer_id_raw)
             for f_id in qs_filings.values_list('filing_id', flat=True).distinct():
                 current_filing = qs_filings.filter(filing_id=f_id).order_by('-filing_sequence')[0]
-                
+
                 insert = Filing()
                 if current_filing.session_id % 2 == 0:
                     cycle_year = current_filing.session_id
@@ -161,13 +166,13 @@ class Command(BaseCommand):
                 if len(insert_obj_list) == 10000:
                     Filing.objects.bulk_create(insert_obj_list)
                     insert_obj_list = []
-        
+
         if len(insert_obj_list) > 0:
             Filing.objects.bulk_create(insert_obj_list)
             insert_obj_list = []
-        
+
         print 'loaded filings'
-    
+
     def load_summary(self):
         '''
             Currently using a dictonary to parse the summary information by form type, schedule and line number.
@@ -226,13 +231,13 @@ class Command(BaseCommand):
                 if len(insert_obj_list) == 10000:
                     Summary.objects.bulk_create(insert_obj_list)
                     insert_obj_list = []
-        
+
         if len(insert_obj_list)> 0:
             Summary.objects.bulk_create(insert_obj_list)
             insert_obj_list = []
-        
+
         print 'loaded summary'
-        
+
         filings_no_data_cnt = 0
         filings_with_data_cnt = 0
         for v in insert_stats.values():
@@ -240,14 +245,14 @@ class Command(BaseCommand):
                 filings_no_data_cnt += 1
             elif v > 0:
                 filings_with_data_cnt += 1
-        
+
         total_filing_cnt = Filing.objects.count()
         pct_filings_have_data = (filings_with_data_cnt / float(filings_no_data_cnt))*100
         print '%s total filings processed, %s percent have data' % (total_filing_cnt, pct_filings_have_data)
         if Summary.objects.count() == filings_with_data_cnt:
             print 'All filings with data represented in Summary table'
-        
-    
+
+
     def load_expenditures(self):
         insert_stats = {}
         insert_obj_list = []
@@ -256,7 +261,7 @@ class Command(BaseCommand):
             filing_key = '%s-%s' % (f.filing_id_raw, f.amend_id)
             insert_stats[filing_key] = qs.count()
             for q in qs:
-                
+
                 ## have to contruct the payee name from multiple fields
                 if q.payee_naml == '':
                     bal_name = q.bal_name
@@ -267,7 +272,7 @@ class Command(BaseCommand):
                     recipient_name = ' '.join(name_list)
                 else:
                     recipient_name = (q.payee_namt + ' ' + q.payee_namf + ' ' + q.payee_naml + ' ' + q.payee_nams).strip()
-                
+
                 insert = Expenditure()
                 insert.cycle = f.cycle
                 insert.committee = f.committee
@@ -300,24 +305,24 @@ class Command(BaseCommand):
                 insert.cum_ytd = q.cum_ytd
                 insert.payee_st = q.payee_st
                 insert.tran_id = q.tran_id
-                
+
                 insert.name = recipient_name.strip()
                 insert_obj_list.append(insert)
                 if len(insert_obj_list) == 10000:
                     Expenditure.objects.bulk_create(insert_obj_list)
                     insert_obj_list = []
-                
+
         if len(insert_obj_list) > 0:
             Expenditure.objects.bulk_create(insert_obj_list)
             insert_obj_list = []
-        
+
         cnt = Expenditure.objects.count()
         if sum(insert_stats.values()) == cnt:
             print 'loaded %s expenditures' % cnt
         else:
             print 'loaded %s expenditures but %s records queried' % (cnt, sum(insert_stats.values()))
         insert_stats = {}
-        
+
     def load_contributions(self):
         insert_stats = {}
         insert_obj_list = []
@@ -383,11 +388,11 @@ class Command(BaseCommand):
         if len(insert_obj_list) > 0:
             Contribution.objects.bulk_create(insert_obj_list)
             insert_obj_list = []
-        
+
         cnt = Contribution.objects.count()
         if sum(insert_stats.values()) == cnt:
             print 'loaded %s contributions' % cnt
         else:
             print 'loaded %s contributions but %s records queried' % (cnt, sum(insert_stats.values()))
-        
+
         insert_stats = {}
