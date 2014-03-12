@@ -7,6 +7,12 @@ except ImportError:
     use_setuptools()
     from setuptools import setup
 
+try:
+   import pypandoc
+   description = pypandoc.convert('README.md', 'rst')
+except (IOError, ImportError):
+   description = open('README.md').read()
+
 import os
 
 README = open(os.path.join(os.path.dirname(__file__), 'README.rst')).read()
