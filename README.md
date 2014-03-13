@@ -41,8 +41,8 @@ $ python manage.py build_campaign_finance
 
 
 ## Explore data
-Start the development server and visit [http://127.0.0.1:8000/admin/](http://127.0.0.1:8000/admin/)
-   to inspect the Cal-access data (you'll need the Admin app enabled).
+Start the development server and visit [http://127.0.0.1:8000/browser/](http://127.0.0.1:8000/browser/)
+   to inspect the Cal-access data.
 
 ## Authors
 - [Agustin Armendariz](https://github.com/armendariz)
