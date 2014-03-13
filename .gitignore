@@ -11,3 +11,5 @@ docs/_build
 .tox
 cover
 *.rst
+bower_components
+node_modules
