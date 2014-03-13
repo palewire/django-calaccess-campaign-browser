@@ -5,13 +5,35 @@ try:
 except:
     print 'you need to load the raw calaccess data app in order to populate this one'
 from campaign_finance.models import  Committee, Contribution, Cycle, Expenditure, Filer, Filing, Stats, Summary
-from django.db import connection, transaction
+from django.db import connection, transaction, reset_queries
 from dateutil.relativedelta import relativedelta
 from django.db.models import Sum
 from django.db.models import Q
-from django.conf import settings
 import csv
 
+import gc
+
+def queryset_iterator(queryset, chunksize=1000):
+    '''
+    Iterate over a Django Queryset ordered by the primary key
+
+    This method loads a maximum of chunksize (default: 1000) rows in it's
+    memory at the same time while django normally would load all rows in it's
+    memory. Using the iterator() method only causes it to not preload all the
+    classes.
+
+    Note that the implementation of the iterator does not support ordered query sets.
+    
+    https://djangosnippets.org/snippets/1949/
+    '''
+    pk = 0
+    last_pk = queryset.order_by('-pk')[0].pk
+    queryset = queryset.order_by('pk')
+    while pk < last_pk:
+        for row in queryset.filter(pk__gt=pk)[:chunksize]:
+            pk = row.pk
+            yield row
+        gc.collect()
 
 def insert_cmte(filer_obj, filer_id_raw):
     insert_cmtee = Committee()
@@ -24,22 +46,18 @@ def insert_cmte(filer_obj, filer_id_raw):
         insert_cmtee.xref_filer_id = filer_name_obj.xref_filer_id
     except:
         insert_cmtee.name = None
-    insert_cmtee.save()
+    insert_cmtee.save() 
 
 class Command(BaseCommand):
     help = 'Break out the recipient committee campaign finance data from the CAL-ACCESS dump'
-
+    
     def handle(self, *args, **options):
-        # execute the commands if DEBUG is set to False
-        if not settings.DEBUG:
-            self.load_filers()
-            self.load_filings()
-            self.load_summary()
-            self.load_contributions()
-            self.load_expenditures()
-        else:
-            print "DEBUG is not set to False. Please change before running `build_campaign_finance`"
-
+        self.load_filers()
+        self.load_filings()
+        self.load_summary()
+        self.load_contributions()
+        self.load_expenditures()
+    
     def load_filers(self):
         '''
             Take a look in the Filings table and just load up the filers that have filed a 460 or a 450
@@ -75,11 +93,17 @@ class Command(BaseCommand):
         ## this method should cut through all the crap like
         ### this candidate filer has no committees
         ### or this candidate committee has no associated candidate filer and no name of the committee in FilerNameCD
-
+        
+        ## F450 & F460 are current Recipient Committee Forms
+        ## F419, F420 & F490 were old forms that were mapped to the F450 & F460 format?
+        ## See cal_errata_201.pdf page 31 # 4
+        # But I don't seem to get any more filers of campaign statements when using those in the all_filings query
+        # Only F490 appears to have summary records, and those look to be for lobbying records...
+        #all_filings = FilerFilingsCd.objects.filter(Q(form_id='F460') | Q(form_id='F450') | Q(form_id='F419') | Q(form_id='F420') | Q(form_id='F490')).values_list('filing_id', flat=True).distinct()
         all_filings = FilerFilingsCd.objects.filter(Q(form_id='F460') | Q(form_id='F450')).values_list('filing_id', flat=True).distinct()
         all_filings_with_data = SmryCd.objects.filter(filing_id__in=all_filings).values_list('filing_id', flat=True).distinct()
         all_filers_with_data = FilerFilingsCd.objects.filter(filing_id__in=all_filings_with_data).values_list('filer_id', flat=True).distinct() # if you swap filing_id for filer_id in the values clause you get the same count of filings as in all_filings_with_data
-
+        
         for filer_id in all_filers_with_data:
             qs_linked = FilerLinksCd.objects.filter(filer_id_b=filer_id)
             if qs_linked.count() == 0:
@@ -96,7 +120,7 @@ class Command(BaseCommand):
                     insert_pac.xref_filer_id = None
                 insert_pac.save()
                 insert_cmte(insert_pac, filer_id)
-
+                
             elif qs_linked.count() == 1:
                 filer_id_type = 'cand'
                 filer_cand_id = qs_linked[0].filer_id_a
@@ -139,15 +163,17 @@ class Command(BaseCommand):
                     print 'linked pac filer_id_b not unique for filer_id %s' % filer_id
                     break
         print 'loaded filers'
-
+        gc.collect()
+        reset_queries()
+    
     def load_filings(self):
         insert_obj_list = []
-
-        for c in Committee.objects.all():
+        
+        for c in queryset_iterator(Committee.objects.all()):
             qs_filings = FilerFilingsCd.objects.filter(Q(form_id='F460') | Q(form_id='F450'), filer_id=c.filer_id_raw)
             for f_id in qs_filings.values_list('filing_id', flat=True).distinct():
                 current_filing = qs_filings.filter(filing_id=f_id).order_by('-filing_sequence')[0]
-
+                
                 insert = Filing()
                 if current_filing.session_id % 2 == 0:
                     cycle_year = current_filing.session_id
@@ -163,16 +189,18 @@ class Command(BaseCommand):
                 if current_filing.rpt_end:
                     insert.end_date = current_filing.rpt_end.isoformat()
                 insert_obj_list.append(insert)
-                if len(insert_obj_list) == 10000:
+                if len(insert_obj_list) == 5000:
                     Filing.objects.bulk_create(insert_obj_list)
                     insert_obj_list = []
-
+        
         if len(insert_obj_list) > 0:
             Filing.objects.bulk_create(insert_obj_list)
             insert_obj_list = []
-
+        
         print 'loaded filings'
-
+        gc.collect()
+        reset_queries()
+    
     def load_summary(self):
         '''
             Currently using a dictonary to parse the summary information by form type, schedule and line number.
@@ -207,7 +235,7 @@ class Command(BaseCommand):
         }
         insert_stats = {}
         insert_obj_list = []
-        for f in Filing.objects.all():
+        for f in queryset_iterator(Filing.objects.all()):
             qs = SmryCd.objects.filter(filing_id=f.filing_id_raw, amend_id=f.amend_id)
             f_id = '%s-%s' % (f.filing_id_raw, f.amend_id)
             insert_stats[f_id] = qs.count()
@@ -228,16 +256,18 @@ class Command(BaseCommand):
                     except:
                         insert.__dict__[k] = 0
                 insert_obj_list.append(insert)
-                if len(insert_obj_list) == 10000:
+                if len(insert_obj_list) == 5000:
                     Summary.objects.bulk_create(insert_obj_list)
                     insert_obj_list = []
-
+                    reset_queries()
+                    gc.collect()
+        
         if len(insert_obj_list)> 0:
             Summary.objects.bulk_create(insert_obj_list)
             insert_obj_list = []
-
+        
         print 'loaded summary'
-
+        
         filings_no_data_cnt = 0
         filings_with_data_cnt = 0
         for v in insert_stats.values():
@@ -245,154 +275,171 @@ class Command(BaseCommand):
                 filings_no_data_cnt += 1
             elif v > 0:
                 filings_with_data_cnt += 1
-
+        
         total_filing_cnt = Filing.objects.count()
         pct_filings_have_data = (filings_with_data_cnt / float(filings_no_data_cnt))*100
         print '%s total filings processed, %s percent have data' % (total_filing_cnt, pct_filings_have_data)
         if Summary.objects.count() == filings_with_data_cnt:
             print 'All filings with data represented in Summary table'
-
+        
+        reset_queries()
+        gc.collect()
 
     def load_expenditures(self):
         insert_stats = {}
         insert_obj_list = []
-        for f in Filing.objects.all():
+        for f in queryset_iterator(Filing.objects.all()):
             qs = ExpnCd.objects.filter(filing_id=f.filing_id_raw, amend_id=f.amend_id)
             filing_key = '%s-%s' % (f.filing_id_raw, f.amend_id)
             insert_stats[filing_key] = qs.count()
-            for q in qs:
-
-                ## have to contruct the payee name from multiple fields
-                if q.payee_naml == '':
-                    bal_name = q.bal_name
-                    cand_name = (q.cand_namt + ' ' + q.cand_namf + ' ' + q.cand_naml + ' ' + q.cand_nams).strip()
-                    juris_name = q.juris_dscr
-                    off_name = q.offic_dscr
-                    name_list = [ bal_name, cand_name, juris_name, off_name, ]
-                    recipient_name = ' '.join(name_list)
-                else:
-                    recipient_name = (q.payee_namt + ' ' + q.payee_namf + ' ' + q.payee_naml + ' ' + q.payee_nams).strip()
-
-                insert = Expenditure()
-                insert.cycle = f.cycle
-                insert.committee = f.committee
-                insert.filing = f
-                insert.line_item = q.line_item
-                insert.payee_namt = q.payee_namt
-                insert.payee_namf = q.payee_namf
-                insert.payee_naml = q.payee_naml
-                insert.payee_nams = q.payee_nams
-                insert.amend_id = q.amend_id
-                insert.expn_dscr = q.expn_dscr
-                insert.payee_zip4 = q.payee_zip4
-                insert.g_from_e_f = q.g_from_e_f
-                insert.payee_city = q.payee_city
-                insert.amount = q.amount
-                insert.memo_refno = q.memo_refno
-                insert.expn_code = q.expn_code
-                insert.memo_code = q.memo_code
-                insert.entity_cd = q.entity_cd
-                insert.bakref_tid = q.bakref_tid
-                insert.payee_adr1 = q.payee_adr1
-                insert.payee_adr2 = q.payee_adr2
-                insert.expn_chkno = q.expn_chkno
-                insert.form_type = q.form_type
-                insert.cmte_id = q.cmte_id
-                insert.xref_schnm = q.xref_schnm
-                insert.xref_match = q.xref_match
-                if q.expn_date:
-                    insert.expn_date = q.expn_date.isoformat()
-                insert.cum_ytd = q.cum_ytd
-                insert.payee_st = q.payee_st
-                insert.tran_id = q.tran_id
-
-                insert.name = recipient_name.strip()
-                insert_obj_list.append(insert)
-                if len(insert_obj_list) == 10000:
-                    Expenditure.objects.bulk_create(insert_obj_list)
-                    insert_obj_list = []
-
+            if qs.count() > 0:
+                for q in queryset_iterator(qs):
+                    
+                    ## have to contruct the payee name from multiple fields
+                    if q.payee_naml == '':
+                        bal_name = q.bal_name
+                        cand_name = (q.cand_namt + ' ' + q.cand_namf + ' ' + q.cand_naml + ' ' + q.cand_nams).strip()
+                        juris_name = q.juris_dscr
+                        off_name = q.offic_dscr
+                        name_list = [ bal_name, cand_name, juris_name, off_name, ]
+                        recipient_name = ' '.join(name_list)
+                    else:
+                        recipient_name = (q.payee_namt + ' ' + q.payee_namf + ' ' + q.payee_naml + ' ' + q.payee_nams).strip()
+                    
+                    insert = Expenditure()
+                    insert.cycle = f.cycle
+                    insert.committee = f.committee
+                    insert.filing = f
+                    insert.line_item = q.line_item
+                    insert.payee_namt = q.payee_namt
+                    insert.payee_namf = q.payee_namf
+                    insert.payee_naml = q.payee_naml
+                    insert.payee_nams = q.payee_nams
+                    insert.amend_id = q.amend_id
+                    insert.expn_dscr = q.expn_dscr
+                    insert.payee_zip4 = q.payee_zip4
+                    insert.g_from_e_f = q.g_from_e_f
+                    insert.payee_city = q.payee_city
+                    insert.amount = q.amount
+                    insert.memo_refno = q.memo_refno
+                    insert.expn_code = q.expn_code
+                    insert.memo_code = q.memo_code
+                    insert.entity_cd = q.entity_cd
+                    insert.bakref_tid = q.bakref_tid
+                    insert.payee_adr1 = q.payee_adr1
+                    insert.payee_adr2 = q.payee_adr2
+                    insert.expn_chkno = q.expn_chkno
+                    insert.form_type = q.form_type
+                    insert.cmte_id = q.cmte_id
+                    insert.xref_schnm = q.xref_schnm
+                    insert.xref_match = q.xref_match
+                    if q.expn_date:
+                        insert.expn_date = q.expn_date.isoformat()
+                    insert.cum_ytd = q.cum_ytd
+                    insert.payee_st = q.payee_st
+                    insert.tran_id = q.tran_id
+                    
+                    insert.name = recipient_name.strip()
+                    insert_obj_list.append(insert)
+                    if len(insert_obj_list) == 5000:
+                        Expenditure.objects.bulk_create(insert_obj_list)
+                        insert_obj_list = []
+                       
+                        reset_queries()
+                        gc.collect()
+                
         if len(insert_obj_list) > 0:
             Expenditure.objects.bulk_create(insert_obj_list)
             insert_obj_list = []
-
+        
         cnt = Expenditure.objects.count()
         if sum(insert_stats.values()) == cnt:
             print 'loaded %s expenditures' % cnt
         else:
             print 'loaded %s expenditures but %s records queried' % (cnt, sum(insert_stats.values()))
         insert_stats = {}
+        
+        reset_queries()
+        gc.collect()
 
     def load_contributions(self):
         insert_stats = {}
         insert_obj_list = []
-        for f in Filing.objects.all():
+        for f in queryset_iterator(Filing.objects.all()):
             qs = RcptCd.objects.filter(filing_id=f.filing_id_raw, amend_id=f.amend_id)
             filing_key = '%s-%s' % (f.filing_id_raw, f.amend_id)
             insert_stats[filing_key] = qs.count()
-            for q in qs:
-                insert = Contribution()
-                insert.cycle = f.cycle
-                insert.committee = f.committee
-                insert.filing = f
-                insert.ctrib_namt = q.ctrib_namt
-                insert.ctrib_occ = q.ctrib_occ
-                insert.ctrib_nams = q.ctrib_nams
-                insert.line_item = q.line_item
-                insert.amend_id = q.amend_id
-                insert.rec_type = q.rec_type
-                insert.ctrib_namf = q.ctrib_namf
-                insert.date_thru = q.date_thru
-                insert.ctrib_naml = q.ctrib_naml
-                insert.ctrib_self = q.ctrib_self
-                if q.rcpt_date:
-                    insert.rcpt_date = q.rcpt_date
-                insert.ctrib_zip4 = q.ctrib_zip4
-                insert.ctrib_st = q.ctrib_st
-                insert.ctrib_adr1 = q.ctrib_adr1
-                insert.ctrib_adr2 = q.ctrib_adr2
-                insert.memo_refno = q.memo_refno
-                insert.intr_st = q.intr_st
-                insert.memo_code = q.memo_code
-                insert.intr_self = q.intr_self
-                insert.intr_occ = q.intr_occ
-                insert.intr_emp = q.intr_emp
-                insert.entity_cd = q.entity_cd
-                insert.intr_cmteid = q.intr_cmteid
-                insert.ctrib_city = q.ctrib_city
-                insert.bakref_tid = q.bakref_tid
-                insert.tran_type = q.tran_type
-                insert.intr_adr2 = q.intr_adr2
-                insert.cum_ytd = q.cum_ytd
-                insert.intr_adr1 = q.intr_adr1
-                insert.form_type = q.form_type
-                insert.intr_city = q.intr_city
-                insert.cmte_id = q.cmte_id
-                insert.xref_schnm = q.xref_schnm
-                insert.ctrib_emp = q.ctrib_emp
-                insert.xref_match = q.xref_match
-                insert.cum_oth = q.cum_oth
-                insert.ctrib_dscr = q.ctrib_dscr
-                insert.intr_namt = q.intr_namt
-                insert.intr_nams = q.intr_nams
-                insert.amount = q.amount
-                insert.intr_naml = q.intr_naml
-                insert.intr_zip4 = q.intr_zip4
-                insert.intr_namf = q.intr_namf
-                insert.tran_id = q.tran_id
-                insert.name = (q.ctrib_namt + ' '+ q.ctrib_namf + ' ' + q.ctrib_naml + ' ' + q.ctrib_nams).strip()
-                insert_obj_list.append(insert)
-                if len(insert_obj_list) == 10000:
-                    Contribution.objects.bulk_create(insert_obj_list)
-                    insert_obj_list = []
+            if qs.count() > 0:
+                for q in queryset_iterator(qs):
+                    insert = Contribution()
+                    insert.cycle = f.cycle
+                    insert.committee = f.committee
+                    insert.filing = f
+                    insert.ctrib_namt = q.ctrib_namt
+                    insert.ctrib_occ = q.ctrib_occ
+                    insert.ctrib_nams = q.ctrib_nams
+                    insert.line_item = q.line_item
+                    insert.amend_id = q.amend_id
+                    insert.rec_type = q.rec_type
+                    insert.ctrib_namf = q.ctrib_namf
+                    insert.date_thru = q.date_thru
+                    insert.ctrib_naml = q.ctrib_naml
+                    insert.ctrib_self = q.ctrib_self
+                    if q.rcpt_date:
+                        insert.rcpt_date = q.rcpt_date
+                    insert.ctrib_zip4 = q.ctrib_zip4
+                    insert.ctrib_st = q.ctrib_st
+                    insert.ctrib_adr1 = q.ctrib_adr1
+                    insert.ctrib_adr2 = q.ctrib_adr2
+                    insert.memo_refno = q.memo_refno
+                    insert.intr_st = q.intr_st
+                    insert.memo_code = q.memo_code
+                    insert.intr_self = q.intr_self
+                    insert.intr_occ = q.intr_occ
+                    insert.intr_emp = q.intr_emp
+                    insert.entity_cd = q.entity_cd
+                    insert.intr_cmteid = q.intr_cmteid
+                    insert.ctrib_city = q.ctrib_city
+                    insert.bakref_tid = q.bakref_tid
+                    insert.tran_type = q.tran_type
+                    insert.intr_adr2 = q.intr_adr2
+                    insert.cum_ytd = q.cum_ytd
+                    insert.intr_adr1 = q.intr_adr1
+                    insert.form_type = q.form_type
+                    insert.intr_city = q.intr_city
+                    insert.cmte_id = q.cmte_id
+                    insert.xref_schnm = q.xref_schnm
+                    insert.ctrib_emp = q.ctrib_emp
+                    insert.xref_match = q.xref_match
+                    insert.cum_oth = q.cum_oth
+                    insert.ctrib_dscr = q.ctrib_dscr
+                    insert.intr_namt = q.intr_namt
+                    insert.intr_nams = q.intr_nams
+                    insert.amount = q.amount
+                    insert.intr_naml = q.intr_naml
+                    insert.intr_zip4 = q.intr_zip4
+                    insert.intr_namf = q.intr_namf
+                    insert.tran_id = q.tran_id
+                    insert.name = (q.ctrib_namt + ' '+ q.ctrib_namf + ' ' + q.ctrib_naml + ' ' + q.ctrib_nams).strip()
+                    insert_obj_list.append(insert)
+                    if len(insert_obj_list) == 5000:
+                        Contribution.objects.bulk_create(insert_obj_list)
+                        insert_obj_list = []
+                        
+                        reset_queries()
+                        gc.collect()
+                
         if len(insert_obj_list) > 0:
             Contribution.objects.bulk_create(insert_obj_list)
             insert_obj_list = []
-
+        
         cnt = Contribution.objects.count()
         if sum(insert_stats.values()) == cnt:
             print 'loaded %s contributions' % cnt
         else:
             print 'loaded %s contributions but %s records queried' % (cnt, sum(insert_stats.values()))
-
+        
         insert_stats = {}
+        
+        reset_queries()
+        gc.collect()
