@@ -4,5 +4,19 @@
 {% endblock %}
 
 {% block content %}
-Detail
+<div class="container">
+  <div class="row">
+    <div class="col-lg-12">
+      <div class="page-header">
+        <h1>Filing No. {{ filing.filing_id_raw }} <small>{{ filing.form_id }}</small></h1>
+      </div>
+      <ol class="breadcrumb">
+        <li><a href="/browser">Home</a></li>
+        <li><a href="{{ filing.committee.filer.get_absolute_url }}">Filer</a></li>
+        <li><a href="{{ filing.committee.get_absolute_url }}">Committee</a></li>
+        <li class="active">{{ filing.filing_id_raw }}</li>
+      </ol>
+    </div>
+  </div>
+</div>
 {% endblock %}

@@ -7,7 +7,7 @@
 <div class="container">
   <div class="row">
     <div class="col-12-lg">
-      <div class="table-responsive">
+      <!-- <div class="table-responsive"> -->
         <table class="table table-bordered table-hover">
           <thead>
             <tr>
@@ -19,14 +19,16 @@
           <tbody>
           {% for filer in filers %}
             <tr>
-              <td>{{ filer.name }}</td>
+              <td>
+                <a href="{{ filer.get_absolute_url }}">{{ filer.name }}</a>
+              </td>
               <td>{{ filer.filer_id }}</td>
               <td>{{ filer.filer_type }}</td>
             </tr>
           {% endfor %}
           </tbody>
         </table>
-      </div>
+      <!-- </div> -->
 
     </div>
   </div>
