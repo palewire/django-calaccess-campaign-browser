@@ -6,17 +6,11 @@ from django.views import generic
 
 from campaign_finance.models import *
 
-class IndexView(generic.ListView):
-    template_name = 'templates/campaign_finance/index.html'
-    context_object_name = 'latest_campaigns'
+class FilingListView(generic.ListView):
+    model = Filing
+    template = 'templates/filing/list.html'
+    context_object_name = 'filings'
 
-    def get_queryset(self):
-        return Committee.objects.order_by('-name')[:5]
-
-class FilerView(generic.DetailView):
-    model = Filer
-    template = 'templates/filer/detail.html'
-
-class CommitteeView(generic.DetailView):
-    model = Filer
-    template = 'templates/committee/detail.html'
+class FilingDetailView(generic.DetailView):
+    model = Filing
+    template = 'templates/filing/detail.html'

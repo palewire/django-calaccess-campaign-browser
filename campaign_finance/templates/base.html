@@ -1,5 +1,5 @@
 {% load staticfiles %}
-{% load compress %}
+
 <!DOCTYPE html>
 <!--[if IE 9]><html class="lt-ie10" lang="en" > <![endif]-->
 <html class="no-js" lang="en" >
@@ -11,18 +11,18 @@
     <!-- Typekit and Google Fonts -->
     <script type="text/javascript" src="//use.typekit.net/quu2bck.js"></script>
     <script type="text/javascript">try{Typekit.load();}catch(e){}</script>
-    
+
     <link href='http://fonts.googleapis.com/css?family=Lato:300,400,300italic|Stint+Ultra+Expanded' rel='stylesheet' type='text/css'>
     <link rel="shortcut icon" type="image/x-icon" href="http://cironline.org/sites/all/themes/cir/favicon.ico">
 
-    {% compress css %}
+
     <!-- JS lib css -->
     <link rel="stylesheet" href="{% static "bower_components/leaflet-dist/leaflet.css" %}">
     <link rel="stylesheet" href="{% static "bower_components/jquery-ui/themes/base/minified/jquery.ui.theme.min.css" %}">
     <link rel="stylesheet" href="{% static "bower_components/cal-heatmap/cal-heatmap.css" %}">
     <!-- App CSS -->
     <link rel="stylesheet" href="{% static "styles/main.css" %}">
-    {% endcompress %}
+
 
     <!-- Modernizr -->
     <script src="{% static "bower_components/modernizr/modernizr.js" %}"></script>
@@ -30,13 +30,13 @@
   <body>
     <!-- Header -->
     {% include '_header.html' %}
-    
+
     {% block content %}
     {% endblock %}
 
     <!-- JavaScript -->
 
-    {% compress js %}
+
     <!-- bower:js -->
     <script src="{% static "bower_components/jquery/jquery.js" %}"></script>
     <!-- Other Includes -->
@@ -44,17 +44,17 @@
     <script src="{% static "bower_components/moment/min/moment.min.js" %}"></script>
     <script src="{% static "bower_components/d3/d3.min.js" %}"></script>
     <script src="{% static "bower_components/jquery-ui/ui/minified/jquery-ui.min.js" %}"></script>
-    
+
     <script src="{% static "bower_components/underscore/underscore.js" %}"></script>
     <script src="{% static "bower_components/backbone/backbone.js" %}"></script>
     <script src="{% static "bower_components/cal-heatmap/cal-heatmap.js" %}"></script>
-    
+
     <!-- CSS Framework JS -->
     <script src="{% static "bower_components/sass-bootstrap/dist/js/bootstrap.min.js" %}"></script>
-    
+
     <!-- endbower -->
     <script src="{% static "scripts/main.js" %}"></script>
-    {% endcompress %}
+
 
     {% block javascript %}
     {% endblock %}
