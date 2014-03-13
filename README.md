@@ -27,13 +27,8 @@ INSTALLED_APPS = (
 In your project `urls.py`:
 ```python
 ...
-from campaign_finance import views
-
 urlpatterns = patterns('',
-    # ...
-    url(r'^browser$', views.FilingListView.as_view(template_name='filing/list.html'), name='filing_list'),
-
-    url(r'^browser/filing/(?P<pk>\d+)/$', views.FilingDetailView.as_view(template_name='filing/detail.html'), name='filing_detail'),
+    url(r'^browser/', include('campaign_finance.urls')),    
 )
 ```
 ## Loading the data
