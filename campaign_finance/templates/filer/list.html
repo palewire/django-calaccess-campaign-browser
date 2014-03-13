@@ -11,19 +11,17 @@
         <table class="table table-bordered table-hover">
           <thead>
             <tr>
-              <th>(Raw) Filing No.</th>
-              <th>Form</th>
-              <th>Committee</th>
-              <th>Filer</th>
+              <th>Name.</th>
+              <th>ID</th>
+              <th>Type</th>
             </tr>
           </thead>
           <tbody>
-          {% for filing in filings %}
+          {% for filer in filers %}
             <tr>
-              <td>{{ filing.filing_id_raw }}</td>
-              <td>{{ filing.form_id }}</td>
-              <td>{{ filing.committee.name }}</td>
-              <td>{{ filing.committee.filer.name }}</td>
+              <td>{{ filer.name }}</td>
+              <td>{{ filer.filer_id }}</td>
+              <td>{{ filer.filer_type }}</td>
             </tr>
           {% endfor %}
           </tbody>
