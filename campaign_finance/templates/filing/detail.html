@@ -1,0 +1,54 @@
+{% extends 'base.html' %}
+
+{% block title %}
+{% endblock %}
+
+{% block content %}
+<div class="container">
+  <div class="row">
+    <div class="col-lg-12">
+      <div class="page-header">
+        <h1>Filing No. {{ filing.filing_id_raw }} <small>{{ filing.form_id }}</small></h1>
+      </div>
+      <ol class="breadcrumb">
+        <li><a href="/browser">Home</a></li>
+        <li><a href="{{ filing.committee.filer.get_absolute_url }}">Filer</a></li>
+        <li><a href="{{ filing.committee.get_absolute_url }}">{{ filing.committee.name }}</a></li>
+        <li class="active">{{ filing.filing_id_raw }}</li>
+      </ol>
+
+      <table class="table table-bordered table-hover">
+        <thead>
+          <tr>
+            <th>itemized expn</th>
+            <th>itemized mon. contribs</th>
+            <th>non mon. contribs</th>
+            <th>outstanding debts</th>
+            <th>total contribs</th>
+            <th>total expn</th>
+            <th>total mon. contribs</th>
+            <th>unitemized expn</th>
+            <th>unitemized mon. contribs</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+          {% for summary in filing.summary_set.all %}
+            <td>{{ summary.itemized_expenditures }}</td>
+            <td>{{ summary.itemized_monetary_contribs }}</td>
+            <td>{{ summary.non_monetary_contribs }}</td>
+            <td>{{ summary.outstanding_debts }}</td>
+            <td>{{ summary.total_contribs }}</td>
+            <td>{{ summary.total_expenditures }}</td>
+            <td>{{ summary.total_monetary_contribs }}</td>
+            <td>{{ summary.unitemized_expenditures }}</td>
+            <td>{{ summary.unitemized_monetary_contribs }}</td>
+          {% endfor %}
+          </tr>
+        </tbody>
+      </table>
+
+    </div>
+  </div>
+</div>
+{% endblock %}

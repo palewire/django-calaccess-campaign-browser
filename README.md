@@ -23,7 +23,19 @@ INSTALLED_APPS = (
     'campaign_finance',
 )
 ```
+## Setup urls
+In your project `urls.py`:
+```python
+...
+from campaign_finance import views
 
+urlpatterns = patterns('',
+    # ...
+    url(r'^browser$', views.FilingListView.as_view(template_name='filing/list.html'), name='filing_list'),
+
+    url(r'^browser/filing/(?P<pk>\d+)/$', views.FilingDetailView.as_view(template_name='filing/detail.html'), name='filing_detail'),
+)
+```
 ## Loading the data
 - Next, sync the database, create a Django admin user, and run the management command to extract campaign finance data from from the raw calaccess data dump.
 ```bash

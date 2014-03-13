@@ -1,0 +1,44 @@
+{% extends 'base.html' %}
+
+{% block title %}
+{% endblock %}
+
+{% block content %}
+<div class="container">
+  <header>
+    <h1>{{ filer.name }}</h1>
+    <ol class="breadcrumb">
+      <li><a href="/browser">Home</a></li>
+      <li class="active">{{ filer.name }}</li>
+    </ol>
+  </header>
+  <div class="row">
+    <div class="col-12-lg">
+      <!-- <div class="table-responsive"> -->
+        <table class="table table-bordered table-hover">
+          <thead>
+            <tr>
+              <th>Name</th>
+              <th>(Raw) Filing No.</th>
+              <th>Type</th>
+            </tr>
+          </thead>
+          <tbody>
+          {% for committee in filer.committee_set.all %}
+            <tr>
+              <td>
+                <a href="{{ committee.get_absolute_url }}">{{ committee.name }}</a>
+              </td>
+              <td>{{ committee.filer_id_raw }}</td>
+              <td>{{ committee.committe_type }}</td>
+            </tr>
+          {% endfor %}
+          </tbody>
+        </table>
+      <!-- </div> -->
+
+    </div>
+  </div>
+</div>
+</div>
+{% endblock %}

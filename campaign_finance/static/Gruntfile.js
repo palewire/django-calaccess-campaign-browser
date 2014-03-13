@@ -20,12 +20,12 @@ module.exports = function (grunt) {
         livereload: true
       },
       css: {
-        files: ['assets/styles/scss/*.scss'],
-        
+        files: ['styles/scss/*.scss'],
+
         tasks: ['sass'],
       },
       src: {
-        files: ['templates/**/*.html', 'assets/scripts/**/*.js', 'Gruntfile.js'],
+        files: ['../templates/**/*.html', 'scripts/**/*.js', 'Gruntfile.js'],
       }
     }, // watch
 
@@ -33,8 +33,8 @@ module.exports = function (grunt) {
       dist: { // Target
         files: { // Dictionary of files
           // 'dest': 'source'
-          'assets/styles/main.css': 'assets/styles/scss/main.scss'
-          
+          'styles/main.css': 'styles/scss/main.scss'
+
         }
       }
     },
@@ -49,13 +49,13 @@ module.exports = function (grunt) {
     },
     'bower-install': {
       target: {
-        src: ['templates/index.html'],
-        ignorePath: ['templates'],
+        src: ['../templates/base.html'],
+        ignorePath: ['../templates'],
       }
     },
     jshint: {
       // define the files to lint
-      files: ['Gruntfile.js', 'app/scripts/*.js'],
+      files: ['Gruntfile.js', 'scripts/*.js'],
       // configure JSHint (documented at http://www.jshint.com/docs/)
       options: {
           // more options here if you want to override JSHint defaults
@@ -71,7 +71,7 @@ module.exports = function (grunt) {
   });
 
   grunt.registerTask('default', [
-    'sass', 
+    'sass',
     'watch'
   ]);
 
