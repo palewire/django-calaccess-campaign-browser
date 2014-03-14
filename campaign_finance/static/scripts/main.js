@@ -3,6 +3,9 @@
 var App = App || {};
 
 App = {
+    init: function () {
+        App.dataTables()
+    },
     createCalendar: function (selector, data) {
         var cal = new CalHeatMap();
         cal.init({
@@ -40,5 +43,12 @@ App = {
             // Desktop
             return 5
         }
+    },
+    dataTables: function () {
+        $('table').dataTable();
     }
 };
+
+jQuery(document).ready(function($) {
+    App.init();
+});
