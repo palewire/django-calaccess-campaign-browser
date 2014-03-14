@@ -3,6 +3,9 @@
 var App = App || {};
 
 App = {
+    init: function () {
+        App._determineRangeSize(App.dataTables)
+    },
     createCalendar: function (selector, data) {
         var cal = new CalHeatMap();
         cal.init({
@@ -31,14 +34,20 @@ App = {
             el.remove();
         });
     },
-    _determineRangeSize: function () {
+    _determineRangeSize: function (callback) {
         var browserWidth = document.documentElement.clientWidth;
 
         if (browserWidth <= 420) {
-            return 3;
+            // Mobile
         } else {
-            // Desktop
-            return 5
+            callback();
         }
+    },
+    dataTables: function () {
+        $('table').dataTable();
     }
 };
+
+jQuery(document).ready(function($) {
+    App.init();
+});

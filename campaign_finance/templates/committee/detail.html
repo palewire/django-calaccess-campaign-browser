@@ -16,7 +16,7 @@
   <div class="row">
     <div class="col-12-lg">
       <div class="table-responsive">
-        <table class="table table-bordered table-hover">
+        <table id="datatable" class=""> <!-- table table-bordered table-hover -->
           <thead>
             <tr>
               <th>Filing No.</th>
@@ -39,17 +39,29 @@
                 <a href="{{ filing.get_absolute_url }}">{{ filing.filing_id_raw }}</a>
               </td>
               <td>{{ filing.form_id }}</td>
-              {% for summary in filing.summary_set.all %}
-                <td>{{ summary.itemized_expenditures }}</td>
-                <td>{{ summary.itemized_monetary_contribs }}</td>
-                <td>{{ summary.non_monetary_contribs }}</td>
-                <td>{{ summary.outstanding_debts }}</td>
-                <td>{{ summary.total_contribs }}</td>
-                <td>{{ summary.total_expenditures }}</td>
-                <td>{{ summary.total_monetary_contribs }}</td>
-                <td>{{ summary.unitemized_expenditures }}</td>
-                <td>{{ summary.unitemized_monetary_contribs }}</td>
-              {% endfor %}
+              {% if filing.summary_set.all %}
+                {% for summary in filing.summary_set.all %}
+                  <td>{{ summary.itemized_expenditures }}</td>
+                  <td>{{ summary.itemized_monetary_contribs }}</td>
+                  <td>{{ summary.non_monetary_contribs }}</td>
+                  <td>{{ summary.outstanding_debts }}</td>
+                  <td>{{ summary.total_contribs }}</td>
+                  <td>{{ summary.total_expenditures }}</td>
+                  <td>{{ summary.total_monetary_contribs }}</td>
+                  <td>{{ summary.unitemized_expenditures }}</td>
+                  <td>{{ summary.unitemized_monetary_contribs }}</td>
+                {% endfor %}
+              {% else %}
+                <td>N/A</td>
+                <td>N/A</td>
+                <td>N/A</td>
+                <td>N/A</td>
+                <td>N/A</td>
+                <td>N/A</td>
+                <td>N/A</td>
+                <td>N/A</td>
+                <td>N/A</td>
+              {% endif %}
             </tr>
           {% endfor %}
           </tbody>
