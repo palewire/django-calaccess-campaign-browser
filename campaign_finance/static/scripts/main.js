@@ -4,7 +4,7 @@ var App = App || {};
 
 App = {
     init: function () {
-        App.dataTables()
+        App._determineRangeSize(App.dataTables)
     },
     createCalendar: function (selector, data) {
         var cal = new CalHeatMap();
@@ -34,14 +34,13 @@ App = {
             el.remove();
         });
     },
-    _determineRangeSize: function () {
+    _determineRangeSize: function (callback) {
         var browserWidth = document.documentElement.clientWidth;
 
         if (browserWidth <= 420) {
-            return 3;
+            // Mobile
         } else {
-            // Desktop
-            return 5
+            callback();
         }
     },
     dataTables: function () {
