@@ -4,13 +4,14 @@
 {% endblock %}
 
 {% block content %}
+  {% load humanize %}
 <div class="container">
   <header>
     <h1>{{ committee.name }}</h1>
     <ol class="breadcrumb">
       <li><a href="/browser">Home</a></li>
       <li><a href="{{ committee.filer.get_absolute_url }}">Filer</a></li>
-      <li class="active">{{ committee.name }}</li>
+      <li class="active">{{ committee.name }} ({{ committee.filer_id_raw }})</li>
     </ol>
   </header>
   <div class="row">
@@ -21,6 +22,7 @@
             <tr>
               <th>Filing No.</th>
               <th>Form</th>
+              <th>Cycle</th>
               <th>itemized expn</th>
               <th>itemized mon. contribs</th>
               <th>non mon. contribs</th>
@@ -41,15 +43,16 @@
               <td>{{ filing.form_id }}</td>
               {% if filing.summary_set.all %}
                 {% for summary in filing.summary_set.all %}
-                  <td>{{ summary.itemized_expenditures }}</td>
-                  <td>{{ summary.itemized_monetary_contribs }}</td>
-                  <td>{{ summary.non_monetary_contribs }}</td>
-                  <td>{{ summary.outstanding_debts }}</td>
-                  <td>{{ summary.total_contribs }}</td>
-                  <td>{{ summary.total_expenditures }}</td>
-                  <td>{{ summary.total_monetary_contribs }}</td>
-                  <td>{{ summary.unitemized_expenditures }}</td>
-                  <td>{{ summary.unitemized_monetary_contribs }}</td>
+                  <td>{{ summary.cycle.name }}</td>
+                  <td>{{ summary.itemized_expenditures | intcomma }}</td>
+                  <td>{{ summary.itemized_monetary_contribs | intcomma }}</td>
+                  <td>{{ summary.non_monetary_contribs | intcomma }}</td>
+                  <td>{{ summary.outstanding_debts | intcomma }}</td>
+                  <td>{{ summary.total_contribs | intcomma }}</td>
+                  <td>{{ summary.total_expenditures | intcomma }}</td>
+                  <td>{{ summary.total_monetary_contribs | intcomma }}</td>
+                  <td>{{ summary.unitemized_expenditures | intcomma }}</td>
+                  <td>{{ summary.unitemized_monetary_contribs | intcomma }}</td>
                 {% endfor %}
               {% else %}
                 <td>N/A</td>

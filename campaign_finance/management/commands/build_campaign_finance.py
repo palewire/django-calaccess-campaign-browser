@@ -35,17 +35,13 @@ def queryset_iterator(queryset, chunksize=1000):
             yield row
         gc.collect()
 
-def insert_cmte(filer_obj, filer_id_raw):
+def insert_cmte(filer_obj, cmte_filer_id_raw, cmte_type, cmte_name, cmte_xref_id, effective_date):
     insert_cmtee = Committee()
     insert_cmtee.filer = filer_obj # tie all candidate committees to the CAL-ACCESS candidate filer
-    insert_cmtee.filer_id_raw = filer_id_raw # preserve the CAL-ACCESS filer_id for the committee here, but don't add it to our Filer model. So can distinguish PAC from Cand Cmtee
-    insert_cmtee.committee_type = filer_obj.filer_type
-    try:
-        filer_name_obj = FilernameCd.objects.filter(filer_id=filer_id_raw)[0]
-        insert_cmtee.name = (filer_name_obj.namt + ' ' + filer_name_obj.namf + '' + filer_name_obj.naml + ' ' + filer_name_obj.nams).strip()
-        insert_cmtee.xref_filer_id = filer_name_obj.xref_filer_id
-    except:
-        insert_cmtee.name = None
+    insert_cmtee.filer_id_raw = cmte_filer_id_raw # preserve the CAL-ACCESS filer_id for the committee here, but don't add it to our Filer model. So can distinguish PAC from Cand Cmtee
+    insert_cmtee.committee_type = cmte_type
+    insert_cmtee.name = cmte_name
+    insert_cmtee.xref_filer_id = cmte_xref_id
     insert_cmtee.save() 
 
 class Command(BaseCommand):
@@ -62,110 +58,72 @@ class Command(BaseCommand):
         '''
             Take a look in the Filings table and just load up the filers that have filed a 460 or a 450
         '''
-        #filer_type_dict = {}
-        #for f in FilerTypesCd.objects.all():
-        #    filer_type_dict[f.filer_type] = f.description
-        '''
-            {0L: u' NOT DEFINED',
-            1L: u'CLIENT',
-            2L: u'EMPLOYER',
-            3L: u'FIRM',
-            4L: u'LOBBYIST',
-            5L: u'PAYMENT TO INFLUENCE',
-            6L: u'ALL FILERS',
-            8L: u'CANDIDATE/OFFICEHOLDER',
-            10L: u'MAJOR DONOR/INDEPENDENT EXPENDITURE COMMITTEE',
-            12L: u'SLATE MAILER ORGANIZATIONS',
-            14L: u'PROPONENT',
-            16L: u'RECIPIENT COMMITTEE',
-            17L: u'PROPOSITION ',
-            19L: u'INITIATIVE',
-            20L: u'TREASURER/RESPONSIBLE OFFICER',
-            21L: u'FEDERAL',
-            100L: u'PREPAID ACCOUNT',
-            101L: u'INDIVIDUAL'}
-        '''
-        # there's a lot of orphaned junk in this database
-        # i winnow down the filers we care about like so
-        ## get a list of all the recipient committees that filed a dislosure
-        ## get a list of all those filings that have any summary info to report
-        ## take the list of those filers and load them up
-        ## this method should cut through all the crap like
-        ### this candidate filer has no committees
-        ### or this candidate committee has no associated candidate filer and no name of the committee in FilerNameCD
+        candidate_cmte_list = []
+        all_candidate_filer_ids = FilernameCd.objects.filter(filer_type='CANDIDATE/OFFICEHOLDER').values_list('filer_id', flat=True).distinct() # all filers of type candidate
         
-        ## F450 & F460 are current Recipient Committee Forms
-        ## F419, F420 & F490 were old forms that were mapped to the F450 & F460 format?
-        ## See cal_errata_201.pdf page 31 # 4
-        # But I don't seem to get any more filers of campaign statements when using those in the all_filings query
-        # Only F490 appears to have summary records, and those look to be for lobbying records...
-        #all_filings = FilerFilingsCd.objects.filter(Q(form_id='F460') | Q(form_id='F450') | Q(form_id='F419') | Q(form_id='F420') | Q(form_id='F490')).values_list('filing_id', flat=True).distinct()
+        for filer_id in all_candidate_filer_ids:
+            qs_linked = FilerLinksCd.objects.filter(filer_id_a=filer_id) # querying by filer_id_a gets list of connected recipient committees
+            if qs_linked.count() > 0: # has a linked committee
+                cmte_filer_ids = list(qs_linked.values_list('filer_id_b', flat=True)) # all the committees controlled by the candidate
+                candidate_cmte_list.extend(cmte_filer_ids) # build a list of all candidate committees so can exclude for pac import
+                qs_cmte_filings = FilerFilingsCd.objects.filter(filer_id__in=cmte_filer_ids) # query to see if there are any filings associated with the committee
+                if qs_cmte_filings.count() > 0: # has data associated with a committee
+                    candidate_filer_name_obj = FilernameCd.objects.filter(filer_id=filer_id).order_by('-effect_dt').exclude(naml='')[0]
+                    candidate_filer_obj, created = Filer.objects.get_or_create(
+                        filer_id = filer_id,
+                        status = candidate_filer_name_obj.status,
+                        filer_type = 'cand',
+                        effective_date = candidate_filer_name_obj.effect_dt,
+                        xref_filer_id = candidate_filer_name_obj.xref_filer_id,
+                        name = (candidate_filer_name_obj.namt + ' ' + candidate_filer_name_obj.namf + ' ' + candidate_filer_name_obj.naml + ' ' + candidate_filer_name_obj.nams).strip(),
+                    )
+                    if created == True:
+                        for cmte_filer_id in cmte_filer_ids:
+                           qs_this_cmte_filings = qs_cmte_filings.filter(filer_id=cmte_filer_id).values_list('filing_id', flat=True)
+                           if SmryCd.objects.filter(filing_id__in=list(qs_this_cmte_filings)).count() > 0: # filings have data
+                                candidate_filer_obj.active = True
+                                candidate_filer_obj.save()
+                                qs_names = FilernameCd.objects.filter(filer_id=cmte_filer_id).order_by('-effect_dt').exclude(naml='')
+                                if qs_names.count() > 0:
+                                    cmte_filer_name_obj = qs_names[0]
+                                    cmte_obj, cmte_created = Committee.objects.get_or_create(
+                                        filer = candidate_filer_obj,
+                                        filer_id_raw = cmte_filer_id,
+                                        name = (cmte_filer_name_obj.namt + ' ' + cmte_filer_name_obj.namf + ' ' + cmte_filer_name_obj.naml + ' ' + cmte_filer_name_obj.nams).strip(),
+                                        committee_type = 'cand',
+                                    )
+        print 'candidates and their linked committees loaded'
+        
         all_filings = FilerFilingsCd.objects.filter(Q(form_id='F460') | Q(form_id='F450')).values_list('filing_id', flat=True).distinct()
         all_filings_with_data = SmryCd.objects.filter(filing_id__in=all_filings).values_list('filing_id', flat=True).distinct()
-        all_filers_with_data = FilerFilingsCd.objects.filter(filing_id__in=all_filings_with_data).values_list('filer_id', flat=True).distinct() # if you swap filing_id for filer_id in the values clause you get the same count of filings as in all_filings_with_data
+        all_filers_with_data = FilerFilingsCd.objects.filter(filing_id__in=all_filings_with_data).exclude(filer_id__in=candidate_cmte_list).values_list('filer_id', flat=True).distinct() # if you swap filing_id for filer_id in the values clause you get the same count of filings as in all_filings_with_data
         
-        for filer_id in all_filers_with_data:
-            qs_linked = FilerLinksCd.objects.filter(filer_id_b=filer_id)
-            if qs_linked.count() == 0:
-                filer_id_type = 'pac'
-                insert_pac = Filer()
-                insert_pac.filer_id = filer_id
-                insert_pac.filer_type = filer_id_type
-                try:
-                    filer_name_obj = FilernameCd.objects.filter(filer_id=filer_id).exclude(naml='')[0]
-                    insert_pac.name = (filer_name_obj.namt + ' ' + filer_name_obj.namf + ' ' + filer_name_obj.naml + ' ' + filer_name_obj.nams).strip()
-                    insert_pac.xref_filer_id = filer_name_obj.xref_filer_id
-                except:
-                    insert_pac.name = None
-                    insert_pac.xref_filer_id = None
-                insert_pac.save()
-                insert_cmte(insert_pac, filer_id)
-                
-            elif qs_linked.count() == 1:
-                filer_id_type = 'cand'
-                filer_cand_id = qs_linked[0].filer_id_a
-                qs_candidate_linked = FilerLinksCd.objects.filter(filer_id_a=filer_cand_id)
-                if qs_candidate_linked.values_list('filer_id_a', flat=True).distinct().count() == 1:
-                    try:
-                        filer_name_obj = FilernameCd.objects.filter(filer_id=filer_cand_id)[0]
-                        name = (filer_name_obj.namt + ' ' + filer_name_obj.namf + ' ' + filer_name_obj.naml + ' ' + filer_name_obj.nams).strip()
-                        xref_filer_id = filer_name_obj.xref_filer_id
-                    except:
-                        name = None
-                        xref_filer_id = None
-                    filer_obj, created = Filer.objects.get_or_create(
-                        filer_id = filer_cand_id,
-                        filer_type = filer_id_type,
-                        name = name,
-                        xref_filer_id = xref_filer_id,
-                    )
-                    insert_cmte(filer_obj, filer_id)
-                else:
-                    print 'filer_id %s might not be a candidate, take a look' % filer_id
-                    break
-            elif qs_linked.count() > 1:
-                filer_id_type = 'linked-pac'
-                if qs_linked.values_list('filer_id_b').distinct().count() == 1:
-                    linked_pac_id = qs_linked.values_list('filer_id_b', flat=True).distinct()[0]
-                    insert_pac_linked = Filer()
-                    insert_pac_linked.filer_id = linked_pac_id
-                    insert_pac_linked.filer_type = filer_id_type
-                    try:
-                        filer_name_obj = FilernameCd.objects.filter(filer_id=linked_pac_id)[0]
-                        insert_pac_linked.name = (filer_name_obj.namt + ' ' + filer_name_obj.namf + ' ' + filer_name_obj.naml + ' ' + filer_name_obj.nams).strip()
-                        insert_pac_linked.xref_filer_id = filer_name_obj.xref_filer_id
-                    except:
-                        insert_pac_linked.name = None
-                        insert_pac_linked.xref_filer_id = None
-                    insert_pac_linked.save()
-                    insert_cmte(insert_pac_linked, filer_id)
-                else:
-                    print 'linked pac filer_id_b not unique for filer_id %s' % filer_id
-                    break
-        print 'loaded filers'
-        gc.collect()
-        reset_queries()
-    
+        for pac_filer_id in all_filers_with_data:
+            pac_filer_name = FilernameCd.objects.filter(filer_id=pac_filer_id)
+            if pac_filer_name.count() > 0:
+                pac_filer_name_obj = pac_filer_name.order_by('-effect_dt').exclude(naml='')[0]
+                pac_filer_obj, created = Filer.objects.get_or_create(
+                    filer_id = pac_filer_id,
+                    status = pac_filer_name_obj.status,
+                    filer_type = 'pac',
+                    effective_date = pac_filer_name_obj.effect_dt,
+                    xref_filer_id = pac_filer_name_obj.xref_filer_id,
+                    name = (pac_filer_name_obj.namt + ' ' + pac_filer_name_obj.namf + ' ' + pac_filer_name_obj.naml + ' ' + pac_filer_name_obj.nams).strip(),
+                )
+                qs_pac_filings = FilerFilingsCd.objects.filter(filer_id=pac_filer_id)
+                if qs_pac_filings.count() > 0:
+                    qs_pac_smry = SmryCd.objects.filter(filing_id__in=list(qs_pac_filings.values_list('filing_id', flat=True)))
+                    if qs_pac_smry.count() > 0:
+                        pac_filer_obj.active = True
+                        pac_filer_obj.save()
+                pac_cmte_obj, pac_created = Committee.objects.get_or_create(
+                    filer = pac_filer_obj,
+                    filer_id_raw = pac_filer_id,
+                    name = (pac_filer_name_obj.namt + ' ' + pac_filer_name_obj.namf + ' ' + pac_filer_name_obj.naml + ' ' + pac_filer_name_obj.nams).strip(),
+                    committee_type = 'pac',
+                )
+        print 'loaded up the non-candidate linked committees with filings associated with them'
+
     def load_filings(self):
         insert_obj_list = []
         

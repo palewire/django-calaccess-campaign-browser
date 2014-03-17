@@ -9,15 +9,16 @@ class Filer(models.Model):
         ('pac', 'Political Action Committee'),
         ('cand', 'Candidate'),
     )
-    # straight out of the filer tables.
+    # straight out of the filer table
     filer_id = models.IntegerField()
     status = models.CharField(max_length=255, null=True)
     filer_type = models.CharField(max_length=10L, choices=FILER_TYPE_OPTIONS)
-
+    effective_date = models.DateField(null=True)
     ## fields updated by other tables
     xref_filer_id = models.CharField(max_length=32L, null=True)
     name = models.CharField(max_length=255L, null=True)
-
+    active = models.BooleanField(default=False)
+    
     def __unicode__(self):
         return self.name
 
