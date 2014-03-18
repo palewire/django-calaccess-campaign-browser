@@ -53,6 +53,11 @@ The JavaScript and CSS for the project is managed with Grunt and Bower. Currentl
 Start the development server and visit [http://127.0.0.1:8000/browser/](http://127.0.0.1:8000/browser/)
    to inspect the Cal-access data.
 
+## API
+django-calaccess-browser uses django-tastypie to expose the data as an API. Add `tastypie` to the project `INSTALLED_APPS` and make sure you included `campaign_finance.urls` in your project's `urls.py`.
+
+From there visit [127.0.0.1:8000/browser/api/v1/filer/?format=json](127.0.0.1:8000/browser/api/v1/filer/?format=json) to explore the JSON representation of the data.
+
 ## Authors
 - [Agustin Armendariz](https://github.com/armendariz)
 - [Ben Welsh](https://github.com/palewire)
