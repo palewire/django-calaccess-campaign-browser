@@ -1,10 +1,10 @@
 {% extends 'base.html' %}
+{% load humanize %}
 
 {% block title %}
 {% endblock %}
 
 {% block content %}
-  {% load humanize %}
 <div class="container">
   <div class="row">
     <div class="col-lg-12">
@@ -41,16 +41,15 @@
             <td>{{ filing.end_date }}</td>
           {% for summary in filing.summary_set.all %}
             <td>{{ summary.cycle.name }}</td>
-            <td>{{ summary.itemized_expenditures | intcomma }}</td>
-            <td>{{ summary.itemized_monetary_contribs | intcomma }}</td>
-            <td>{{ summary.non_monetary_contribs | intcomma }}</td>
-            <td>{{ summary.outstanding_debts | intcomma }}</td>
-            <td>{{ summary.total_contribs | intcomma }}</td>
-            <td>{{ summary.total_expenditures | intcomma }}</td>
-            <td>{{ summary.total_monetary_contribs | intcomma }}</td>
-            <td>{{ summary.unitemized_expenditures | intcomma }}</td>
-            <td>{{ summary.unitemized_monetary_contribs | intcomma }}</td>
-            <td></td>
+            <td>${{ summary.itemized_expenditures | intcomma }}</td>
+            <td>${{ summary.itemized_monetary_contribs | intcomma }}</td>
+            <td>${{ summary.non_monetary_contribs | intcomma }}</td>
+            <td>${{ summary.outstanding_debts | intcomma }}</td>
+            <td>${{ summary.total_contribs | intcomma }}</td>
+            <td>${{ summary.total_expenditures | intcomma }}</td>
+            <td>${{ summary.total_monetary_contribs | intcomma }}</td>
+            <td>${{ summary.unitemized_expenditures | intcomma }}</td>
+            <td>${{ summary.unitemized_monetary_contribs | intcomma }}</td>
           {% endfor %}
           </tr>
         </tbody>
