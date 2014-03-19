@@ -1,10 +1,10 @@
 {% extends 'base.html' %}
+{% load humanize %}
 
 {% block title %}
 {% endblock %}
 
 {% block content %}
-  {% load humanize %}
 <div class="container">
   <div class="row">
     <div class="col-lg-12">
@@ -50,7 +50,6 @@
             <td>{{ summary.total_monetary_contribs | intcomma }}</td>
             <td>{{ summary.unitemized_expenditures | intcomma }}</td>
             <td>{{ summary.unitemized_monetary_contribs | intcomma }}</td>
-            <td></td>
           {% endfor %}
           </tr>
         </tbody>

@@ -6,6 +6,7 @@ Detailed documentation is in the "docs" directory. *(coming soon)*
 
 ## Requirements
 - Django 1.6
+- [django.contrib.humanize](https://docs.djangoproject.com/en/1.6/ref/contrib/humanize/)
 - MySQL 5.5
 - [django-calaccess-parser](https://github.com/california-civic-data-coalition/django-calaccess-parser)
 - Patience
@@ -38,6 +39,14 @@ $ python manage.py syncdb
 $ python manage.py build_campaign_finance
 ```
 :warning: This'll take a while. Go grab some coffee or do something else productive with your life.
+
+## Building
+The JavaScript and CSS for the project is managed with Grunt and Bower. Currently, the JavaScript and SCSS dependencies are not included so you'll need to build them yourself;
+
+1. Install [Node.js](http://nodejs.org/) (this will also include NPM)
+2. Install Grunt and bower globally with `npm install -g bower grunt-cli`
+3. Go to the `static` directory and install the required dependencies with `npm install && bower install`
+4. Generate the `main.css` file and watch for HTML, CSS and JavaScript changes by executing `grunt`
 
 
 ## Explore data

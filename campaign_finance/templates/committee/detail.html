@@ -1,10 +1,10 @@
 {% extends 'base.html' %}
+{% load humanize %}
 
 {% block title %}
 {% endblock %}
 
 {% block content %}
-  {% load humanize %}
 <div class="container">
   <header>
     <h1>{{ committee.name }}</h1>
@@ -55,6 +55,7 @@
                   <td>{{ summary.unitemized_monetary_contribs | intcomma }}</td>
                 {% endfor %}
               {% else %}
+                <td>N/A</td>
                 <td>N/A</td>
                 <td>N/A</td>
                 <td>N/A</td>
