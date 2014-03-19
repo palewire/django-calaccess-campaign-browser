@@ -41,9 +41,9 @@
                 <a href="{{ filing.get_absolute_url }}">{{ filing.filing_id_raw }}</a>
               </td>
               <td>{{ filing.form_id }}</td>
+              <td>{{ filing.cycle.name }}</td>
               {% if filing.summary_set.all %}
                 {% for summary in filing.summary_set.all %}
-                  <td>{{ summary.cycle.name }}</td>
                   <td>{{ summary.itemized_expenditures | intcomma }}</td>
                   <td>{{ summary.itemized_monetary_contribs | intcomma }}</td>
                   <td>{{ summary.non_monetary_contribs | intcomma }}</td>

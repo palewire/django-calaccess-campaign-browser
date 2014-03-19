@@ -62,9 +62,9 @@ class Command(BaseCommand):
         all_candidate_filer_ids = FilernameCd.objects.filter(filer_type='CANDIDATE/OFFICEHOLDER').values_list('filer_id', flat=True).distinct() # all filers of type candidate
         
         for filer_id in all_candidate_filer_ids:
-            qs_linked = FilerLinksCd.objects.filter(filer_id_a=filer_id) # querying by filer_id_a gets list of connected recipient committees
-            if qs_linked.count() > 0: # has a linked committee
-                cmte_filer_ids = list(qs_linked.values_list('filer_id_b', flat=True)) # all the committees controlled by the candidate
+            qs_linked = FilerLinksCd.objects.filter(Q(filer_id_a=filer_id) | Q(filer_id_b=filer_id)).filter(link_type='12011') # querying by filer_id_a gets list of connected recipient committees
+            cmte_filer_ids = list(qs_linked.values_list('filer_id_a', flat=True).exclude(filer_id_a=filer_id)) + list( qs_linked.values_list('filer_id_b', flat=True).exclude(filer_id_b=filer_id))
+            if len(cmte_filer_ids) > 0: # has a linked committee
                 candidate_cmte_list.extend(cmte_filer_ids) # build a list of all candidate committees so can exclude for pac import
                 qs_cmte_filings = FilerFilingsCd.objects.filter(filer_id__in=cmte_filer_ids) # query to see if there are any filings associated with the committee
                 if qs_cmte_filings.count() > 0: # has data associated with a committee
@@ -123,7 +123,8 @@ class Command(BaseCommand):
                     committee_type = 'pac',
                 )
         print 'loaded up the non-candidate linked committees with filings associated with them'
-
+    # Need to fix duped committee issue and deal with controlling filer thing.
+    
     def load_filings(self):
         insert_obj_list = []
         
@@ -131,25 +132,25 @@ class Command(BaseCommand):
             qs_filings = FilerFilingsCd.objects.filter(Q(form_id='F460') | Q(form_id='F450'), filer_id=c.filer_id_raw)
             for f_id in qs_filings.values_list('filing_id', flat=True).distinct():
                 current_filing = qs_filings.filter(filing_id=f_id).order_by('-filing_sequence')[0]
-                
-                insert = Filing()
-                if current_filing.session_id % 2 == 0:
-                    cycle_year = current_filing.session_id
-                else:
-                    cycle_year = current_filing.session_id + 1
-                insert.cycle, created = Cycle.objects.get_or_create(name=cycle_year)
-                insert.committee = c
-                insert.filing_id_raw = current_filing.filing_id
-                insert.amend_id = current_filing.filing_sequence
-                insert.form_id = current_filing.form_id
-                if current_filing.rpt_start:
-                    insert.start_date = current_filing.rpt_start.isoformat()
-                if current_filing.rpt_end:
-                    insert.end_date = current_filing.rpt_end.isoformat()
-                insert_obj_list.append(insert)
-                if len(insert_obj_list) == 5000:
-                    Filing.objects.bulk_create(insert_obj_list)
-                    insert_obj_list = []
+                if SmryCd.objects.filter(filing_id=current_filing.filing_id).count() > 0:
+                    insert = Filing()
+                    if current_filing.session_id % 2 == 0:
+                        cycle_year = current_filing.session_id
+                    else:
+                        cycle_year = current_filing.session_id + 1
+                    insert.cycle, created = Cycle.objects.get_or_create(name=cycle_year)
+                    insert.committee = c
+                    insert.filing_id_raw = current_filing.filing_id
+                    insert.amend_id = current_filing.filing_sequence
+                    insert.form_id = current_filing.form_id
+                    if current_filing.rpt_start:
+                        insert.start_date = current_filing.rpt_start.isoformat()
+                    if current_filing.rpt_end:
+                        insert.end_date = current_filing.rpt_end.isoformat()
+                    insert_obj_list.append(insert)
+                    if len(insert_obj_list) == 5000:
+                        Filing.objects.bulk_create(insert_obj_list)
+                        insert_obj_list = []
         
         if len(insert_obj_list) > 0:
             Filing.objects.bulk_create(insert_obj_list)
