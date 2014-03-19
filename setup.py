@@ -26,7 +26,8 @@ setup(
     packages=[
         'campaign_finance',
         'campaign_finance.management',
-        'campaign_finance.management.commands'
+        'campaign_finance.management.commands',
+	'campaign_finance.utils',
     ],
     include_package_data=True,
     license='MIT License',  # example license
