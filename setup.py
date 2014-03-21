@@ -26,7 +26,8 @@ setup(
     packages=[
         'campaign_finance',
         'campaign_finance.management',
-        'campaign_finance.management.commands'
+        'campaign_finance.management.commands',
+	'campaign_finance.utils',
     ],
     include_package_data=True,
     license='MIT License',  # example license
@@ -48,10 +49,11 @@ setup(
         'Topic :: Internet :: WWW/HTTP :: Dynamic Content',
     ],
 
-    # dependencies
-    # install_requires=[
-    #     'django-calaccess-parser==0.1'
-    # ],
+    dependencies
+    install_requires=[
+        #'django-calaccess-parser==0.1',
+        'tastypie==0.11.0'
+    ],
     # dependency_links=[
     #     'git+ssh://git@github.com:california-civic-data-coalition/django-calaccess-parser.git@0.1#egg-django-calaccess-parser-0.1'
     # ]
