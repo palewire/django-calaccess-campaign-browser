@@ -58,6 +58,12 @@ django-calaccess-browser uses django-tastypie to expose the data as an API. Add 
 
 From there visit [127.0.0.1:8000/browser/api/v1/filer/?format=json](127.0.0.1:8000/browser/api/v1/filer/?format=json) to explore the JSON representation of the data.
 
+## Export
+You can also export the data into easily queryable flat files.
+```bash
+$ python manage.py export_campaign_finance
+```
+
 ## Authors
 - [Agustin Armendariz](https://github.com/armendariz)
 - [Ben Welsh](https://github.com/palewire)
