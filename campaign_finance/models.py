@@ -55,6 +55,10 @@ class Committee(models.Model):
     filer_id_raw = models.IntegerField()
     name = models.CharField(max_length=255, null=True)
     committee_type = models.CharField(max_length=50, choices=CMTE_TYPE_OPTIONS)
+    
+    # working on sorting out the linking table
+    #linked = models.BooleanField(default=False)
+    #link_type = models.CharField(max_length=255, null=True)
 
     def __unicode__(self):
         return self.name
@@ -69,9 +73,44 @@ class Committee(models.Model):
 
     total_contributions = property(_total_contributions)
 
+    def links(self):
+        d = {}
+        try:
+            from calaccess.models import FilerLinksCd, FilernameCd, LookupCode
+            qs_links = FilerLinksCd.objects.filter(filer_id_a=self.filer_id_raw)
+            for q in qs_links:
+                qs_names = FilernameCd.objects.filter(filer_id=q.filer_id_b).order_by('-effect_dt').exclude(naml='')
+                if qs_names > 0:
+                    cmte_filer_name_obj = qs_names[0]
+                    name = (cmte_filer_name_obj.namt + ' ' + cmte_filer_name_obj.namf + ' ' + cmte_filer_name_obj.naml + ' ' + cmte_filer_name_obj.nams).strip()
+                else:
+                    name = ''
+                d[q.filer_id_b] = {
+                    'link_type': LookupCode.objects.get(code_id=q.link_type).code_desc,
+                    'filer_id_b': q.filer_id_b,
+                    'filer_name': name,
+                    'effective_date': q.effect_dt,
+                }
+            
+        except:
+            print 'Raw data not available. Install calaccess app to process and house raw data.'
+        
+        return d
+    
+    def print_links(self):
+        d = self.links()
+        if d:
+            for v in d.values():
+                print '%s\t%s\t%s\t%s' % (v['filer_id_b'], v['link_type'], v['effective_date'], v['filer_name'],)
+
+
 
 class Cycle(models.Model):
     name = models.IntegerField()
+    
+    def __unicode__(self):
+        str_name = '%s' % self.name
+        return str_name
 
 class Filing(models.Model):
     cycle = models.ForeignKey(Cycle)
@@ -81,7 +120,11 @@ class Filing(models.Model):
     form_id = models.CharField(max_length=7)
     start_date = models.DateField(null=True)
     end_date = models.DateField(null=True)
-
+    
+    def __unicode__(self):
+        str_name = '%s (%s - %s)' % (self.filing_id_raw, self.start_date, self.end_date)
+        return str_name
+    
     def get_absolute_url(self):
         return reverse('filing_detail', args=[str(self.pk)])
 
@@ -104,6 +147,10 @@ class Summary(models.Model):
     total_contribs = models.DecimalField(max_digits=16, decimal_places=2)
     outstanding_debts = models.DecimalField(max_digits=16, decimal_places=2)
     ending_cash_balance = models.DecimalField(max_digits=16, decimal_places=2)
+    
+    def __unicode__(self):
+        str_name = '%s %s (%s - %s)' % (self.cycle.name, self.committee.name, self.filing.start_date, self.filing.end_date)
+        return str_name
 
 
 class Expenditure(models.Model):
@@ -115,6 +162,35 @@ class Expenditure(models.Model):
     And tries to prep the data for categorization by orgs and individuals
     Data comes from calaccess.models.ExpnCd
     '''
+    EXPENDITURE_CODE_CHOICES = (
+        ('CMP', 'campaign paraphernalia/misc.'),
+        ('CNS', 'campaign consultants'),
+        ('CTB', 'contribution (explain nonmonetary)*'),
+        ('CVC', 'civic donations'),
+        ('FIL', 'candidate filing/ballot fees'),
+        ('FND', 'fundraising events'),
+        ('IND', 'independent expenditure supporting/opposing others (explain)*'),
+        ('LEG', 'legal defense'),
+        ('LIT', 'campaign literature and mailings'),
+        ('MBR', 'member communications'),
+        ('MTG', 'meetings and appearances'),
+        ('OFC', 'office expenses'),
+        ('PET', 'petition circulating'),
+        ('PHO', 'phone banks'),
+        ('POL', 'polling and survey research'),
+        ('POS', 'postage, delivery and messenger services'),
+        ('PRO', 'professional services (legal, accounting)'),
+        ('PRT', 'print ads'),
+        ('RAD', 'radio airtime and production costs'),
+        ('RFD', 'returned contributions'),
+        ('SAL', "campaign workers' salaries"),
+        ('TEL', 't.v. or cable airtime and production costs'),
+        ('TRC', 'candidate travel, lodging, and meals'),
+        ('TRS', 'staff/spouse travel, lodging, and meals'),
+        ('TSF', 'transfer between committees of the same candidate/sponsor'),
+        ('VOT', 'voter registration'),
+        ('WEB', 'information technology costs (internet, e-mail)'),
+    )
     cycle = models.ForeignKey(Cycle)
     committee = models.ForeignKey(Committee)
     filing = models.ForeignKey(Filing)
@@ -126,7 +202,8 @@ class Expenditure(models.Model):
     cum_ytd = models.DecimalField(max_digits=16, decimal_places=2, null=True)
     entity_cd = models.CharField(max_length=5L, blank=True)
     expn_chkno = models.CharField(max_length=20L, blank=True)
-    expn_code = models.CharField(max_length=3L, blank=True)
+    expn_code = models.CharField(max_length=3L, blank=True, choices=EXPENDITURE_CODE_CHOICES)
+    expn_code_display = models.CharField(max_length=255, blank=True)
     expn_date = models.DateField(null=True)
     expn_dscr = models.CharField(max_length=400L, blank=True)
     form_type = models.CharField(max_length=6L, blank=True)
@@ -161,6 +238,10 @@ class Expenditure(models.Model):
             print 'Raw data not available. Install calaccess app to process and house raw data.'
             obj = None
         return obj
+    
+    def save(self, **kwargs):
+        self.expn_code_display = self.get_expn_code_display()
+        super(self.__class__, self).save(**kwargs)
 
 class Contribution(models.Model):
     cycle = models.ForeignKey(Cycle)
