@@ -64,6 +64,18 @@ You can also export the data into easily queryable flat files.
 $ python manage.py export_campaign_finance
 ```
 
+## Update the data
+When you are ready to get new data, just blow away both the parser and the campaign finance browser app.
+Then reload them.
+
+You can do something like this, making sure you fill in your database and user names correctly.
+ ```bash
+ $ python manage.py sqlclear calaccess | mysql -u user_name -p database_name
+ $ python manage.py sqlclear campaign_finance | mysql -u user_name -p database_name
+ $ pytnon manage.py syncdb
+ $ python manage.py downloadcalaccess && python manage.py build_campaign_finance
+ ```
+
 ## Authors
 - [Agustin Armendariz](https://github.com/armendariz)
 - [Ben Welsh](https://github.com/palewire)
