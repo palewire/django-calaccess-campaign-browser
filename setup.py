@@ -1,5 +1,6 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
+import os
 try:
     from setuptools import setup
 except ImportError:
@@ -13,9 +14,6 @@ try:
 except (IOError, ImportError):
    description = open('README.md').read()
 
-import os
-
-README = open(os.path.join(os.path.dirname(__file__), 'README.rst')).read()
 
 # allow setup.py to be run from any path
 os.chdir(os.path.normpath(os.path.join(os.path.abspath(__file__), os.pardir)))
@@ -32,7 +30,7 @@ setup(
     include_package_data=True,
     license='MIT License',  # example license
     description='A simple Django app browse California campaign finance data from Cal-Access.',
-    long_description=README,
+    long_description=description,
     url='https://github.com/california-civic-data-coalition',
     author='Agustin Armendariz, Aaron Williams',
     author_email='awilliams@cironline.org',
