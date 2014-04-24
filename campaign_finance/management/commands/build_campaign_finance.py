@@ -236,7 +236,7 @@ class Command(BaseCommand):
                 filings_with_data_cnt += 1
         
         total_filing_cnt = Filing.objects.count()
-        pct_filings_have_data = (filings_with_data_cnt / float(filings_no_data_cnt))*100
+        pct_filings_have_data = (filings_with_data_cnt / float(total_filing_cnt))*100
         print '%s total filings processed, %s percent have data' % (total_filing_cnt, pct_filings_have_data)
         if Summary.objects.count() == filings_with_data_cnt:
             print 'All filings with data represented in Summary table'
