@@ -60,7 +60,9 @@ class Command(BaseCommand):
             ('bakref_tid', 'bakref_tid'),
             ('cmte_id', 'cmte_id'),
             ('committee__filer__name', 'filer'),
+            ('committee__filer__filer_id', 'filer_id'),
             ('committee__name', 'committee'),
+            ('committee__filer_id_raw', 'committee_id'),
             ('ctrib_adr1', 'ctrib_adr1'),
             ('ctrib_adr2', 'ctrib_adr2'),
             ('ctrib_city', 'ctrib_city'),
@@ -79,6 +81,7 @@ class Command(BaseCommand):
             ('cycle__name', 'cycle'),
             ('date_thru', 'date_thru'),
             ('entity_cd', 'entity_cd'),
+            ('filing__filing_id_raw', 'filing_id'),
             ('filing__start_date', 'filing_start_date'),
             ('filing__end_date', 'filing_end_date'),
             ('form_type', 'form_type'),
@@ -102,7 +105,6 @@ class Command(BaseCommand):
             ('name', 'name'),
             ('rcpt_date', 'rcpt_date'),
             ('rec_type', 'rec_type'),
-            ('status', 'status'),
             ('tran_id', 'tran_id'),
             ('tran_type', 'tran_type'),
             ('xref_match', 'xref_match'),
@@ -111,7 +113,7 @@ class Command(BaseCommand):
         csv_writer = csvkit.unicsv.UnicodeCSVDictWriter(outfile, fieldnames=header_translation.keys(), delimiter='|')
         csv_writer.writerow(header_translation)
         for c in Cycle.objects.all():
-            dict_rows = Contribution.objects.filter(cycle=c).values(*header_translation.keys())
+            dict_rows = Contribution.objects.filter(cycle=c).exclude(dupe=True).values(*header_translation.keys())
             csv_writer.writerows(dict_rows)
         outfile.close()
         print 'Exported contributions'
@@ -127,7 +129,9 @@ class Command(BaseCommand):
             ('bakref_tid', 'bakref_tid'),
             ('cmte_id', 'cmte_id'),
             ('committee__filer__name', 'filer'),
+            ('committee__filer__filer_id','filer_id'),
             ('committee__name', 'committee'),
+            ('committee__filer_id_raw','committee_id'),
             ('cum_ytd', 'cum_ytd'),
             ('cycle__name', 'cycle'),
             ('entity_cd', 'entity_cd'),
@@ -135,6 +139,7 @@ class Command(BaseCommand):
             ('expn_code', 'expn_code'),
             ('expn_date', 'expn_date'),
             ('expn_dscr', 'expn_dscr'),
+            ('filing__filing_id_raw','filing_id'),
             ('filing__start_date', 'filing_start_date'),
             ('filing__end_date', 'filing_end_date'),
             ('form_type', 'form_type'),
@@ -155,7 +160,6 @@ class Command(BaseCommand):
             ('payee_namt', 'payee_namt'),
             ('payee_st', 'payee_st'),
             ('payee_zip4', 'payee_zip4'),
-            ('status', 'status'),
             ('tran_id', 'tran_id'),
             ('xref_match', 'xref_match'),
             ('xref_schnm', 'xref_schnm'),
@@ -163,7 +167,7 @@ class Command(BaseCommand):
         csv_writer = csvkit.unicsv.UnicodeCSVDictWriter(outfile, fieldnames=header_translation.keys(), delimiter='|')
         csv_writer.writerow(header_translation)
         for c in Cycle.objects.all():
-            dict_rows = Expenditure.objects.filter(cycle=c).values(*header_translation.keys())
+            dict_rows = Expenditure.objects.filter(cycle=c).exclude(dupe=True).values(*header_translation.keys())
             csv_writer.writerows(dict_rows)
         outfile.close()
         print 'Exported expenditures '
@@ -176,9 +180,12 @@ class Command(BaseCommand):
         
         header_translation =  SortedDict([
             ('committee__filer__name', 'filer'),
+            ('committee__filer__filer_id', 'filer_id'),
             ('committee__name', 'committee'),
+            ('committee__filer_id_raw', 'committee_id'),
             ('cycle__name', 'cycle'),
             ('ending_cash_balance', 'ending_cash_balance'),
+            ('filing__filing_id_raw', 'filing_id'),
             ('filing__start_date', 'filing_start_date'),
             ('filing__end_date', 'filing_end_date'),
             ('form_type', 'form_type'),
@@ -196,7 +203,7 @@ class Command(BaseCommand):
         csv_writer = csvkit.unicsv.UnicodeCSVDictWriter(outfile, fieldnames=header_translation.keys(), delimiter='|')
         csv_writer.writerow(header_translation)
         for c in Cycle.objects.all():
-            dict_rows = Summary.objects.filter(cycle=c).values(*header_translation.keys())
+            dict_rows = Summary.objects.filter(cycle=c).exclude(dupe=True).values(*header_translation.keys())
             csv_writer.writerows(dict_rows)
         outfile.close()
         print 'Exported summary'
