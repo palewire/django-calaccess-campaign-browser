@@ -220,9 +220,12 @@ class Expenditure(models.Model):
     xref_schnm = models.CharField(max_length=2L, blank=True) # Related record is included on Form 460 Schedules B2 or F
 
     ## Derived fields
-    name = models.CharField(max_length=255) # derive like so (e.payee_namt + ' '+ e.payee_namf + ' ' + e.payee_naml + ' ' + e.payee_nams).strip()
+    name = models.CharField(max_length=255)
+    raw_org_name = models.CharField(max_length=255)
+    person_flag = models.BooleanField()
     org_id = models.IntegerField(null=True)
     individual_id = models.IntegerField(null=True)
+    
     dupe = models.BooleanField(default=False)
     
     def raw(self):
@@ -289,7 +292,8 @@ class Contribution(models.Model):
     xref_schnm = models.CharField(max_length=2L, blank=True)
 
     ## Derived fields
-    name = models.CharField(max_length=255) # derive like so (r.ctrib_namt + ' '+ r.ctrib_namf + ' ' + r.ctrib_naml + ' ' + r.ctrib_nams).strip()
+    raw_org_name = models.CharField(max_length=255)
+    person_flag = models.BooleanField()
     org_id = models.IntegerField(null=True)
     individual_id = models.IntegerField(null=True)
     dupe = models.BooleanField(default=False)

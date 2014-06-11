@@ -224,7 +224,8 @@ class Command(BaseCommand):
             }
         }
         insert_stats = {}
-        insert_obj_list = []
+        i = 0
+        bulk_recrods = []
         for f in queryset_iterator(Filing.objects.all()):
             qs = SmryCd.objects.filter(filing_id=f.filing_id_raw, amend_id=f.amend_id)
             f_id = '%s-%s' % (f.filing_id_raw, f.amend_id)
@@ -246,16 +247,19 @@ class Command(BaseCommand):
                         insert.__dict__[k] = qs.get(form_type=v['sked'], line_item=v['line_item']).amount_a
                     except:
                         insert.__dict__[k] = 0
-                insert_obj_list.append(insert)
-                if len(insert_obj_list) == 5000:
-                    Summary.objects.bulk_create(insert_obj_list)
-                    insert_obj_list = []
+                i += 1
+                bulk_recrods.append(insert)
+                if i % 5000 == 0:
+                    Summary.objects.bulk_create(bulk_recrods)
+                    bulk_recrods = []
+                    print '%s records created ...' % i
                     reset_queries()
                     gc.collect()
         
-        if len(insert_obj_list)> 0:
-            Summary.objects.bulk_create(insert_obj_list)
-            insert_obj_list = []
+        if len(bulk_recrods)> 0:
+            Summary.objects.bulk_create(bulk_recrods)
+            bulk_recrods = []
+            print '%s records created ...' % i
         
         print 'loaded summary'
         
@@ -297,8 +301,16 @@ class Command(BaseCommand):
                         off_name = q.offic_dscr
                         name_list = [ bal_name, cand_name, juris_name, off_name, ]
                         recipient_name = ' '.join(name_list)
+                        person_flag = False
+                        raw_org_name = ''
                     else:
                         recipient_name = (q.payee_namt + ' ' + q.payee_namf + ' ' + q.payee_naml + ' ' + q.payee_nams).strip()
+                        if q.payee_namf == '':
+                            raw_org_name = q.payee_naml
+                            person_flag = False
+                        else:
+                            person_flag = True
+                            raw_org_name = ''
                     
                     insert = Expenditure()
                     insert.cycle = f.cycle
@@ -333,8 +345,10 @@ class Command(BaseCommand):
                     insert.cum_ytd = q.cum_ytd
                     insert.payee_st = q.payee_st
                     insert.tran_id = q.tran_id
-                    
                     insert.name = recipient_name.strip()
+                    insert.person_flag = person_flag
+                    insert.raw_org_name = raw_org_name
+                    
                     insert_obj_list.append(insert)
                     if len(insert_obj_list) == 5000:
                         Expenditure.objects.bulk_create(insert_obj_list)
@@ -366,6 +380,14 @@ class Command(BaseCommand):
             insert_stats[filing_key] = qs.count()
             if qs.count() > 0:
                 for q in queryset_iterator(qs):
+                    
+                    if q.ctrib_namf == '':
+                        raw_org_name = q.ctrib_naml
+                        person_flag = False
+                    else:
+                        raw_org_name = q.ctrib_emp
+                        person_flag = True
+                    
                     insert = Contribution()
                     insert.cycle = f.cycle
                     insert.committee = f.committee
@@ -416,7 +438,9 @@ class Command(BaseCommand):
                     insert.intr_zip4 = q.intr_zip4
                     insert.intr_namf = q.intr_namf
                     insert.tran_id = q.tran_id
-                    insert.name = (q.ctrib_namt + ' '+ q.ctrib_namf + ' ' + q.ctrib_naml + ' ' + q.ctrib_nams).strip()
+                    insert.raw_org_name = raw_org_name
+                    insert.person_flag = person_flag
+                    
                     insert_obj_list.append(insert)
                     if len(insert_obj_list) == 5000:
                         Contribution.objects.bulk_create(insert_obj_list)
