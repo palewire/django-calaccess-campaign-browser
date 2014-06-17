@@ -47,10 +47,9 @@ setup(
         'Topic :: Internet :: WWW/HTTP :: Dynamic Content',
     ],
 
-    dependencies
     install_requires=[
         #'django-calaccess-parser==0.1',
-        'tastypie==0.11.0'
+        'tastypie==0.11.0',
     ],
     # dependency_links=[
     #     'git+ssh://git@github.com:california-civic-data-coalition/django-calaccess-parser.git@0.1#egg-django-calaccess-parser-0.1'
