@@ -39,7 +39,6 @@ setup(
     include_package_data=True,
     license='MIT License',  # example license
     description='A simple Django app browse California campaign finance data from Cal-Access.',
-    long_description=description,
     url='https://github.com/california-civic-data-coalition',
     author='California Civic Data Coalition',
     author_email='awilliams@cironline.org',
