@@ -25,6 +25,7 @@ paramiko==1.11.0
 progressbar==2.3
 psycopg2==2.4.6
 pycrypto==2.6
+pyflakes==0.8.1
 python-coveralls==2.4.2
 python-dateutil==2.1
 python-memcached==1.48
