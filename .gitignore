@@ -13,3 +13,4 @@ cover
 *.rst
 bower_components
 node_modules
+data
