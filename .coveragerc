@@ -1,0 +1,12 @@
+[run]
+include =
+    campaign_finance/views.py
+    campaign_finance/models.py
+    campaign_finance/admin.py
+    campaign_finance/management/commands/build_campaign_finance.py
+    campaign_finance/management/commands/export_campaign_finance.py
+
+[report]
+exclude_lines =
+    pragma: no cover
+    add_introspection_rules

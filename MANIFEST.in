@@ -1,5 +1,0 @@
-include LICENSE
-include README.rst
-recursive-include campaign_finance/templates *
-recursive-include campaign_finance/static *
-recursive-include docs *
