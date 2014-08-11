@@ -1,10 +1,32 @@
 from django.core.management.base import BaseCommand, CommandError
 from optparse import make_option
 try:
-    from calaccess.models import FilernameCd,  FilerFilingsCd, FilerLinksCd, ExpnCd, RcptCd, SmryCd,  FilersCd, FilerTypesCd, FilerToFilerTypeCd, LookupCode
+    from calaccess.models import (
+        FilernameCd,
+        FilerFilingsCd,
+        FilerLinksCd,
+        ExpnCd, RcptCd,
+        SmryCd,
+        FilersCd,
+        FilerTypesCd,
+        FilerToFilerTypeCd,
+        LookupCode
+    )
+
 except:
-    print 'you need to load the raw calaccess data app in order to populate this one'
-from campaign_finance.models import  Committee, Contribution, Cycle, Expenditure, Filer, Filing, Stats, Summary
+    print 'you need to load the raw calaccess data app'
+
+from campaign_finance.models import (
+    Committee,
+    Contribution,
+    Cycle,
+    Expenditure,
+    Filer,
+    Filing,
+    Stats,
+    Summary
+)
+
 from django.db import connection, transaction, reset_queries
 from dateutil.relativedelta import relativedelta
 from django.db.models import Sum
@@ -12,6 +34,7 @@ from django.db.models import Q
 import csv
 
 import gc
+
 
 def queryset_iterator(queryset, chunksize=1000):
     '''
@@ -22,8 +45,9 @@ def queryset_iterator(queryset, chunksize=1000):
     memory. Using the iterator() method only causes it to not preload all the
     classes.
 
-    Note that the implementation of the iterator does not support ordered query sets.
-    
+    Note that the implementation of the iterator
+    does not support ordered query sets.
+
     https://djangosnippets.org/snippets/1949/
     '''
     pk = 0
@@ -35,136 +59,331 @@ def queryset_iterator(queryset, chunksize=1000):
             yield row
         gc.collect()
 
-def insert_cmte(filer_obj, cmte_filer_id_raw, cmte_type, cmte_name, cmte_xref_id, effective_date):
+
+def insert_cmte(filer_obj, cmte_filer_id_raw, cmte_type,
+                cmte_name, cmte_xref_id, effective_date):
+
     insert_cmtee = Committee()
-    insert_cmtee.filer = filer_obj # tie all candidate committees to the CAL-ACCESS candidate filer
-    insert_cmtee.filer_id_raw = cmte_filer_id_raw # preserve the CAL-ACCESS filer_id for the committee here, but don't add it to our Filer model. So can distinguish PAC from Cand Cmtee
+    # tie all candidate committees to the CAL-ACCESS candidate filer
+    insert_cmtee.filer = filer_obj
+    # preserve the CAL-ACCESS filer_id for the committee here, but don't add
+    # it to our Filer model. So can distinguish PAC from Cand Cmtee
+    insert_cmtee.filer_id_raw = cmte_filer_id_raw
     insert_cmtee.committee_type = cmte_type
     insert_cmtee.name = cmte_name
     insert_cmtee.xref_filer_id = cmte_xref_id
-    insert_cmtee.save() 
+    insert_cmtee.save()
+
 
 class Command(BaseCommand):
-    help = 'Break out the recipient committee campaign finance data from the CAL-ACCESS dump'
-    
+    help = 'Isolate recipient committee campaign finance data'
+
     def handle(self, *args, **options):
         self.load_filers()
         self.load_filings()
         self.load_summary()
         self.load_contributions()
         self.load_expenditures()
-    
+
     def load_filers(self):
         '''
-            Take a look in the Filings table and just load up the filers that have filed a 460 or a 450.
-            Load the candidates first, linking them to all the committees they control.
-            Then load the rest of the committees.
+        Take a look in the Filings table and just
+        load up the filers that have filed a 460 or a 450.
+        Load the candidates first,
+        linking them to all the committees they control.
+        Then load the rest of the committees.
         '''
         candidate_cmte_list = []
-        all_candidate_filer_ids = FilernameCd.objects.filter(filer_type='CANDIDATE/OFFICEHOLDER').values_list('filer_id', flat=True).distinct() # all filers of type candidate
-        
+        # all filers of type candidate
+        all_candidate_filer_ids = (
+            FilernameCd
+            .objects
+            .filter(filer_type='CANDIDATE/OFFICEHOLDER')
+            .values_list('filer_id', flat=True)
+            .distinct()
+        )
+
         for filer_id in all_candidate_filer_ids:
-            qs_linked = FilerLinksCd.objects.filter(Q(filer_id_a=filer_id) | Q(filer_id_b=filer_id)).filter(link_type='12011') # querying by filer_id_a gets list of connected recipient committees
-            cmte_filer_ids = list(qs_linked.values_list('filer_id_a', flat=True).exclude(filer_id_a=filer_id)) + list( qs_linked.values_list('filer_id_b', flat=True).exclude(filer_id_b=filer_id))
-            if len(cmte_filer_ids) > 0: # has a linked committee
-                candidate_cmte_list.extend(cmte_filer_ids) # build a list of all candidate committees so can exclude for pac import
-                qs_cmte_filings = FilerFilingsCd.objects.filter(filer_id__in=cmte_filer_ids) # query to see if there are any filings associated with the committee
-                if qs_cmte_filings.count() > 0: # has data associated with a committee
-                    candidate_filer_name_obj = FilernameCd.objects.filter(filer_id=filer_id).order_by('-effect_dt').exclude(naml='')[0]
-                    candidate_filer_obj, created = Filer.objects.get_or_create(
-                        filer_id = filer_id,
-                        status = candidate_filer_name_obj.status,
-                        filer_type = 'cand',
-                        effective_date = candidate_filer_name_obj.effect_dt,
-                        xref_filer_id = candidate_filer_name_obj.xref_filer_id,
-                        name = (candidate_filer_name_obj.namt + ' ' + candidate_filer_name_obj.namf + ' ' + candidate_filer_name_obj.naml + ' ' + candidate_filer_name_obj.nams).strip(),
+            # querying by filer_id_a gets list of
+            # connected recipient committees
+            qs_linked = (
+                FilerLinksCd
+                .objects
+                .filter(Q(filer_id_a=filer_id) | Q(filer_id_b=filer_id))
+                .filter(link_type='12011')
+            )
+
+            filer_a_ids = list(
+                (
+                    qs_linked
+                    .values_list('filer_id_a', flat=True)
+                    .exclude(filer_id_a=filer_id)
+                )
+            )
+
+            filer_b_ids = list(
+                (
+                    qs_linked
+                    .values_list('filer_id_b', flat=True)
+                    .exclude(filer_id_b=filer_id)
+                )
+            )
+
+            cmte_filer_ids = filer_a_ids + filer_b_ids
+
+            if len(cmte_filer_ids) > 0:  # has a linked committee
+                # build a list of all candidate committees so can exclude for
+                # pac import
+                candidate_cmte_list.extend(cmte_filer_ids)
+                # query to see if there are any filings associated with the
+                # committee
+                qs_cmte_filings = FilerFilingsCd.objects.filter(
+                    filer_id__in=cmte_filer_ids)
+                # has data associated with a committee
+                if qs_cmte_filings.count() > 0:
+                    candidate_filer_name_obj = (
+                        FilernameCd
+                        .objects
+                        .filter(filer_id=filer_id)
+                        .order_by('-effect_dt')
+                        .exclude(naml='')[0]
                     )
-                    if created == True:
+
+                    candidate_filer_obj, created = Filer.objects.get_or_create(
+                        filer_id=filer_id,
+                        status=candidate_filer_name_obj.status,
+                        filer_type='cand',
+                        effective_date=candidate_filer_name_obj.effect_dt,
+                        xref_filer_id=candidate_filer_name_obj.xref_filer_id,
+                        name=(
+                            '{0} {1} {2} {3}'
+                            .format(
+                                candidate_filer_name_obj.namt,
+                                candidate_filer_name_obj.namf,
+                                candidate_filer_name_obj.naml,
+                                candidate_filer_name_obj.nams
+                            )
+                            .strip()
+                        )
+                    )
+
+                    if created:
                         for cmte_filer_id in cmte_filer_ids:
-                           qs_this_cmte_filings = qs_cmte_filings.filter(filer_id=cmte_filer_id).values_list('filing_id', flat=True)
-                           if SmryCd.objects.filter(filing_id__in=list(qs_this_cmte_filings)).count() > 0: # filings have data
+                            qs_this_cmte_filings = (
+                                qs_cmte_filings
+                                .filter(filer_id=cmte_filer_id)
+                                .values_list('filing_id', flat=True)
+                            )
+
+                            # filings have data
+                            summary_count = (
+                                SmryCd
+                                .objects
+                                .filter(
+                                    filing_id__in=(
+                                        list(qs_this_cmte_filings)
+                                    )
+                                )
+                                .count()
+                            )
+
+                            if summary_count > 0:
                                 candidate_filer_obj.active = True
                                 candidate_filer_obj.save()
-                                qs_names = FilernameCd.objects.filter(filer_id=cmte_filer_id).order_by('-effect_dt').exclude(naml='')
+
+                                qs_names = (
+                                    FilernameCd
+                                    .objects
+                                    .filter(filer_id=cmte_filer_id)
+                                    .order_by('-effect_dt')
+                                    .exclude(naml='')
+                                )
+
                                 if qs_names.count() > 0:
                                     cmte_filer_name_obj = qs_names[0]
-                                    cmte_obj, cmte_created = Committee.objects.get_or_create(
-                                        filer = candidate_filer_obj,
-                                        filer_id_raw = cmte_filer_id,
-                                        name = (cmte_filer_name_obj.namt + ' ' + cmte_filer_name_obj.namf + ' ' + cmte_filer_name_obj.naml + ' ' + cmte_filer_name_obj.nams).strip(),
-                                        committee_type = 'cand',
+
+                                    cmte_obj, cmte_created = (
+                                        Committee
+                                        .objects
+                                        .get_or_create(
+                                            filer=candidate_filer_obj,
+                                            filer_id_raw=cmte_filer_id,
+                                            name=(
+                                                '{0} {1} {2} {3}'
+                                                .format(
+                                                    cmte_filer_name_obj.namt,
+                                                    cmte_filer_name_obj.namf,
+                                                    cmte_filer_name_obj.naml,
+                                                    cmte_filer_name_obj.nams
+                                                )
+                                                .strip()
+                                            ),
+                                            committee_type='cand',
+                                        )
                                     )
+
         print 'candidates and their linked committees loaded'
-        
-        all_filings = FilerFilingsCd.objects.filter(Q(form_id='F460') | Q(form_id='F450')).values_list('filing_id', flat=True).distinct()
-        all_filings_with_data = SmryCd.objects.filter(filing_id__in=all_filings).values_list('filing_id', flat=True).distinct()
-        all_filers_with_data = FilerFilingsCd.objects.filter(filing_id__in=all_filings_with_data).exclude(filer_id__in=candidate_cmte_list).values_list('filer_id', flat=True).distinct() # if you swap filing_id for filer_id in the values clause you get the same count of filings as in all_filings_with_data
-        
+
+        all_filings = (
+            FilerFilingsCd
+            .objects
+            .filter(Q(form_id='F460') | Q(form_id='F450'))
+            .values_list('filing_id', flat=True)
+            .distinct()
+        )
+
+        all_filings_with_data = (
+            SmryCd
+            .objects
+            .filter(filing_id__in=all_filings)
+            .values_list('filing_id', flat=True)
+            .distinct()
+        )
+
+        # if you swap filing_id for filer_id in the values clause you
+        # get the same count of filings as in all_filings_with_data
+        all_filers_with_data = (
+            FilerFilingsCd
+            .objects
+            .filter(filing_id__in=all_filings_with_data)
+            .exclude(filer_id__in=candidate_cmte_list)
+            .values_list('filer_id', flat=True)
+            .distinct()
+        )
+
         for pac_filer_id in all_filers_with_data:
             pac_filer_name = FilernameCd.objects.filter(filer_id=pac_filer_id)
+
             if pac_filer_name.count() > 0:
-                pac_filer_name_obj = pac_filer_name.order_by('-effect_dt').exclude(naml='')[0]
+                pac_filer_name_obj = pac_filer_name.order_by(
+                    '-effect_dt').exclude(naml='')[0]
+
                 pac_filer_obj, created = Filer.objects.get_or_create(
-                    filer_id = pac_filer_id,
-                    status = pac_filer_name_obj.status,
-                    filer_type = 'pac',
-                    effective_date = pac_filer_name_obj.effect_dt,
-                    xref_filer_id = pac_filer_name_obj.xref_filer_id,
-                    name = (pac_filer_name_obj.namt + ' ' + pac_filer_name_obj.namf + ' ' + pac_filer_name_obj.naml + ' ' + pac_filer_name_obj.nams).strip(),
+                    filer_id=pac_filer_id,
+                    status=pac_filer_name_obj.status,
+                    filer_type='pac',
+                    effective_date=pac_filer_name_obj.effect_dt,
+                    xref_filer_id=pac_filer_name_obj.xref_filer_id,
+                    name=(
+                        '{0} {1} {2} {3}'
+                        .format(
+                            pac_filer_name_obj.namt,
+                            pac_filer_name_obj.namf,
+                            pac_filer_name_obj.naml,
+                            pac_filer_name_obj.nams
+                        )
+                        .strip()
+                    ),
                 )
-                qs_pac_filings = FilerFilingsCd.objects.filter(filer_id=pac_filer_id)
+                qs_pac_filings = FilerFilingsCd.objects.filter(
+                    filer_id=pac_filer_id)
+
                 if qs_pac_filings.count() > 0:
-                    qs_pac_smry = SmryCd.objects.filter(filing_id__in=list(qs_pac_filings.values_list('filing_id', flat=True)))
+                    qs_pac_smry = (
+                        SmryCd
+                        .objects
+                        .filter(
+                            filing_id__in=(
+                                list(
+                                    qs_pac_filings
+                                    .values_list('filing_id', flat=True)
+                                )
+                            )
+                        )
+                    )
+
                     if qs_pac_smry.count() > 0:
                         pac_filer_obj.active = True
                         pac_filer_obj.save()
+
                 pac_cmte_obj, pac_created = Committee.objects.get_or_create(
-                    filer = pac_filer_obj,
-                    filer_id_raw = pac_filer_id,
-                    name = (pac_filer_name_obj.namt + ' ' + pac_filer_name_obj.namf + ' ' + pac_filer_name_obj.naml + ' ' + pac_filer_name_obj.nams).strip(),
+                    filer=pac_filer_obj,
+                    filer_id_raw=pac_filer_id,
+                    name=(
+                        '{0} {1} {2} {3}'
+                        .format(
+                            pac_filer_name_obj.namt,
+                            pac_filer_name_obj.namf,
+                            pac_filer_name_obj.naml,
+                            pac_filer_name_obj.nams
+                        )
+                        .strip()
+                    ),
                     committee_type = 'pac',
                 )
-        print 'loaded up the non-candidate linked committees with filings associated with them'
+
+        print 'loaded non-candidate linked committees with associated filings'
     # Need to fix duped committee issue and deal with controlling filer thing.
-    
+
     def load_filings(self):
         '''
         Loads all filings, using the most current, amended filing
         '''
         insert_obj_list = []
-        
+
         for c in queryset_iterator(Committee.objects.all()):
-            qs_filings = FilerFilingsCd.objects.filter(Q(form_id='F460') | Q(form_id='F450'), filer_id=c.filer_id_raw)
-            for f_id in qs_filings.values_list('filing_id', flat=True).distinct():
-                current_filing = qs_filings.filter(filing_id=f_id).order_by('-filing_sequence')[0]
-                if SmryCd.objects.filter(filing_id=current_filing.filing_id).count() > 0:
+            qs_filings = FilerFilingsCd.objects.filter(
+                Q(form_id='F460') | Q(form_id='F450'), filer_id=c.filer_id_raw)
+
+            filing_ids = (
+                qs_filings
+                .values_list('filing_id', flat=True)
+                .distinct()
+            )
+
+            for f_id in filing_ids:
+
+                current_filing = qs_filings.filter(
+                    filing_id=f_id).order_by('-filing_sequence')[0]
+
+                summary_count = (
+                    SmryCd
+                    .objects
+                    .filter(filing_id=current_filing.filing_id)
+                    .count()
+                )
+
+                if summary_count > 0:
                     insert = Filing()
                     if current_filing.session_id % 2 == 0:
                         cycle_year = current_filing.session_id
                     else:
                         cycle_year = current_filing.session_id + 1
-                    insert.cycle, created = Cycle.objects.get_or_create(name=cycle_year)
+                    insert.cycle, created = Cycle.objects.get_or_create(
+                        name=cycle_year)
                     insert.committee = c
                     insert.filing_id_raw = current_filing.filing_id
                     insert.amend_id = current_filing.filing_sequence
                     insert.form_id = current_filing.form_id
+
                     if current_filing.rpt_start:
-                        insert.start_date = current_filing.rpt_start.isoformat()
+                        insert.start_date = (
+                            current_filing
+                            .rpt_start
+                            .isoformat()
+                        )
+
                     if current_filing.rpt_end:
-                        insert.end_date = current_filing.rpt_end.isoformat()
+                        insert.end_date = (
+                            current_filing
+                            .rpt_end
+                            .isoformat()
+                        )
+
                     insert_obj_list.append(insert)
+
                     if len(insert_obj_list) == 5000:
                         Filing.objects.bulk_create(insert_obj_list)
                         insert_obj_list = []
-        
+
         if len(insert_obj_list) > 0:
             Filing.objects.bulk_create(insert_obj_list)
             insert_obj_list = []
-        
+
         print 'loaded filings'
         gc.collect()
         reset_queries()
-        
+
         # get dupe filings flagged
         d = {}
         for f in Filing.objects.all():
@@ -173,31 +392,32 @@ class Command(BaseCommand):
                 d[id_num] = 1
             else:
                 d[id_num] += 1
-        
+
         filing_id_list = []
-        for k,v in d.items():
+        for k, v in d.items():
             if v > 1:
                 filing_id_list.append(k)
-                #print '%s\t%s' % (k,v)
-        
+                # print '%s\t%s' % (k,v)
+
         for id_num in filing_id_list:
             qs = Filing.objects.filter(filing_id_raw=id_num).order_by('-id')
             keeper = qs[0]
             for q in qs.exclude(id=keeper.id):
                 q.dupe = True
                 q.save()
-        
+
         print 'flagged dupe filings'
         gc.collect()
         reset_queries()
-    
+
     def load_summary(self):
         '''
-            Currently using a dictonary to parse the summary information by form type, schedule and line number.
+        Currently using a dictonary to parse the summary
+        information by form type, schedule and line number.
         '''
         summary_form_dict = {
             'F460': {
-                #'name': 'Recipient Committee Campaign Statement',
+                # 'name': 'Recipient Committee Campaign Statement',
                 'itemized_monetary_contribs': {'sked': 'A', 'line_item': 1},
                 'unitemized_monetary_contribs': {'sked': 'A', 'line_item': 2},
                 'total_monetary_contribs': {'sked': 'A', 'line_item': 3},
@@ -210,7 +430,8 @@ class Command(BaseCommand):
                 'outstanding_debts': {'sked': 'F460', 'line_item': 19},
             },
             'F450': {
-                #'name': 'Recipient Committee Campaign Statement -- Short Form',
+                # 'Recipient Committee Campaign Statement -- Short Form'
+                # 'name': "" -- Short Form',
                 'itemized_monetary_contribs': None,
                 'unitemized_monetary_contribs': None,
                 'total_monetary_contribs': {'sked': 'F450', 'line_item': 7},
@@ -227,13 +448,11 @@ class Command(BaseCommand):
         i = 0
         bulk_recrods = []
         for f in queryset_iterator(Filing.objects.all()):
-            qs = SmryCd.objects.filter(filing_id=f.filing_id_raw, amend_id=f.amend_id)
+            qs = SmryCd.objects.filter(
+                filing_id=f.filing_id_raw, amend_id=f.amend_id)
             f_id = '%s-%s' % (f.filing_id_raw, f.amend_id)
             insert_stats[f_id] = qs.count()
-            #if qs.count() == 0:
-            #    #print 'no SmryCd data for Committee %s Filing %s Amend %s' % (f.committee.filer_id, f.filing_id_raw, f.amend_id)
-            #    pass
-            #else:
+
             if qs.count() > 0:
                 query_dict = summary_form_dict[f.form_id]
                 insert = Summary()
@@ -242,9 +461,13 @@ class Command(BaseCommand):
                 insert.form_type = f.form_id
                 insert.filing = f
                 insert.dupe = f.dupe
-                for k,v in query_dict.items():
+                for k, v in query_dict.items():
                     try:
-                        insert.__dict__[k] = qs.get(form_type=v['sked'], line_item=v['line_item']).amount_a
+                        insert.__dict__[k] = qs.get(
+                            form_type=v['sked'],
+                            line_item=v['line_item']
+                        ).amount_a
+
                     except:
                         insert.__dict__[k] = 0
                 i += 1
@@ -255,14 +478,14 @@ class Command(BaseCommand):
                     print '%s records created ...' % i
                     reset_queries()
                     gc.collect()
-        
-        if len(bulk_recrods)> 0:
+
+        if len(bulk_recrods) > 0:
             Summary.objects.bulk_create(bulk_recrods)
             bulk_recrods = []
             print '%s records created ...' % i
-        
+
         print 'loaded summary'
-        
+
         filings_no_data_cnt = 0
         filings_with_data_cnt = 0
         for v in insert_stats.values():
@@ -270,13 +493,19 @@ class Command(BaseCommand):
                 filings_no_data_cnt += 1
             elif v > 0:
                 filings_with_data_cnt += 1
-        
+
         total_filing_cnt = Filing.objects.count()
-        pct_filings_have_data = (filings_with_data_cnt / float(total_filing_cnt))*100
-        print '%s total filings processed, %s percent have data' % (total_filing_cnt, pct_filings_have_data)
+        pct_filings_have_data = (
+            filings_with_data_cnt / float(total_filing_cnt)) * 100
+
+        print (
+            '{0} total filings processed, {1} percent have data'
+            .format(total_filing_cnt, pct_filings_have_data)
+        )
+
         if Summary.objects.count() == filings_with_data_cnt:
             print 'All filings with data represented in Summary table'
-        
+
         reset_queries()
         gc.collect()
 
@@ -287,31 +516,53 @@ class Command(BaseCommand):
         insert_stats = {}
         insert_obj_list = []
         for f in queryset_iterator(Filing.objects.all()):
-            qs = ExpnCd.objects.filter(filing_id=f.filing_id_raw, amend_id=f.amend_id)
+            qs = ExpnCd.objects.filter(
+                filing_id=f.filing_id_raw, amend_id=f.amend_id)
             filing_key = '%s-%s' % (f.filing_id_raw, f.amend_id)
             insert_stats[filing_key] = qs.count()
             if qs.count() > 0:
                 for q in queryset_iterator(qs):
-                    
-                    ## have to contruct the payee name from multiple fields
+
+                    # have to contruct the payee name from multiple fields
                     if q.payee_naml == '':
                         bal_name = q.bal_name
-                        cand_name = (q.cand_namt + ' ' + q.cand_namf + ' ' + q.cand_naml + ' ' + q.cand_nams).strip()
+                        cand_name = (
+                            '{0} {1} {2} {3}'
+                            .format(
+                                q.cand_namt,
+                                q.cand_namf,
+                                q.cand_naml,
+                                q.cand_nams
+                            )
+                            .strip()
+                        )
+
                         juris_name = q.juris_dscr
                         off_name = q.offic_dscr
-                        name_list = [ bal_name, cand_name, juris_name, off_name, ]
+                        name_list = [
+                            bal_name, cand_name, juris_name, off_name, ]
                         recipient_name = ' '.join(name_list)
                         person_flag = False
                         raw_org_name = ''
                     else:
-                        recipient_name = (q.payee_namt + ' ' + q.payee_namf + ' ' + q.payee_naml + ' ' + q.payee_nams).strip()
+                        recipient_name = (
+                            '{0} {1} {2} {3}'
+                            .format(
+                                q.payee_namt,
+                                q.payee_namf,
+                                q.payee_naml,
+                                q.payee_nams
+                            )
+                            .strip()
+                        )
+
                         if q.payee_namf == '':
                             raw_org_name = q.payee_naml
                             person_flag = False
                         else:
                             person_flag = True
                             raw_org_name = ''
-                    
+
                     insert = Expenditure()
                     insert.cycle = f.cycle
                     insert.committee = f.committee
@@ -348,26 +599,30 @@ class Command(BaseCommand):
                     insert.name = recipient_name.strip()
                     insert.person_flag = person_flag
                     insert.raw_org_name = raw_org_name
-                    
+
                     insert_obj_list.append(insert)
                     if len(insert_obj_list) == 5000:
                         Expenditure.objects.bulk_create(insert_obj_list)
                         insert_obj_list = []
-                       
+
                         reset_queries()
                         gc.collect()
-                
+
         if len(insert_obj_list) > 0:
             Expenditure.objects.bulk_create(insert_obj_list)
             insert_obj_list = []
-        
+
         cnt = Expenditure.objects.count()
         if sum(insert_stats.values()) == cnt:
             print 'loaded %s expenditures' % cnt
         else:
-            print 'loaded %s expenditures but %s records queried' % (cnt, sum(insert_stats.values()))
+            print (
+                'loaded {0} expenditures but {1} records queried'
+                .format(cnt, sum(insert_stats.values()))
+            )
+
         insert_stats = {}
-        
+
         reset_queries()
         gc.collect()
 
@@ -375,19 +630,20 @@ class Command(BaseCommand):
         insert_stats = {}
         insert_obj_list = []
         for f in queryset_iterator(Filing.objects.all()):
-            qs = RcptCd.objects.filter(filing_id=f.filing_id_raw, amend_id=f.amend_id)
+            qs = RcptCd.objects.filter(
+                filing_id=f.filing_id_raw, amend_id=f.amend_id)
             filing_key = '%s-%s' % (f.filing_id_raw, f.amend_id)
             insert_stats[filing_key] = qs.count()
             if qs.count() > 0:
                 for q in queryset_iterator(qs):
-                    
+
                     if q.ctrib_namf == '':
                         raw_org_name = q.ctrib_naml
                         person_flag = False
                     else:
                         raw_org_name = q.ctrib_emp
                         person_flag = True
-                    
+
                     insert = Contribution()
                     insert.cycle = f.cycle
                     insert.committee = f.committee
@@ -440,26 +696,31 @@ class Command(BaseCommand):
                     insert.tran_id = q.tran_id
                     insert.raw_org_name = raw_org_name
                     insert.person_flag = person_flag
-                    
+
                     insert_obj_list.append(insert)
                     if len(insert_obj_list) == 5000:
                         Contribution.objects.bulk_create(insert_obj_list)
                         insert_obj_list = []
-                        
+
                         reset_queries()
                         gc.collect()
-                
+
         if len(insert_obj_list) > 0:
             Contribution.objects.bulk_create(insert_obj_list)
             insert_obj_list = []
-        
+
         cnt = Contribution.objects.count()
+
         if sum(insert_stats.values()) == cnt:
             print 'loaded %s contributions' % cnt
+
         else:
-            print 'loaded %s contributions but %s records queried' % (cnt, sum(insert_stats.values()))
-        
+            print (
+                'loaded {0} contributions but {1} records queried'
+                .format(cnt, sum(insert_stats.values()))
+            )
+
         insert_stats = {}
-        
+
         reset_queries()
         gc.collect()
