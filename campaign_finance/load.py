@@ -5,10 +5,7 @@ try:
         FilerLinksCd,
         ExpnCd,
         RcptCd,
-        SmryCd,
-        FilersCd,
-        FilerTypesCd,
-        FilerToFilerTypeCd
+        SmryCd
     )
 
 except:
@@ -25,11 +22,9 @@ from campaign_finance.models import (
     Summary
 )
 
-from django.db import connection, transaction
 from dateutil.relativedelta import relativedelta
 from django.db.models import Sum
 from django.db.models import Q
-import csv
 
 
 def check_committee_no_filing():
@@ -123,7 +118,7 @@ def load():
 
 
 def explore_links(qs_links):
-    for q in qs:
+    for q in qs_links:
         q_name_a = (
             FilernameCd
             .objects

@@ -1,10 +1,7 @@
 # Create your views here.
-from django.shortcuts import get_list_or_404, render
-from django.http import HttpResponseRedirect
-from django.core.urlresolvers import reverse
 from django.views import generic
 
-from campaign_finance.models import *
+from campaign_finance.models import Filer, Committee, Filing
 
 
 class FilerListView(generic.ListView):

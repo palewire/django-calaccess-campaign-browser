@@ -1,4 +1,3 @@
-import datetime
 from haystack import indexes
 from campaign_finance.models import Filer
 

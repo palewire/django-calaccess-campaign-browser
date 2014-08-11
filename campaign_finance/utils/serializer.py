@@ -5,7 +5,6 @@ Use it as a starting point for other custom serializers in a project
 import csv
 import json
 from django.http import HttpResponse
-from django.utils.datastructures import SortedDict
 from django.core.serializers.json import DjangoJSONEncoder
 from tastypie.serializers import Serializer
 

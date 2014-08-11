@@ -1,16 +1,16 @@
-from django.core.management.base import BaseCommand, CommandError
-from optparse import make_option
+import gc
+
+from django.core.management.base import BaseCommand
+from django.db import reset_queries
+from django.db.models import Q
+
 try:
     from calaccess.models import (
         FilernameCd,
         FilerFilingsCd,
         FilerLinksCd,
         ExpnCd, RcptCd,
-        SmryCd,
-        FilersCd,
-        FilerTypesCd,
-        FilerToFilerTypeCd,
-        LookupCode
+        SmryCd
     )
 
 except:
@@ -23,17 +23,9 @@ from campaign_finance.models import (
     Expenditure,
     Filer,
     Filing,
-    Stats,
     Summary
 )
 
-from django.db import connection, transaction, reset_queries
-from dateutil.relativedelta import relativedelta
-from django.db.models import Sum
-from django.db.models import Q
-import csv
-
-import gc
 
 
 def queryset_iterator(queryset, chunksize=1000):

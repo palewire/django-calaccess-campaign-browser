@@ -1,20 +1,16 @@
-from django.core.management.base import BaseCommand, CommandError
-from django.db import connection
-from django.conf import settings
 from optparse import make_option
 import os
 import csvkit
-import csv
+
+from django.core.management.base import BaseCommand
+from django.conf import settings
 from django.utils.datastructures import SortedDict
+
 from campaign_finance.models import (
-    Committee,
     Contribution,
     Cycle,
     Expenditure,
-    Filer,
-    Filing,
-    Summary,
-    Stats
+    Summary
 )
 
 custom_options = (

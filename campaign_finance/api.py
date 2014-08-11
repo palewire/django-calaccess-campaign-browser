@@ -1,5 +1,5 @@
 from tastypie.resources import ModelResource
-from .models import Filer, Committee, Filing
+from .models import Filer
 from .utils.serializer import CIRCustomSerializer
 
 
