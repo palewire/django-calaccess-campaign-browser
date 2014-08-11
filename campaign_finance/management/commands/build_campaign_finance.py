@@ -27,7 +27,6 @@ from campaign_finance.models import (
 )
 
 
-
 def queryset_iterator(queryset, chunksize=1000):
     '''
     Iterate over a Django Queryset ordered by the primary key
