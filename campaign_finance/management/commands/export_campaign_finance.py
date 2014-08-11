@@ -6,7 +6,16 @@ import os
 import csvkit
 import csv
 from django.utils.datastructures import SortedDict
-from campaign_finance.models import Committee, Contribution, Cycle, Expenditure, Filer, Filing, Summary, Stats
+from campaign_finance.models import (
+    Committee,
+    Contribution,
+    Cycle,
+    Expenditure,
+    Filer,
+    Filing,
+    Summary,
+    Stats
+)
 
 custom_options = (
     make_option(
@@ -32,14 +41,16 @@ custom_options = (
     ),
 )
 
+
 class Command(BaseCommand):
-    help = 'Export parsed data as csv files. Mashes the relational tables down to three easy to query tables.'
+    help = 'Export parsed data as csv files.'
     option_list = BaseCommand.option_list + custom_options
-    
+
     def set_options(self, *args, **kwargs):
-        self.data_dir = os.path.join(settings.ROOT_DIR, 'campaign_finance/data')
+        self.data_dir = os.path.join(
+            settings.ROOT_DIR, 'campaign_finance/data')
         os.path.exists(self.data_dir) or os.mkdir(self.data_dir)
-    
+
     def handle(self, *args, **options):
         self.set_options(*args, **options)
         if options['contributions']:
@@ -48,13 +59,13 @@ class Command(BaseCommand):
             self.expenditures()
         if options['summary']:
             self.summary()
-    
+
     def contributions(self):
         print 'working on contributions'
         csv_name = 'contributions.csv'
         outfile_path = os.path.join(self.data_dir,  csv_name)
         outfile = open(outfile_path, 'w')
-        
+
         header_translation = SortedDict([
             ('amount', 'amount'),
             ('bakref_tid', 'bakref_tid'),
@@ -110,10 +121,12 @@ class Command(BaseCommand):
             ('xref_match', 'xref_match'),
             ('xref_schnm', 'xref_schnm'),
         ])
-        csv_writer = csvkit.unicsv.UnicodeCSVDictWriter(outfile, fieldnames=header_translation.keys(), delimiter='|')
+        csv_writer = csvkit.unicsv.UnicodeCSVDictWriter(
+            outfile, fieldnames=header_translation.keys(), delimiter='|')
         csv_writer.writerow(header_translation)
         for c in Cycle.objects.all():
-            dict_rows = Contribution.objects.filter(cycle=c).exclude(dupe=True).values(*header_translation.keys())
+            dict_rows = Contribution.objects.filter(cycle=c).exclude(
+                dupe=True).values(*header_translation.keys())
             csv_writer.writerows(dict_rows)
         outfile.close()
         print 'Exported contributions'
@@ -123,15 +136,15 @@ class Command(BaseCommand):
         csv_name = 'expenditures.csv'
         outfile_path = os.path.join(self.data_dir,  csv_name)
         outfile = open(outfile_path, 'w')
-        
-        header_translation =  SortedDict([
+
+        header_translation = SortedDict([
             ('amount', 'amount'),
             ('bakref_tid', 'bakref_tid'),
             ('cmte_id', 'cmte_id'),
             ('committee__filer__name', 'filer'),
-            ('committee__filer__filer_id','filer_id'),
+            ('committee__filer__filer_id', 'filer_id'),
             ('committee__name', 'committee'),
-            ('committee__filer_id_raw','committee_id'),
+            ('committee__filer_id_raw', 'committee_id'),
             ('cum_ytd', 'cum_ytd'),
             ('cycle__name', 'cycle'),
             ('entity_cd', 'entity_cd'),
@@ -139,7 +152,7 @@ class Command(BaseCommand):
             ('expn_code', 'expn_code'),
             ('expn_date', 'expn_date'),
             ('expn_dscr', 'expn_dscr'),
-            ('filing__filing_id_raw','filing_id'),
+            ('filing__filing_id_raw', 'filing_id'),
             ('filing__start_date', 'filing_start_date'),
             ('filing__end_date', 'filing_end_date'),
             ('form_type', 'form_type'),
@@ -164,21 +177,23 @@ class Command(BaseCommand):
             ('xref_match', 'xref_match'),
             ('xref_schnm', 'xref_schnm'),
         ])
-        csv_writer = csvkit.unicsv.UnicodeCSVDictWriter(outfile, fieldnames=header_translation.keys(), delimiter='|')
+        csv_writer = csvkit.unicsv.UnicodeCSVDictWriter(
+            outfile, fieldnames=header_translation.keys(), delimiter='|')
         csv_writer.writerow(header_translation)
         for c in Cycle.objects.all():
-            dict_rows = Expenditure.objects.filter(cycle=c).exclude(dupe=True).values(*header_translation.keys())
+            dict_rows = Expenditure.objects.filter(cycle=c).exclude(
+                dupe=True).values(*header_translation.keys())
             csv_writer.writerows(dict_rows)
         outfile.close()
         print 'Exported expenditures '
-    
+
     def summary(self):
         print 'working on summary'
         csv_name = 'summary.csv'
         outfile_path = os.path.join(self.data_dir,  csv_name)
         outfile = open(outfile_path, 'w')
-        
-        header_translation =  SortedDict([
+
+        header_translation = SortedDict([
             ('committee__filer__name', 'filer'),
             ('committee__filer__filer_id', 'filer_id'),
             ('committee__name', 'committee'),
@@ -200,10 +215,12 @@ class Command(BaseCommand):
             ('unitemized_expenditures', 'unitemized_expenditures'),
             ('unitemized_monetary_contribs', 'unitemized_monetary_contribs'),
         ])
-        csv_writer = csvkit.unicsv.UnicodeCSVDictWriter(outfile, fieldnames=header_translation.keys(), delimiter='|')
+        csv_writer = csvkit.unicsv.UnicodeCSVDictWriter(
+            outfile, fieldnames=header_translation.keys(), delimiter='|')
         csv_writer.writerow(header_translation)
         for c in Cycle.objects.all():
-            dict_rows = Summary.objects.filter(cycle=c).exclude(dupe=True).values(*header_translation.keys())
+            dict_rows = Summary.objects.filter(cycle=c).exclude(
+                dupe=True).values(*header_translation.keys())
             csv_writer.writerows(dict_rows)
         outfile.close()
         print 'Exported summary'
