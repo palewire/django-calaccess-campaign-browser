@@ -3,6 +3,7 @@ include =
     campaign_finance/views.py
     campaign_finance/models.py
     campaign_finance/admin.py
+    campaign_finance/load.py
     campaign_finance/management/commands/build_campaign_finance.py
     campaign_finance/management/commands/export_campaign_finance.py
 
