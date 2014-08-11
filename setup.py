@@ -41,7 +41,7 @@ setup(
     description='A simple Django app browse California campaign finance data from Cal-Access.',
     url='https://github.com/california-civic-data-coalition',
     author='California Civic Data Coalition',
-    author_email='awilliams@cironline.org',
+    author_email='aaron.colby.williams@gmail.com',
     install_requires=(
        # 'django-calaccess-parser>=0.2',
         'django>=1.6',
