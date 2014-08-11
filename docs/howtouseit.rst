@@ -1,7 +1,7 @@
-Django Cal-Access browser
+Django Cal-Access Campaign Finance
 =========================
 
-**django-calacces-browser** is a simple Django app to build campaign
+**django-calacces-campaign-finance** is a simple Django app to build campaign
 finance data from the cal access database. It is reliant on
 `django-calaccess-parser <https://github.com/california-civic-data-coalition/django-calaccess-parser>`__.
 
