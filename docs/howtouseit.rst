@@ -19,11 +19,11 @@ Requirements
 Installation
 ------------
 
--  Install django-calaccess-browser with pip
+-  Install django-calaccess-campaign-finance with pip
 
    .. code:: bash
 
-       $ pip install https://github.com/california-civic-data-coalition/django-calaccess-browser/archive/master.zip
+       $ pip install django-calaccess-campaign-finance
 
 -  Add ``campaign_finance`` to your INSTALLED\_APPS setting like this:
 
@@ -43,7 +43,7 @@ Installation
 
        ...
        urlpatterns = patterns('',
-           url(r'^browser/', include('campaign_finance.urls')),    
+           url(r'^browser/', include('campaign_finance.urls')),
        )
 
    Loading the data
