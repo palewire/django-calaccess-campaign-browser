@@ -1,7 +1,7 @@
 Django==1.6.5
 Fabric==1.7.0
 Jinja==1.2
-MySQL-python==1.2.4
+MySQL-python==1.2.5
 PyYAML==3.11
 SQLAlchemy==0.8.3
 South==0.8.1
@@ -21,7 +21,7 @@ hurry.filesize==0.9
 ipython==2.2.0
 openpyxl==1.6.2
 paramiko==1.11.0
-progressbar==2.3
+progressbar>=2.2
 psycopg2==2.4.6
 pycrypto==2.6
 pyflakes==0.8.1
@@ -35,3 +35,4 @@ sh==1.09
 six==1.4.1
 tornado==3.2
 xlrd==0.9.2
+django-calaccess-parser==0.4
