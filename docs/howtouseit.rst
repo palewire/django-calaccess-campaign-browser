@@ -1,121 +1,54 @@
-Django Cal-Access Campaign Finance
-=========================
+How to use it
+=============
 
-**django-calacces-campaign-finance** is a simple Django app to build campaign
-finance data from the cal access database. It is reliant on
-`django-calaccess-parser <https://github.com/california-civic-data-coalition/django-calaccess-parser>`__.
+Install the application and its dependencies with ``pip``
 
-Detailed documentation is in the "docs" directory. *(coming soon)*
+.. code-block:: bash
 
-Requirements
-------------
+   $ pip install django-calaccess-campaign-finance
 
--  Django 1.6
--  `django.contrib.humanize <https://docs.djangoproject.com/en/1.6/ref/contrib/humanize/>`__
--  MySQL 5.5
--  `django-calaccess-parser <https://github.com/california-civic-data-coalition/django-calaccess-parser>`__
--  Patience
+Add this ``campaign_finance`` app as well as the underlying ``calaccess`` app
+that contains the raw government database it will work with to refine to your Django project's ``settings.py`` file:
 
-Installation
-------------
+.. code-block:: python
 
--  Install django-calaccess-campaign-finance with pip
-
-   .. code:: bash
-
-       $ pip install django-calaccess-campaign-finance
-
--  Add ``campaign_finance`` to your INSTALLED\_APPS setting like this:
-
-   .. code:: python
-
-       INSTALLED_APPS = (
-           ...
-           'campaign_finance',
-       )
-
-   Setup urls
-   ----------
-
-   In your project ``urls.py``:
-
-   .. code:: python
-
+   INSTALLED_APPS = (
        ...
-       urlpatterns = patterns('',
-           url(r'^browser/', include('campaign_finance.urls')),
-       )
+       'calaccess',
+       'campaign_finance',
+   )
 
-   Loading the data
-   ----------------
+In your project ``urls.py`` file, add this app's URLs:
 
--  Next, sync the database, create a Django admin user, and run the
-   management command to extract campaign finance data from from the raw
-   calaccess data dump.
+.. code-block:: python
 
-   .. code:: bash
+   urlpatterns = patterns('',
+       url(r'^browser/', include('campaign_finance.urls')),
+   )
 
-       $ python manage.py syncdb
-       $ python manage.py build_campaign_finance
+Next, sync the database and create a Django admin user.
 
-   :warning: This'll take a while. Go grab some coffee or do something
-   else productive with your life.
+.. code-block:: bash
 
-Building
---------
+   $ python manage.py syncdb
 
-The JavaScript and CSS for the project is managed with Grunt and Bower.
-Currently, the JavaScript and SCSS dependencies are not included so
-you'll need to build them yourself;
+Run the management command that installs the raw data dump from the California
+Secretary of State.
 
-1. Install `Node.js <http://nodejs.org/>`__ (this will also include NPM)
-2. Install Grunt and bower globally with
-   ``npm install -g bower grunt-cli``
-3. Go to the ``static`` directory and install the required dependencies
-   with ``npm install && bower install``
-4. Generate the ``main.css`` file and watch for HTML, CSS and JavaScript
-   changes by executing ``grunt``
+.. code-block:: bash
 
-Explore data
-------------
+    $ python manage.py downloadcalaccess
 
-Start the development server and visit http://127.0.0.1:8000/browser/ to
-inspect the Cal-access data.
+Run the management command that extracts and refines campaign finance data from from the raw
+calaccess data dump.
 
-API
----
+.. code-block:: bash
 
-django-calaccess-browser uses django-tastypie to expose the data as an
-API. Add ``tastypie`` to the project ``INSTALLED_APPS`` and make sure
-you included ``campaign_finance.urls`` in your project's ``urls.py``.
+   $ python manage.py build_campaign_finance
 
-From there visit
-`127.0.0.1:8000/browser/api/v1/filer/?format=json <127.0.0.1:8000/browser/api/v1/filer/?format=json>`__
-to explore the JSON representation of the data.
+Start the development server and visit ``http://127.0.0.1:8000/browser/`` to
+inspect the data.
 
-Export
-------
+.. code-block:: bash
 
-You can also export the data into easily queryable flat files.
-
-.. code:: bash
-
-    $ python manage.py export_campaign_finance
-
-Update the data
----------------
-
-When you are ready to get new data, just blow away both the parser and
-the campaign finance browser app. Then reload them.
-
-You can do something like this, making sure you fill in your database
-and user names correctly.
-``bash  $ python manage.py sqlclear calaccess | mysql -u user_name -p database_name  $ python manage.py sqlclear campaign_finance | mysql -u user_name -p database_name  $ pytnon manage.py syncdb  $ python manage.py downloadcalaccess && python manage.py build_campaign_finance``
-
-Authors
--------
-
--  `Agustin Armendariz <https://github.com/armendariz>`__
--  `Ben Welsh <https://github.com/palewire>`__
--  `Aaron Williams <https://github.com/aboutaaron>`__
-
+    $ python manage.py runserver
