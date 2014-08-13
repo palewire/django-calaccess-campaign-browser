@@ -34,7 +34,7 @@ setup(
         'campaign_finance',
         'campaign_finance.management',
         'campaign_finance.management.commands',
-	'campaign_finance.utils',
+        'campaign_finance.utils',
     ],
     include_package_data=True,
     license='MIT License',  # example license
@@ -43,7 +43,7 @@ setup(
     author='California Civic Data Coalition',
     author_email='awilliams@cironline.org',
     install_requires=(
-       # 'django-calaccess-parser>=0.2',
+        'django-calaccess-parser>=0.4',
         'django>=1.6',
         'csvkit==0.6.1',
         'python-dateutil==2.1',

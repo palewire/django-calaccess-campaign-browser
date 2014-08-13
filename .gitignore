@@ -1,4 +1,5 @@
 example/project/settings_local.py
+example/.static/
 *.pyc
 *.swp
 .DS_Store
