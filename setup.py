@@ -29,7 +29,7 @@ class TestCommand(Command):
 
 setup(
     name='django-calaccess-campaign-finance',
-    version='0.2',
+    version='0.3',
     packages=[
         'campaign_finance',
         'campaign_finance.management',
