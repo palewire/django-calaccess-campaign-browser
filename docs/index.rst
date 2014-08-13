@@ -1,7 +1,7 @@
 django-calaccess-campaign-finance
 =======================
 
-A Django app to refine and investigation campaign finance data drawn
+A Django app to refine and investigate campaign finance data drawn
 from the California Secretary of State's CAL-ACCESS database
 
 Documentation

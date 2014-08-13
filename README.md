@@ -1,6 +1,6 @@
 # django-calaccess-campaign-finance
 
-A Django app to refine and investigation campaign finance data drawn from the California Secretary of State’s CAL-ACCESS database
+A Django app to refine and investigate campaign finance data drawn from the California Secretary of State’s CAL-ACCESS database
 
 [![Build Status](https://travis-ci.org/california-civic-data-coalition/django-calaccess-campaign-finance.png?branch=master)](https://travis-ci.org/california-civic-data-coalition/django-calaccess-campaign-finance)
 [![PyPI version](https://badge.fury.io/py/django-calaccess-campaign-finance.png)](http://badge.fury.io/py/django-calaccess-campaign-finance)
