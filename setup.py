@@ -37,8 +37,8 @@ setup(
         'campaign_finance.utils',
     ],
     include_package_data=True,
-    license='MIT License',  # example license
-    description='A simple Django app browse California campaign finance data from Cal-Access.',
+    license='MIT',
+    description='A Django app to refine and investigation campaign finance data drawn from the California Secretary of State’s CAL-ACCESS database',
     url='https://github.com/california-civic-data-coalition',
     author='California Civic Data Coalition',
     author_email='awilliams@cironline.org',
