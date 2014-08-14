@@ -4,7 +4,7 @@ var App = App || {};
 
 App = {
     init: function () {
-        App.dataTables();
+        // App.dataTables();
     },
     dataTables: function () {
         $('table').dataTable();

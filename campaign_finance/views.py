@@ -3,6 +3,7 @@ import csv
 import json
 from django.views import generic
 from django.db.models import Sum, Count
+from django.core.urlresolvers import reverse
 from django.http import Http404, HttpResponse
 from campaign_finance.models import Filer, Committee, Filing
 from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
@@ -25,6 +26,7 @@ class CSVResponseMixin(object):
         return response
 
 
+
 class IndexView(generic.ListView):
     model = Filer
     template = 'templates/home/index.html'
@@ -35,6 +37,13 @@ class FilerListView(generic.ListView):
     model = Filer
     template = 'templates/filer/list.html'
     context_object_name = 'filers'
+    allow_empty = False
+    paginate_by = 25
+
+    def get_context_data(self, **kwargs):
+        context = super(FilerListView, self).get_context_data(**kwargs)
+        context['base_url'] = '/'
+        return context
 
 
 class FilerDetailView(generic.DetailView):
