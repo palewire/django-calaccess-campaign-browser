@@ -42,7 +42,7 @@ class FilerListView(generic.ListView):
 
     def get_context_data(self, **kwargs):
         context = super(FilerListView, self).get_context_data(**kwargs)
-        context['base_url'] = '/'
+        context['base_url'] = '/explore/'
         return context
 
 
