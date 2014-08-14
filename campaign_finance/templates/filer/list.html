@@ -3,10 +3,24 @@
 {% block title %}
 {% endblock %}
 
+{% block javascript %}
+    <script>
+    $('.pagination').twbsPagination({
+        totalPages: {{ paginator.count }},
+        visiblePages: 5,
+        startPage: {{ page_obj.number }},
+        prev: '&laquo;',
+        next: '&rsaquo;',
+        onPageClick: function (event, page) {
+            window.location.href = "{{ base_url }}" + page + '/';
+        }
+    });
+    </script>
+{% endblock %}
+
 {% block content %}
 <div class="container">
   {% include "paginator.html" %}
-
   <div class="row">
     <div class="col-12-lg">
       <!-- <div class="table-responsive"> -->
@@ -33,5 +47,6 @@
       <!-- </div> -->
     </div>
   </div>
+  {% include "paginator.html" %}
 </div>
 {% endblock %}
