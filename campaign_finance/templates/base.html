@@ -8,11 +8,13 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>{% block title %} {% endblock%} django calaccess parser</title>
-    <link href='http://fonts.googleapis.com/css?family=Lato:300,400,300italic|Stint+Ultra+Expanded' rel='stylesheet' type='text/css'>
+    <link href='http://fonts.googleapis.com/css?family=Lato:300,400,300italic|Open+Sans+Condensed:300' rel='stylesheet' type='text/css'>
     <link rel="shortcut icon" type="image/x-icon" href="">
+    <link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/font-awesome/4.1.0/css/font-awesome.min.css">
     <link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/bootstrap/3.2.0/css/bootstrap.min.css">
     <!-- App CSS -->
     <link rel="stylesheet" href="{% static "css/main.css" %}">
+    <link rel="stylesheet" href="{% static "css/home.css" %}">
   </head>
   <body>
     <!-- Header -->
@@ -31,6 +33,7 @@
 
     <!-- endbower -->
     <script src="{% static "js/main.js" %}"></script>
+    <script src="{% static "js/jquery.twbsPagination.min.js" %}"></script>
 
 
     {% block javascript %}
@@ -38,9 +41,9 @@
 
     <!-- livereload -->
     <!-- REMOVE IN PRODUCTION -->
-    <!-- <script>document.write('<script src="http://'
+    <script>document.write('<script src="http://'
         + location.host.split(':')[0]
         + ':35729/livereload.js"></'
-        + 'script>')</script> -->
+        + 'script>')</script>
   </body>
 </html>

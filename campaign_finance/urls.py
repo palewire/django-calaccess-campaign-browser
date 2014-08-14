@@ -1,5 +1,6 @@
 from django.conf.urls import patterns, include, url
 from tastypie.api import Api
+from django.views.generic.base import RedirectView
 
 from campaign_finance.api import FilerResource
 from campaign_finance import views
@@ -11,6 +12,17 @@ urlpatterns = patterns(
     'campaign_finance.views',
     url(
         r'^$',
+        views.IndexView.as_view(template_name='home/index.html'),
+        name='index'
+    ),
+    url(r'^explore$',
+        RedirectView.as_view(
+            url='/explore/1/',
+            permanent=True,
+        ),
+    ),
+    url(
+        r'^explore/(?P<page>[\d+]+)/$',
         views.FilerListView.as_view(template_name='filer/list.html'),
         name='filer_list'
     ),

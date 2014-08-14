@@ -1,0 +1,26 @@
+{% extends 'base.html' %}
+{% load staticfiles %}
+
+{% block content %}
+<div class="container">
+  <div class="jumbotron">
+    <h1>California Campaign Finance</h1>
+    <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit. Voluptatem nam accusamus saepe voluptatibus reprehenderit. Quas debitis quae maiores itaque eum, beatae rerum vel id, magni aliquid perspiciatis, vitae quis. Beatae.</p>
+
+    <a href="" class="btn btn-danger">
+      Explore
+    </a>
+  </div>
+
+  <div class="col-lg-8 col-lg-offset-2">
+    {% include "home/_download-table.html" %}
+  </div>
+</div>
+
+<footer class="container">
+  <section id="about">
+    <h4>About this page</h4>
+    <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit. Repellat pariatur architecto ducimus delectus consectetur sint sed quos, laboriosam, quasi, cum quo tempora minima alias laudantium id quibusdam adipisci aut maiores.</p>
+  </section>
+</footer>
+{% endblock content %}
