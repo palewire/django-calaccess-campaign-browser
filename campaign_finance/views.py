@@ -5,7 +5,7 @@ from django.views import generic
 from django.db.models import Sum, Count
 from django.core.urlresolvers import reverse
 from django.http import Http404, HttpResponse
-from campaign_finance.models import Filer, Committee, Filing
+from campaign_finance.models import Filer, Committee, Filing, Expenditure, Contribution
 from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 
 
@@ -42,7 +42,7 @@ class FilerListView(generic.ListView):
 
     def get_context_data(self, **kwargs):
         context = super(FilerListView, self).get_context_data(**kwargs)
-        context['base_url'] = '/'
+        context['base_url'] = '/explore/'
         return context
 
 
@@ -53,7 +53,14 @@ class FilerDetailView(generic.DetailView):
 
 class CommitteeDetailView(generic.DetailView):
     model = Committee
-    template = 'templates/committee/detail.html'
+
+
+class CommitteeContributionView(generic.ListView):
+    model = Contribution
+
+
+class CommitteeExpenditureView(generic.ListView):
+    model = Expenditure
 
 
 class FilingDetailView(generic.DetailView):
