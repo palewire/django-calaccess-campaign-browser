@@ -10,19 +10,19 @@ v1_api.register(FilerResource())
 
 urlpatterns = patterns(
     'campaign_finance.views',
-    url(r'^$',
-        RedirectView.as_view(
-            url='/1/',
-            permanent=True,
-        ),
-    ),
     url(
         r'^$',
         views.IndexView.as_view(template_name='home/index.html'),
         name='index'
     ),
+    url(r'^explore$',
+        RedirectView.as_view(
+            url='/explore/1/',
+            permanent=True,
+        ),
+    ),
     url(
-        r'explore/^(?P<page>[\d+]+)/$',
+        r'^explore/(?P<page>[\d+]+)/$',
         views.FilerListView.as_view(template_name='filer/list.html'),
         name='filer_list'
     ),
