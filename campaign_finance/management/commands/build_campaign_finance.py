@@ -70,10 +70,10 @@ class Command(BaseCommand):
     help = 'Isolate recipient committee campaign finance data'
 
     def handle(self, *args, **options):
-        self.load_filers()
-        self.load_filings()
-        self.load_summary()
-        self.load_contributions()
+        # self.load_filers()
+        # self.load_filings()
+        # self.load_summary()
+        # self.load_contributions()
         self.load_expenditures()
 
     def load_filers(self):
@@ -539,10 +539,10 @@ class Command(BaseCommand):
                         recipient_name = (
                             '{0} {1} {2} {3}'
                             .format(
-                                q.payee_namt,
-                                q.payee_namf,
-                                q.payee_naml,
-                                q.payee_nams
+                                q.payee_namt.encode('utf-8'),
+                                q.payee_namf.encode('utf-8'),
+                                q.payee_naml.encode('utf-8'),
+                                q.payee_nams.encode('utf-8')
                             )
                             .strip()
                         )
