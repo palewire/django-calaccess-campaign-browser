@@ -80,8 +80,9 @@ Then you can build the campaign finance models
 
     $ python example/manage.py build_campaign_finance
 
-Finally, you could export the data into CSVs for reporters to dig into
+And fire up the Django test server to use the browser
 
 .. code-block:: bash
 
-    $ python example/manage.py export_campaign_finance
+    $ python example/manage.py collectstatic
+    $ python example/manage.py runserver

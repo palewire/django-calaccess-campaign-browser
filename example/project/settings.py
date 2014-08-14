@@ -1,13 +1,21 @@
 import os
 BASE_DIR = os.path.dirname(os.path.dirname(__file__))
-SECRET_KEY = 'w11nbg_3n4+e@qk^b55qgo5qygesn^3=&s1kwtlbpkai$(1jv3'
-DEBUG = False
+SECRET_KEY = 'r269$heh9at2cot+5l$*$4&xzwsfbbg0&&^prr+e&oh)_4-+ga'
+DEBUG = True
 TEMPLATE_DEBUG = True
+LANGUAGE_CODE = 'en-us'
+TIME_ZONE = 'UTC'
+USE_I18N = True
+USE_L10N = True
+USE_TZ = True
+STATIC_ROOT = os.path.join(BASE_DIR, ".static")
+STATIC_URL = '/static/'
 ALLOWED_HOSTS = [
     'localhost',
     '127.0.0.1',
 ]
-STATIC_ROOT = os.path.join(BASE_DIR, ".static")
+ROOT_URLCONF = 'project.urls'
+WSGI_APPLICATION = 'project.wsgi.application'
 
 INSTALLED_APPS = (
     'django.contrib.admin',
@@ -28,9 +36,6 @@ MIDDLEWARE_CLASSES = (
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
 )
-
-ROOT_URLCONF = 'project.urls'
-WSGI_APPLICATION = 'project.wsgi.application'
 
 DATABASES = {
     'default': {

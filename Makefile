@@ -5,7 +5,6 @@ bootstrap:
 	mysqladmin -h localhost -u root -pmysql create campaign_finance
 	python example/manage.py syncdb
 	python example/manage.py build_campaign_finance
-	python example/manage.py export_campaign_finance
 	python example/manage.py collectstatic --noinput
 	python example/manage.py runserver
 

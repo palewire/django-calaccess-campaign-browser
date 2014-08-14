@@ -29,21 +29,21 @@ class TestCommand(Command):
 
 setup(
     name='django-calaccess-campaign-finance',
-    version='0.2.1',
+    version='0.3',
     packages=[
         'campaign_finance',
         'campaign_finance.management',
         'campaign_finance.management.commands',
-	'campaign_finance.utils',
+        'campaign_finance.utils',
     ],
     include_package_data=True,
-    license='MIT License',  # example license
-    description='A simple Django app browse California campaign finance data from Cal-Access.',
+    license='MIT',
+    description='A Django app to refine and investigate campaign finance data drawn from the California Secretary of State’s CAL-ACCESS database',
     url='https://github.com/california-civic-data-coalition',
     author='California Civic Data Coalition',
     author_email='awilliams@cironline.org',
     install_requires=(
-        'django-calaccess-parser>=0.2',
+        'django-calaccess-parser>=0.4',
         'django>=1.6',
         'csvkit==0.6.1',
         'python-dateutil==2.1',

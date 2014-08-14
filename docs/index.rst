@@ -1,6 +1,8 @@
 django-calaccess-campaign-finance
 =======================
-A simple Django app to build campaign finance data from the cal access database. It is reliant on `django-calaccess-parser <https://github.com/california-civic-data-coalition/django-calaccess-parser>`_
+
+A Django app to refine and investigate campaign finance data drawn
+from the California Secretary of State's CAL-ACCESS database
 
 Documentation
 -------------
