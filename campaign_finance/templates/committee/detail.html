@@ -5,6 +5,7 @@
 {% endblock %}
 
 {% block content %}
+
 <div class="container">
   <header>
     <h1>{{ committee.name }}</h1>
@@ -14,65 +15,151 @@
       <li class="active">{{ committee.name }} ({{ committee.filer_id_raw }})</li>
     </ol>
   </header>
-  <div class="row">
-    <div class="col-12-lg">
-      <div class="table-responsive">
-        <table id="datatable" class=""> <!-- table table-bordered table-hover -->
-          <thead>
-            <tr>
-              <th>Filing No.</th>
-              <th>Form</th>
-              <th>Cycle</th>
-              <th>itemized expn</th>
-              <th>itemized mon. contribs</th>
-              <th>non mon. contribs</th>
-              <th>outstanding debts</th>
-              <th>total contribs</th>
-              <th>total expn</th>
-              <th>total mon. contribs</th>
-              <th>unitemized expn</th>
-              <th>unitemized mon. contribs</th>
-            </tr>
-          </thead>
-          <tbody>
-          {% for filing in committee.filing_set.all %}
-            <tr>
-              <td>
-                <a href="{{ filing.get_absolute_url }}">{{ filing.filing_id_raw }}</a>
-              </td>
-              <td>{{ filing.form_id }}</td>
-              <td>{{ filing.cycle.name }}</td>
-              {% if filing.summary_set.all %}
-                {% for summary in filing.summary_set.all %}
-                  <td>{{ summary.itemized_expenditures | intcomma }}</td>
-                  <td>{{ summary.itemized_monetary_contribs | intcomma }}</td>
-                  <td>{{ summary.non_monetary_contribs | intcomma }}</td>
-                  <td>{{ summary.outstanding_debts | intcomma }}</td>
-                  <td>{{ summary.total_contribs | intcomma }}</td>
-                  <td>{{ summary.total_expenditures | intcomma }}</td>
-                  <td>{{ summary.total_monetary_contribs | intcomma }}</td>
-                  <td>{{ summary.unitemized_expenditures | intcomma }}</td>
-                  <td>{{ summary.unitemized_monetary_contribs | intcomma }}</td>
-                {% endfor %}
-              {% else %}
-                <td>N/A</td>
-                <td>N/A</td>
-                <td>N/A</td>
-                <td>N/A</td>
-                <td>N/A</td>
-                <td>N/A</td>
-                <td>N/A</td>
-                <td>N/A</td>
-                <td>N/A</td>
-              {% endif %}
-            </tr>
-          {% endfor %}
-          </tbody>
-        </table>
-      </div>
 
+<div class="row">
+    <div class="col-xs-12">
+        <h3>Totals</h3>
+        Contribs: ${{committee.total_contributions  | intcomma}}
+        <br>
+        Expends: ${{committee.total_expenditures | intcomma}}
+    </div>
+</div>
+
+<div class="row">
+  <div class="col-xs-12">
+  <h3>Filings</h3>
+    <div class="table-responsive">
+      <table id="datatable" class="table table-bordered table-hover"> <!-- table table-bordered table-hover -->
+        <thead>
+          <tr>
+            <th>Filing No.</th>
+            <th>Form</th>
+            <th>Cycle</th>
+            <th>itemized mon. contribs</th>
+            <th>unitemized mon. contribs</th>
+            <th>total mon. contribs</th>
+            <th>non mon. contribs</th>
+            <th>total contribs</th>
+            <th>itemized expn</th>
+            <th>unitemized expn</th>
+            <th>total expn</th>
+            <th>outstanding debts</th>
+          </tr>
+        </thead>
+        <tbody>
+        {% for filing in committee.filing_set.all %}
+          <tr>
+            <td>
+              <a href="{{ filing.get_absolute_url }}">{{ filing.filing_id_raw }}</a>
+            </td>
+            <td>{{ filing.form_id }}</td>
+            <td>{{ filing.cycle.name }}</td>
+            {% if filing.summary_set.all %}
+              {% for summary in filing.summary_set.all %}
+                <td>${{ summary.itemized_monetary_contribs | intcomma }}</td>
+                <td>${{ summary.unitemized_monetary_contribs | intcomma }}</td>
+                <td>${{ summary.total_monetary_contribs | intcomma }}</td>
+                <td>${{ summary.non_monetary_contribs | intcomma }}</td>
+                <td>${{ summary.total_contribs | intcomma }}</td>
+                <td>${{ summary.itemized_expenditures | intcomma }}</td>
+                <td>${{ summary.unitemized_expenditures | intcomma }}</td>
+                <td>${{ summary.total_expenditures | intcomma }}</td>
+                <td>${{ summary.outstanding_debts | intcomma }}</td>
+              {% endfor %}
+            {% else %}
+              <td>N/A</td>
+              <td>N/A</td>
+              <td>N/A</td>
+              <td>N/A</td>
+              <td>N/A</td>
+              <td>N/A</td>
+              <td>N/A</td>
+              <td>N/A</td>
+              <td>N/A</td>
+            {% endif %}
+          </tr>
+        {% endfor %}
+        </tbody>
+      </table>
+    </div>
+
+  </div>
+</div>
+
+  <div class="row">
+    <div class="col-xs-12">
+        <h3>Contributions</h3>
+          <div class="table-responsive">
+            <table class="table table-bordered table-hover"> <!-- table table-bordered table-hover -->
+              <thead>
+                <tr>
+                    <th>cycle</th>
+                    <th>filing</th>
+                    <th>raw_org_name</th>
+                    <th>amount</th>
+                    <!-- <th>person_flag</th> -->
+                </tr>
+              </thead>
+              <tbody>
+                  {% for contribution in committee.contribution_set.all %}
+                    <tr>
+                        <td>{{ contribution.cycle }}</td>
+                        <td><a href="{{ contribution.filing.get_absolute_url }}">{{ contribution.filing.pk }}</a></td>
+                        <td>{{ contribution.raw_org_name }}</td>
+                        <td>${{ contribution.amount | intcomma }}</td>
+                        <!-- <td>{{ contribution.person_flag }}</td> -->
+                    </tr>
+                  {% endfor %}
+              </tbody>
+            </table>
+          </div>
     </div>
   </div>
+
+<div class="row">
+  <div class="col-xs-12">
+      <h3>Expenditures</h3>
+        <div class="table-responsive">
+          <table class="table table-bordered table-hover"> <!-- table table-bordered table-hover -->
+            <thead>
+              <tr>
+                  <th>date</th>
+                  <th>exp code</th>
+                  <th>exp dscr</th>
+                  <th>tran_id</th>
+                  <!-- <th>bakref_tid</th> -->
+                  <!-- <th></th> -->
+                  <th>cycle</th>
+                  <th>filing</th>
+                  <th>name</th>
+                  <th>raw_org_name</th>
+                  <th>amount</th>
+                  <!-- <th>person_flag</th> -->
+              </tr>
+            </thead>
+            <tbody>
+                {% for expenditure in committee.expenditure_set.all %}
+                  <tr>
+                      <td>{{expenditure.expn_date}}</td>
+                      <td>{{expenditure.expn_code}}</td>
+                      <td>{{expenditure.expn_dscr}}</td>
+                      <td>{{expenditure.tran_id}}</td>
+                      <!-- <td>{{expenditure.bakref_tid}}</td> -->
+                      <!-- <td></td> -->
+                      <td>{{ expenditure.cycle }}</td>
+                      <td><a href="{{ expenditure.filing.get_absolute_url }}">{{ expenditure.filing.pk }}</a></td>
+                      <td>{{ expenditure.name }}</td>
+                      <td>{{ expenditure.raw_org_name }}</td>
+                      <td>${{ expenditure.amount  | intcomma}}</td>
+                      <!-- <td>{{ expenditure.person_flag }}</td> -->
+                  </tr>
+                {% endfor %}
+            </tbody>
+          </table>
+        </div>
+  </div>
+</div>
+
 </div>
 </div>
 {% endblock %}

@@ -27,6 +27,7 @@ INSTALLED_APPS = (
     'django.contrib.humanize',
     'calaccess',
     'campaign_finance',
+    'django.contrib.humanize'
 )
 
 MIDDLEWARE_CLASSES = (
