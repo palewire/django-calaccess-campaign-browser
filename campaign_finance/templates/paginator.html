@@ -1,21 +1,19 @@
 {% if is_paginated %}
-<div class="pagination">
-    <ul>
-        {% if page_obj.has_previous %}
-        <li><a href="{{ base_url }}{{ page_obj.previous_page_number }}/#paginator">&laquo;</a></li>
-        {% else %}
-        <li class="disabled"><a href="#">&laquo;</a></li>
-        {% endif %}
-        {% for i in paginator.page_range %}
-            <li {% if i == page_obj.number %}class="active"{% endif %}>
-                <a href="{{ base_url }}{{ i }}/#paginator">{{ i }}</a>
-            </li>
-        {% endfor %}
-        {% if page_obj.has_next %}
-        <li><a href="{{ base_url }}{{ page_obj.next_page_number }}/#paginator">&raquo;</a></li>
-        {% else %}
-        <li class="disabled"><a href="#">&raquo;</a></li>
-        {% endif %}
-    </ul>
-</div>
+<ul class="pagination">
+    {% if page_obj.has_previous %}
+    <li><a href="{{ base_url }}{{ page_obj.previous_page_number }}/">&laquo;</a></li>
+    {% else %}
+    <li class="disabled"><a href="#">&laquo;</a></li>
+    {% endif %}
+    {% for i in paginator.page_range %}
+        <li {% if i == page_obj.number %}class="active"{% endif %}>
+            <a href="{{ base_url }}{{ i }}/">{{ i }}</a>
+        </li>
+    {% endfor %}
+    {% if page_obj.has_next %}
+    <li><a href="{{ base_url }}{{ page_obj.next_page_number }}/">&raquo;</a></li>
+    {% else %}
+    <li class="disabled"><a href="#">&raquo;</a></li>
+    {% endif %}
+</ul>
 {% endif %}
