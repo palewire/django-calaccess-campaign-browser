@@ -11,8 +11,8 @@ urlpatterns = patterns(
     'campaign_finance.views',
     url(
         r'^$',
-        views.FilerListView.as_view(template_name='filer/list.html'),
-        name='filer_list'
+        views.IndexView.as_view(template_name='home/index.html'),
+        name='index'
     ),
     url(
         r'^filer/(?P<pk>\d+)/$',

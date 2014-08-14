@@ -25,7 +25,10 @@ class CSVResponseMixin(object):
         return response
 
 
-
+class IndexView(generic.ListView):
+    model = Filer
+    template = 'templates/home/index.html'
+    context_object_name = 'filers'
 
 
 class FilerListView(generic.ListView):
