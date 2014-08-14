@@ -8,25 +8,11 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>{% block title %} {% endblock%} django calaccess parser</title>
-    <!-- Typekit and Google Fonts -->
-    <script type="text/javascript" src="//use.typekit.net/quu2bck.js"></script>
-    <script type="text/javascript">try{Typekit.load();}catch(e){}</script>
-
     <link href='http://fonts.googleapis.com/css?family=Lato:300,400,300italic|Stint+Ultra+Expanded' rel='stylesheet' type='text/css'>
-    <link rel="shortcut icon" type="image/x-icon" href="http://cironline.org/sites/all/themes/cir/favicon.ico">
-
-
-    <!-- JS lib css -->
-    <link rel="stylesheet" href="{% static "bower_components/leaflet-dist/leaflet.css" %}">
-    <link rel="stylesheet" href="{% static "bower_components/jquery-ui/themes/base/minified/jquery.ui.theme.min.css" %}">
-    <link rel="stylesheet" href="{% static "bower_components/cal-heatmap/cal-heatmap.css" %}">
-    <link rel="stylesheet" href="{% static "bower_components/datatables-plugins/integration/bootstrap/3/dataTables.bootstrap.css" %}">
+    <link rel="shortcut icon" type="image/x-icon" href="">
+    <link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/bootstrap/3.2.0/css/bootstrap.min.css">
     <!-- App CSS -->
-    <link rel="stylesheet" href="{% static "styles/main.css" %}">
-
-
-    <!-- Modernizr -->
-    <script src="{% static "bower_components/modernizr/modernizr.js" %}"></script>
+    <link rel="stylesheet" href="{% static "css/main.css" %}">
   </head>
   <body>
     <!-- Header -->
@@ -39,26 +25,12 @@
 
 
     <!-- bower:js -->
-    <script src="{% static "bower_components/jquery/jquery.js" %}"></script>
+    <script src="{% static "js/lib/jquery/jquery.js" %}"></script>
     <!-- Other Includes -->
-    <script src="{% static "bower_components/leaflet-dist/leaflet.js" %}"></script>
-    <script src="{% static "bower_components/moment/min/moment.min.js" %}"></script>
-    <script src="{% static "bower_components/d3/d3.min.js" %}"></script>
-    <script src="{% static "bower_components/jquery-ui/ui/minified/jquery-ui.min.js" %}"></script>
-
-    <script src="{% static "bower_components/underscore/underscore.js" %}"></script>
-    <script src="{% static "bower_components/backbone/backbone.js" %}"></script>
-    <script src="{% static "bower_components/cal-heatmap/cal-heatmap.js" %}"></script>
-    <script src="{% static "bower_components/datatables/media/js/jquery.dataTables.js" %}"></script>
-    <script src="{% static "bower_components/datatables-plugins/integration/bootstrap/3/dataTables.bootstrap.js" %}"></script>
-    <script src="{% static "bower_components/datatables-plugins/sorting/currency.js" %}"></script>
-    <script src="{% static "bower_components/datatables-plugins/sorting/num-html.js" %}"></script>
-
-    <!-- CSS Framework JS -->
-    <script src="{% static "bower_components/sass-bootstrap/dist/js/bootstrap.min.js" %}"></script>
+    <script src="{% static "js/lib/datatables/media/js/jquery.dataTables.js" %}"></script>
 
     <!-- endbower -->
-    <script src="{% static "scripts/main.js" %}"></script>
+    <script src="{% static "js/main.js" %}"></script>
 
 
     {% block javascript %}
@@ -66,9 +38,9 @@
 
     <!-- livereload -->
     <!-- REMOVE IN PRODUCTION -->
-    <script>document.write('<script src="http://'
+    <!-- <script>document.write('<script src="http://'
         + location.host.split(':')[0]
         + ':35729/livereload.js"></'
-        + 'script>')</script>
+        + 'script>')</script> -->
   </body>
 </html>

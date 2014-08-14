@@ -1,0 +1,122 @@
+#navbar-calaccess {
+  background: transparent; }
+  @media screen and (min-width: 1024px) {
+    #navbar-calaccess {
+      height: 0px; } }
+  @media screen and (max-width: 420px) {
+    #navbar-calaccess .navbar-brand {
+      font-size: 15px; } }
+  #navbar-calaccess .navbar-logo {
+    float: left;
+    height: 35px;
+    padding: 5px 5px 10px 10px;
+    box-sizing: initial; }
+
+.main #main-search {
+  padding: 10px;
+  background: aliceblue; }
+  .main #main-search .search-text {
+    display: inline-block; }
+
+.candidate-detail header {
+  margin: 0 auto;
+  width: 50%;
+  text-align: center;
+  color: #565656;
+  border-bottom: 1px solid #e2e2e2; }
+  .candidate-detail header h1 {
+    text-transform: lowercase;
+    font-weight: bold;
+    font-family: '$metaserif'; }
+    .candidate-detail header h1:first-letter {
+      text-transform: uppercase; }
+  .candidate-detail header dt, .candidate-detail header dd {
+    display: inline-block;
+    font-family: '$metaserif'; }
+  .candidate-detail header dd {
+    margin-right: 10px; }
+.candidate-detail #candidate-data {
+  text-align: center; }
+  .candidate-detail #candidate-data dd {
+    color: #008542;
+    font-size: 22px;
+    font-weight: bold; }
+    @media screen and (max-width: 420px) {
+      .candidate-detail #candidate-data dd {
+        font-size: 15px; } }
+
+.search-input {
+  font-weight: 200;
+  color: #b71234;
+  background: rgba(0, 0, 0, 0);
+  border: 0;
+  border-bottom: 2px solid lightgrey;
+  box-sizing: border-box;
+  line-height: 1.8em; }
+  .search-input:focus {
+    outline: 0; }
+
+.table a {
+  text-transform: lowercase;
+  color: #b71234; }
+
+.search-results .page-header {
+  background: #f9f9f9;
+  padding: 10px; }
+  .search-results .page-header h3, .search-results .page-header p {
+    display: inline-block; }
+
+.data {
+  font-weight: bold;
+  color: #00b300; }
+
+.spending-table {
+  margin-top: 50px;
+  display: table;
+  width: 100%; }
+  .spending-table thead th {
+    padding: 10px; }
+  .spending-table tbody tr:hover {
+    background: #e2e2e2; }
+  .spending-table tbody > tr > td {
+    border-top: none; }
+  .spending-table #committee {
+    display: inline-block; }
+  .spending-table .table-data .bar {
+    display: inline-block;
+    height: 4px; }
+  .spending-table #contribution {
+    border-right: 1px solid black; }
+    .spending-table #contribution span, .spending-table #contribution p {
+      float: right; }
+    .spending-table #contribution span {
+      display: block;
+      clear: both;
+      color: #b71234; }
+    .spending-table #contribution .bar {
+      background: #b71234;
+      float: right; }
+  .spending-table #expenditure span {
+    color: #008542; }
+  .spending-table #expenditure .bar {
+    background: #008542;
+    float: left; }
+
+.breadcrumb {
+  background: transparent; }
+
+.timeline {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  height: 10em; }
+  .timeline .bar {
+    height: 8em;
+    width: 1.5em;
+    margin-right: 1px; }
+    .timeline .bar:hover {
+      background: #efefef; }
+    .timeline .bar .count {
+      display: block;
+      text-indent: -9999px;
+      background: #aaaaaa; }
