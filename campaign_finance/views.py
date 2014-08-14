@@ -26,12 +26,16 @@ class CSVResponseMixin(object):
 
 
 
-
-
 class FilerListView(generic.ListView):
     model = Filer
     template = 'templates/filer/list.html'
     context_object_name = 'filers'
+    allow_empty = False
+    paginate_by = 25
+
+    def get_context_data(self, **kwargs):
+        context = super(FilerListView, self).get_context_data(**kwargs)
+        return context
 
 
 class FilerDetailView(generic.DetailView):
