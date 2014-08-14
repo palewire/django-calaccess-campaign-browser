@@ -58,9 +58,23 @@ class CommitteeDetailView(generic.DetailView):
 class CommitteeContributionView(generic.ListView):
     model = Contribution
 
+    def get_queryset(self):
+        """
+        Returns the contributions related to this committee.
+        """
+        committee = Committee.objects.get(pk=self.kwargs['pk'])
+        return committee.contribution_set.all()
+
 
 class CommitteeExpenditureView(generic.ListView):
     model = Expenditure
+
+    def get_queryset(self):
+        """
+        Returns the expends related to this committee.
+        """
+        committee = Committee.objects.get(pk=self.kwargs['pk'])
+        return committee.expenditure_set.all()
 
 
 class FilingDetailView(generic.DetailView):
