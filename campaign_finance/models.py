@@ -76,6 +76,14 @@ class Committee(models.Model):
 
     total_contributions = property(_total_contributions)
 
+    def _total_expenditures(self):
+        qs = Filing.objects.filter(committee=self)
+        total = Summary.objects.filter(filing__in=qs).aggregate(
+            tot=Sum('total_expenditures'))['tot']
+        return total
+
+    total_expenditures = property(_total_expenditures)
+
     def links(self):
         d = {}
         try:
