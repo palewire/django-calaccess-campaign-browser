@@ -48,24 +48,21 @@ class FilerListView(generic.ListView):
 
 class FilerDetailView(generic.DetailView):
     model = Filer
-    template = 'filer/detail.html'
+    template = 'templates/filer/detail.html'
 
 
 class CommitteeDetailView(generic.DetailView):
     model = Committee
-    template = 'committee/detail.html'
 
 
 class CommitteeContributionView(generic.ListView):
     model = Contribution
-    template = 'committee/contribution_list.html'
 
 
 class CommitteeExpenditureView(generic.ListView):
     model = Expenditure
-    template = 'committee/expenditure_list.html'
 
 
 class FilingDetailView(generic.DetailView):
     model = Filing
-    template = 'filing/detail.html'
+    template = 'templates/filing/detail.html'

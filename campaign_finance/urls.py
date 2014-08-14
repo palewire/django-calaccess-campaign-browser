@@ -31,6 +31,18 @@ urlpatterns = patterns(
         views.FilerDetailView.as_view(template_name='filer/detail.html'),
         name='filer_detail'
     ),
+    url(r'^committee/(?P<pk>\d+)/contributions/$',
+        views.CommitteeContributionView.as_view(
+            template_name='committee/contribution_list.html'
+        ),
+        name='committee_contribution_list'
+    ),
+    url(r'^committee/(?P<pk>\d+)/expenditures/$',
+        views.CommitteeExpenditureView.as_view(
+            template_name='committee/expenditure_list.html'
+        ),
+        name='committee_expenditure_list',
+    ),
     url(
         r'^committee/(?P<pk>\d+)/$',
         (
@@ -41,14 +53,6 @@ urlpatterns = patterns(
             )
         ),
         name='committee_detail'
-    ),
-    url(r'^committee/(?P<pk>\d+)/contributions/$',
-        views.CommitteeContributionView.as_view(),
-        name='committee_contribution_list'
-    ),
-    url(r'^committee/(?P<pk>\d+)/expenditures/$',
-        views.CommitteeExpenditureView.as_view(),
-        name='committee_detail',
     ),
     url(
         r'^filing/(?P<pk>\d+)/$',
