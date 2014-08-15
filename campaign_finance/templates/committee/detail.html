@@ -27,7 +27,7 @@
 
 <div class="row">
   <div class="col-xs-12">
-  <h3>Filings</h3>
+  <h3><a href="{% url 'committee_filing_list' committee.pk 1 %}">Filings</a></h3>
     <div class="table-responsive">
       <table id="datatable" class="table table-bordered table-hover"> <!-- table table-bordered table-hover -->
         <thead>
@@ -47,7 +47,8 @@
           </tr>
         </thead>
         <tbody>
-        {% for filing in committee.filing_set.all %}
+        <!-- {% regroup committee.filing_set.all by filing.cycle as filing_list %} -->
+        {% for filing in filing_set %}
           <tr>
             <td>
               <a href="{{ filing.get_absolute_url }}">{{ filing.filing_id_raw }}</a>
@@ -88,7 +89,8 @@
 
   <div class="row">
     <div class="col-xs-12">
-        <h3>Contributions</h3>
+        <h3><a href="{% url 'committee_contribution_list' committee.pk 1 %}">Contributions</a></h3>
+        <p>Top 10 contributions by amount</p>
           <div class="table-responsive">
             <table class="table table-bordered table-hover"> <!-- table table-bordered table-hover -->
               <thead>
@@ -101,7 +103,7 @@
                 </tr>
               </thead>
               <tbody>
-                  {% for contribution in committee.contribution_set.all %}
+                  {% for contribution in contribution_set %}
                     <tr>
                         <td>{{ contribution.cycle }}</td>
                         <td><a href="{{ contribution.filing.get_absolute_url }}">{{ contribution.filing.pk }}</a></td>
@@ -118,7 +120,8 @@
 
 <div class="row">
   <div class="col-xs-12">
-      <h3>Expenditures</h3>
+      <h3><a href="{% url 'committee_expenditure_list' committee.pk 1 %}">Expenditures</a></h3>
+      <p>Top 10 expenditures by amount</p>
         <div class="table-responsive">
           <table class="table table-bordered table-hover"> <!-- table table-bordered table-hover -->
             <thead>
@@ -138,7 +141,7 @@
               </tr>
             </thead>
             <tbody>
-                {% for expenditure in committee.expenditure_set.all %}
+                {% for expenditure in expenditure_set %}
                   <tr>
                       <td>{{expenditure.expn_date}}</td>
                       <td>{{expenditure.expn_code}}</td>

@@ -37,12 +37,17 @@ urlpatterns = patterns(
         ),
         name='committee_contribution_list',
     ),
-
     url(r'^committee/(?P<pk>\d+)/expenditures/(?P<page>[\d+]+)/$',
         views.CommitteeExpenditureView.as_view(
             template_name='committee/expenditure_list.html'
         ),
         name='committee_expenditure_list',
+    ),
+    url(r'^committee/(?P<pk>\d+)/filings/(?P<page>[\d+]+)/$',
+        views.CommitteeFilingView.as_view(
+            template_name='committee/filing_list.html'
+        ),
+        name='committee_filing_list',
     ),
     url(
         r'^committee/(?P<pk>\d+)/$',
