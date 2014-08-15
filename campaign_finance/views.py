@@ -57,6 +57,7 @@ class CommitteeDetailView(generic.DetailView):
 
 class CommitteeContributionView(generic.ListView):
     model = Contribution
+    context_object_name = 'committee_contributions'
 
     def get_queryset(self):
         """
@@ -74,6 +75,7 @@ class CommitteeContributionView(generic.ListView):
 
 class CommitteeExpenditureView(generic.ListView):
     model = Expenditure
+    context_object_name = 'committee_expenditures'
 
     def get_queryset(self):
         """
