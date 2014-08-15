@@ -31,6 +31,15 @@
     </ol>
   </header>
 
+<div class="row">
+  <div class="col-xs-12">
+      <h3>Totals</h3>
+      <p class="totals">Contributions: ${{committee.total_contributions  | intcomma}}
+      <br>
+      Expenditures: ${{committee.total_expenditures | intcomma}}</p>
+  </div>
+</div>
+
 {% include "paginator.html" %}
 
   <div class="row">
