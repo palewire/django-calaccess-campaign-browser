@@ -1,13 +1,24 @@
 {% load staticfiles %}
 <header class="container">
-  <ul class="nav nav-pills">
+  <ul class="nav nav-pills red-border">
     <li>
-      <a href="">
         <img width="50px" src="{% static "images/bear.gif" %}" alt="">
-      </a>
     </li>
-    <li class="active"><a href="#">Home</a></li>
-    <li><a href="#">Profile</a></li>
-    <li><a href="#">Messages</a></li>
+    <li class="active"><a href="{% url 'filer_list' 1 %}">Candidates</a></li>
+    <li><a href="{% url 'filer_list' 2 %}">Committees</a></li>
+    <li><a href="https://github.com/california-civic-data-coalition/django-calaccess-campaign-finance" target="_blank">Github</a></li>
   </ul>
 </header>
+
+<script>
+$(document).ready(function(){
+$('ul li').click(function(e) {
+    $('ul li.active').removeClass('active');
+    var $this = $(this);
+    if (!$this.hasClass('active')) {
+        $this.addClass('active');
+    }
+    e.preventDefault();
+});
+});
+</script>

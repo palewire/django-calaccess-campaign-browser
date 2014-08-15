@@ -1,3 +1,8 @@
+.red-border {
+/*margin-top: 5px;*/
+border-bottom: solid 7px #ba0a35;
+height: 45px;
+}
 .totals{
     font-size: 18px;
 }
@@ -35,4 +40,24 @@
 }
 ol{
     line-height:1;
+}
+.nav-pills>li.active>a, .nav-pills>li.active>a:hover, .nav-pills>li.active>a:focus {
+color: #ba0a35;
+ /*background-color: #ba0a35;*/
+ background-color: #fff;
+}
+.nav>li>a {
+position: relative;
+display: block;
+padding: 10px 15px 8px 15px;
+border-radius:0px;
+color:#000;
+}
+.nav>li>a:hover {
+color:#fff;
+background-color:#ba0a35;
+}
+
+a{
+    color:#ba0a35;
 }
