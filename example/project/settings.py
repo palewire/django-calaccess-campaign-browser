@@ -27,6 +27,7 @@ INSTALLED_APPS = (
     'django.contrib.humanize',
     'django.contrib.humanize',
     'storages',
+    'bakery',
     'calaccess',
     'campaign_finance',
 )
@@ -53,6 +54,8 @@ DATABASES = {
         }
     }
 }
+
+BUILD_DIR = os.path.join(BASE_DIR, 'build')
 
 LANGUAGE_CODE = 'en-us'
 TIME_ZONE = 'UTC'

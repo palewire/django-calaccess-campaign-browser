@@ -11,6 +11,9 @@ from django.core.paginator import (
     EmptyPage,
     PageNotAnInteger
 )
+
+from bakery.views import BuildableListView
+
 from campaign_finance.models import (
     Filer,
     Committee,
@@ -112,9 +115,9 @@ class CommitteeDataView(JSONResponseMixin, CSVResponseMixin, generic.ListView):
         return super(CommitteeDataView, self).render_to_response(context, **kwargs)
 
 
-class IndexView(generic.ListView):
+class IndexView(BuildableListView):
     model = FlatFile
-    template = 'templates/home/index.html'
+    template_name = 'home/index.html'
     context_object_name = 'files'
 
     def get_context_data(self, **kwargs):
