@@ -44,7 +44,7 @@ class Command(BaseCommand):
 
     def set_options(self, *args, **kwargs):
         self.data_dir = os.path.join(
-            settings.ROOT_DIR, 'campaign_finance/data')
+            settings.BASE_DIR, 'data')
         os.path.exists(self.data_dir) or os.mkdir(self.data_dir)
 
     def handle(self, *args, **options):
@@ -109,7 +109,7 @@ class Command(BaseCommand):
             ('line_item', 'line_item'),
             ('memo_code', 'memo_code'),
             ('memo_refno', 'memo_refno'),
-            ('name', 'name'),
+            ('raw_org_name', 'raw_org_name'),
             ('rcpt_date', 'rcpt_date'),
             ('rec_type', 'rec_type'),
             ('tran_id', 'tran_id'),

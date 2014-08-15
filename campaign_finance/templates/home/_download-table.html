@@ -1,40 +1,31 @@
-<table class="table table-condensed">
-  <thead>
-    <tr>
-      <th>Name</th>
-      <th>Description</th>
-      <th>File</th>
-    </tr>
-  </thead>
-  <tbody>
-    <tr>
-      <td>Summary.csv</td>
-      <td>Bulk download of summary data. Updated weekly.</td>
-      <td>
-        <a href="" class="btn btn-default">
-          <i class="fa fa-download"></i> Summary.csv
-        </a>
-      </td>
-    </tr>
+{% for file in files %}
+<section class="file-explainer" id="summary">
+  <div class="page-header">
+    <h4>{{ file.file_name }} </h4>
+  </div>
 
-    <tr>
-      <td>Expenditures.csv</td>
-      <td>Bulk download of expenditures data. Updated weekly.</td>
-      <td>
-        <a href="" class="btn btn-default">
-          <i class="fa fa-download"></i> Expenditures.csv
-        </a>
-      </td>
-    </tr>
+  <p>{{ file.description }}</p>
 
-    <tr>
-      <td>Contributons.csv</td>
-      <td>Bulk download of contribution data. Updated weekly.</td>
-      <td>
-        <a href="" class="btn btn-default">
-          <i class="fa fa-download"></i> Contributons.csv
-        </a>
-      </td>
-    </tr>
-  </tbody>
-</table>
+  <table class="table table-condensed">
+    <thead>
+      <tr>
+        <th>File</th>
+        <th>Size</th>
+        <th>Modified Date</th>
+      </tr>
+    </thead>
+
+    <tbody>
+      <tr>
+        <td>
+          <a href="{{ file.s3_file.url }}">
+            <i class="fa fa-download"></i> {{ file.file_name }}
+          </a>
+        </td>
+        <td>{{ file.size }}</td>
+        <td>{{ file.modified_date }}</td>
+      </tr>
+    </tbody>
+  </table>
+</section>
+{% endfor %}
