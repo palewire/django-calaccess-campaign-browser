@@ -1,6 +1,6 @@
 import os
 from optparse import make_option
-from zipfile import ZipFile
+from zipfile import ZipFile, ZIP_DEFLATED
 
 from django.core.management.base import BaseCommand
 from django.core.files.base import File
@@ -94,12 +94,12 @@ class Command(BaseCommand):
 
     def contributions(self):
         file_path = os.path.join(self.data_dir, 'contributions.csv')
-        self.zip_this_file(file_path)
+        get_zip = self.zip_this_file(file_path)
         self.load_model(get_zip)
 
     def expenditures(self):
         file_path = os.path.join(self.data_dir, 'expenditures.csv')
-        self.zip_this_file(file_path)
+        get_zip = self.zip_this_file(file_path)
         self.load_model(get_zip)
 
     def summary(self):
@@ -142,7 +142,7 @@ class Command(BaseCommand):
 
         print "zipping", csv_name
 
-        with ZipFile(zip_name, 'w') as myzip:
+        with ZipFile(zip_name, 'w', ZIP_DEFLATED) as myzip:
             myzip.write(file_path)
 
         return zip_name
