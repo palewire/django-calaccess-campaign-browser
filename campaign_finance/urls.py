@@ -31,49 +31,6 @@ urlpatterns = patterns(
         views.FilerDetailView.as_view(template_name='filer/detail.html'),
         name='filer_detail'
     ),
-
-
-
-
-    ########
-#
-# url(r'^category/(?P<slug>[-_\w]+)/1/$',
-#     RedirectView.as_view(
-#         url='/category/%(slug)s/',
-#         permanent=True,
-#     ), name="category-list-page-1-redirect"),
-#
-# url(r'^category/(?P<slug>[-_\w]+)/(?P<page>[\d+]+)/$',
-#     BaseCategoryDetailView.as_view(),
-#     name="category-list-paginated"),
-#
-
-
-
-
-
-    # url(r'^committee/(?P<pk>\d+)/contributions/$',
-    #     RedirectView.as_view(
-    #         url='committee/%(pk)s/contributions/',
-    #         permanent=True,
-    #     ),
-    #     name="committee_contribution_list_page_1_redirect"
-    # ),
-    # url(r'^committee/(?P<pk>\d+)/contributions/(?P<page>[\d+]+)/$',
-    #     views.CommitteeContributionView.as_view(
-    #         template_name='committee/contribution_list.html'
-    #     ),
-    #     name='committee_contribution_list_paginated',
-    # ),
-
-    # url(r'^committee/(?P<pk>\d+)/contributions$',
-    #     RedirectView.as_view(
-    #         url='/1',
-    #         permanent=True,
-    #     ),
-    #     name='committee_contribution_list_redirect',
-    # ),
-
     url(r'^committee/(?P<pk>\d+)/contributions/(?P<page>[\d+]+)/$',
         views.CommitteeContributionView.as_view(
             template_name='committee/contribution_list.html'
@@ -81,7 +38,7 @@ urlpatterns = patterns(
         name='committee_contribution_list',
     ),
 
-    url(r'^committee/(?P<pk>\d+)/expenditures/$',
+    url(r'^committee/(?P<pk>\d+)/expenditures/(?P<page>[\d+]+)/$',
         views.CommitteeExpenditureView.as_view(
             template_name='committee/expenditure_list.html'
         ),
