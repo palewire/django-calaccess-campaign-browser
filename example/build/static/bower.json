@@ -1,0 +1,12 @@
+{
+  "name": "package",
+  "version": "0.0.0",
+  "dependencies": {
+    "jquery": "~1.11.2",
+    "datatables": "~1.9.4",
+    "datatables-plugins": "*"
+  },
+  "resolutions": {
+    "jquery": "~1.10.2"
+  }
+}
