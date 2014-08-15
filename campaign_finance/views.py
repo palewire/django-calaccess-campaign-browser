@@ -37,6 +37,15 @@ class FilerDetailView(generic.DetailView):
 
 class CommitteeDetailView(generic.DetailView):
     model = Committee
+    # context_object_name = 'committee'
+
+    def get_context_data(self, **kwargs):
+        context = super(CommitteeDetailView, self).get_context_data(**kwargs)
+        context['committee'] = self.object
+        context['filing_set'] = Filing.objects.filter(committee=self.object).order_by('-end_date')[:10]
+        context['contribution_set'] = Contribution.objects.filter(committee=self.object).order_by('-amount')[:10]
+        context['expenditure_set'] = Expenditure.objects.filter(committee=self.object).order_by('-amount')[:10]
+        return context
 
 
 class CommitteeContributionView(generic.ListView):

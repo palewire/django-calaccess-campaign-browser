@@ -47,7 +47,8 @@
           </tr>
         </thead>
         <tbody>
-        {% for filing in committee.filing_set.all %}
+        <!-- {% regroup committee.filing_set.all by filing.cycle as filing_list %} -->
+        {% for filing in filing_set %}
           <tr>
             <td>
               <a href="{{ filing.get_absolute_url }}">{{ filing.filing_id_raw }}</a>
@@ -101,7 +102,7 @@
                 </tr>
               </thead>
               <tbody>
-                  {% for contribution in committee.contribution_set.all %}
+                  {% for contribution in contribution_set %}
                     <tr>
                         <td>{{ contribution.cycle }}</td>
                         <td><a href="{{ contribution.filing.get_absolute_url }}">{{ contribution.filing.pk }}</a></td>
@@ -138,7 +139,7 @@
               </tr>
             </thead>
             <tbody>
-                {% for expenditure in committee.expenditure_set.all %}
+                {% for expenditure in expenditure_set %}
                   <tr>
                       <td>{{expenditure.expn_date}}</td>
                       <td>{{expenditure.expn_code}}</td>
