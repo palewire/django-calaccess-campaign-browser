@@ -3,8 +3,6 @@ from django.core.urlresolvers import reverse
 from django.utils.text import slugify
 from django.db.models import Sum
 
-# Create your models here.
-
 
 class Filer(models.Model):
     FILER_TYPE_OPTIONS = (
@@ -318,6 +316,9 @@ class Expenditure(models.Model):
         self.expn_code_display = self.get_expn_code_display()
         super(self.__class__, self).save(**kwargs)
 
+    def get_absolute_url(self):
+        return reverse('expenditure_detail', args=[str(self.pk)])
+
 
 class Contribution(models.Model):
     cycle = models.ForeignKey(Cycle)
@@ -393,6 +394,9 @@ class Contribution(models.Model):
             print 'Raw data not available. Install and run calaccess app.'
             obj = None
         return obj
+
+    def get_absolute_url(self):
+        return reverse('contribution_detail', args=[str(self.pk)])
 
 
 class Stats(models.Model):

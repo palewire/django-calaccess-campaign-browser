@@ -4,28 +4,50 @@
 {% block title %}
 {% endblock %}
 
+{% block javascript %}
+    <script>
+        $('.pagination').twbsPagination({
+            totalPages: {{ paginator.count }},
+            visiblePages: 5,
+            startPage: {{ page_obj.number }},
+            prev: '&laquo;',
+            next: '&rsaquo;',
+            onPageClick: function (event, page) {
+                window.location.href = "{{ base_url }}" + page + '/';
+            }
+        });
+    </script>
+{% endblock %}
+
 {% block content %}
 
 <div class="container">
   <header>
     <h1>{{ committee.name }}</h1>
     <ol class="breadcrumb">
-      <li><a href="/browser">Home</a></li>
+      <li><a href="{% url 'filer_list' 1 %}">Home</a></li>
       <li><a href="{{ committee.filer.get_absolute_url }}">Filer</a></li>
       <li class="active">{{ committee.name }} ({{ committee.filer_id_raw }})</li>
     </ol>
   </header>
 
+{% include "committee_nav.html" %}
 <div class="row">
     <div class="col-xs-12">
-        <h3>Totals</h3>
-        Contribs: ${{committee.total_expenditures  | intcomma}}
-    </div>
-</div>
-
-  <div class="row">
-    <div class="col-xs-12">
-        <h3>expenditures</h3>
+    <h2>
+          Expenditures
+          <div class="btn-group">
+              <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown">
+                Download data <span class="caret"></span>
+              </button>
+              <ul class="dropdown-menu" role="menu">
+                <li><a href="{% url 'committee_expenditure_list' committee.pk 1 %}?format=csv">Download CSV</a></li>
+                <li><a href="{% url 'committee_expenditure_list' committee.pk 1 %}?format=json">Download JSON</a></li>
+              </ul>
+          </div>
+    </h2>
+    <p class="totals">Total expenditures: ${{committee.total_expenditures  | intcomma}}</p>
+    {% include "paginator.html" %}
           <div class="table-responsive">
             <table class="table table-bordered table-hover"> <!-- table table-bordered table-hover -->
               <thead>
@@ -33,7 +55,7 @@
                     <th>cycle</th>
                     <th>filing</th>
                     <th>raw_org_name</th>
-                    <th>amount</th>
+                    <th class="danger">amount</th>
                     <!-- <th>person_flag</th> -->
                 </tr>
               </thead>
@@ -43,7 +65,7 @@
                         <td>{{ expenditure.cycle }}</td>
                         <td><a href="{{ expenditure.filing.get_absolute_url }}">{{ expenditure.filing.pk }}</a></td>
                         <td>{{ expenditure.raw_org_name }}</td>
-                        <td>${{ expenditure.amount | intcomma }}</td>
+                        <td class="danger">${{ expenditure.amount | intcomma }}</td>
                         <!-- <td>{{ expenditure.person_flag }}</td> -->
                     </tr>
                   {% endfor %}
@@ -52,6 +74,8 @@
           </div>
     </div>
   </div>
+
+{% include "paginator.html" %}
 
 </div>
 {% endblock %}
