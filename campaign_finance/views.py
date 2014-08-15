@@ -7,7 +7,7 @@ from django.utils.encoding import smart_text
 from django.core.urlresolvers import reverse
 from django.http import Http404, HttpResponse
 from campaign_finance.models import Filer, Committee, Filing, Expenditure, Contribution
-from django.http import JsonResponse
+# from django.http import JsonResponse
 
 #
 # Mixins
