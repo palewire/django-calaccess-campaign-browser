@@ -10,11 +10,57 @@
   <header>
     <h1>{{ committee.name }}</h1>
     <ol class="breadcrumb">
-      <li><a href="/browser">Home</a></li>
+      <li><a href="{% url 'filer_list' 1 %}">Home</a></li>
       <li><a href="{{ committee.filer.get_absolute_url }}">Filer</a></li>
       <li class="active">{{ committee.name }} ({{ committee.filer_id_raw }})</li>
     </ol>
   </header>
+
+<nav id="navbar-example" class="navbar navbar-default navbar-static" role="navigation">
+  <div class="container-fluid">
+    <div class="navbar-header">
+      <button class="navbar-toggle" type="button" data-toggle="collapse" data-target=".bs-example-js-navbar-collapse">
+        <span class="sr-only">Toggle navigation</span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+      </button>
+      <span class="navbar-brand" href="#">Committee Overview</span>
+    </div>
+    <div class="collapse navbar-collapse bs-example-js-navbar-collapse">
+      <ul class="nav navbar-nav">
+        <li class="dropdown">
+          <a id="drop1" href="#" role="button" class="dropdown-toggle" data-toggle="dropdown">Filings <span class="caret"></span></a>
+          <ul class="dropdown-menu" role="menu" aria-labelledby="drop1">
+            <li role="presentation"><a role="menuitem" tabindex="-1" href="{% url 'committee_filing_list' committee.pk 1 %}">View All</a></li>
+            <li role="presentation" class="divider"></li>
+            <li role="presentation"><a role="menuitem" tabindex="-1" href="{% url 'committee_filing_list' committee.pk 1 %}?format=csv">Download CSV</a></li>
+            <li role="presentation"><a role="menuitem" tabindex="-1" href="{% url 'committee_filing_list' committee.pk 1 %}?format=json">Download JSON</a></li>
+          </ul>
+        </li>
+        <li class="dropdown">
+          <a id="dropContrib" href="#" role="button" class="dropdown-toggle" data-toggle="dropdown">Contributions <span class="caret"></span></a>
+          <ul class="dropdown-menu" role="menu" aria-labelledby="dropContrib">
+            <li role="presentation"><a role="menuitem" tabindex="-1" href="{% url 'committee_contribution_list' committee.pk 1 %}">View All</a></li>
+            <li role="presentation" class="divider"></li>
+            <li role="presentation"><a role="menuitem" tabindex="-1" href="{% url 'committee_contribution_list' committee.pk 1 %}?format=csv">Download CSV</a></li>
+            <li role="presentation"><a role="menuitem" tabindex="-1" href="{% url 'committee_contribution_list' committee.pk 1 %}?format=json">Download JSON</a></li>
+          </ul>
+        </li>
+        <li class="dropdown">
+          <a id="dropExpend" href="#" role="button" class="dropdown-toggle" data-toggle="dropdown">Expenditures <span class="caret"></span></a>
+          <ul class="dropdown-menu" role="menu" aria-labelledby="dropExpend">
+            <li role="presentation"><a role="menuitem" tabindex="-1" href="{% url 'committee_expenditure_list' committee.pk 1 %}">View All</a></li>
+            <li role="presentation" class="divider"></li>
+            <li role="presentation"><a role="menuitem" tabindex="-1" href="{% url 'committee_expenditure_list' committee.pk 1 %}?format=csv">Download CSV</a></li>
+            <li role="presentation"><a role="menuitem" tabindex="-1" href="{% url 'committee_expenditure_list' committee.pk 1 %}?format=json">Download JSON</a></li>
+          </ul>
+        </li>
+      </ul>
+
+    </div><!-- /.nav-collapse -->
+  </div><!-- /.container-fluid -->
+</nav>
 
 <div class="row">
     <div class="col-xs-12">
@@ -27,7 +73,18 @@
 
 <div class="row">
   <div class="col-xs-12">
-  <h3><a href="{% url 'committee_filing_list' committee.pk 1 %}">Filings</a></h3>
+    <h3>
+          <a href="{% url 'committee_filing_list' committee.pk 1 %}">Filings </a>
+          <div class="btn-group">
+              <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown">
+                Download data <span class="caret"></span>
+              </button>
+              <ul class="dropdown-menu" role="menu">
+                <li><a href="{% url 'committee_filing_list' committee.pk 1 %}?format=csv">Download CSV</a></li>
+                <li><a href="{% url 'committee_filing_list' committee.pk 1 %}?format=json">Download JSON</a></li>
+              </ul>
+          </div>
+    </h3>
   <p>Ten latest filings</p>
     <div class="table-responsive">
       <table id="datatable" class="table table-bordered table-hover"> <!-- table table-bordered table-hover -->
@@ -90,7 +147,18 @@
 
   <div class="row">
     <div class="col-xs-12">
-        <h3><a href="{% url 'committee_contribution_list' committee.pk 1 %}">Contributions</a></h3>
+        <h3>
+              <a href="{% url 'committee_contribution_list' committee.pk 1 %}">Contributions </a>
+              <div class="btn-group">
+                  <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown">
+                    Download data <span class="caret"></span>
+                  </button>
+                  <ul class="dropdown-menu" role="menu">
+                    <li><a href="{% url 'committee_contribution_list' committee.pk 1 %}?format=csv">Download CSV</a></li>
+                    <li><a href="{% url 'committee_contribution_list' committee.pk 1 %}?format=json">Download JSON</a></li>
+                  </ul>
+              </div>
+        </h3>
         <p>Top 10 contributions by amount</p>
           <div class="table-responsive">
             <table class="table table-bordered table-hover"> <!-- table table-bordered table-hover -->
@@ -121,7 +189,18 @@
 
 <div class="row">
   <div class="col-xs-12">
-      <h3><a href="{% url 'committee_expenditure_list' committee.pk 1 %}">Expenditures</a></h3>
+      <h3>
+            <a href="{% url 'committee_expenditure_list' committee.pk 1 %}">Expenditures </a>
+            <div class="btn-group">
+                <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown">
+                  Download data <span class="caret"></span>
+                </button>
+                <ul class="dropdown-menu" role="menu">
+                  <li><a href="{% url 'committee_expenditure_list' committee.pk 1 %}?format=csv">Download CSV</a></li>
+                  <li><a href="{% url 'committee_expenditure_list' committee.pk 1 %}?format=json">Download JSON</a></li>
+                </ul>
+            </div>
+      </h3>
       <p>Top 10 expenditures by amount</p>
         <div class="table-responsive">
           <table class="table table-bordered table-hover"> <!-- table table-bordered table-hover -->
