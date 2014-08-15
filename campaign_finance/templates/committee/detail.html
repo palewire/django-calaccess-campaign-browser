@@ -27,7 +27,7 @@
 
 <div class="row">
   <div class="col-xs-12">
-  <h3>Filings</h3>
+  <h3><a href="{% url 'committee_filing_list' committee.pk 1 %}">Filings</a></h3>
     <div class="table-responsive">
       <table id="datatable" class="table table-bordered table-hover"> <!-- table table-bordered table-hover -->
         <thead>
@@ -89,7 +89,8 @@
 
   <div class="row">
     <div class="col-xs-12">
-        <h3>Contributions</h3>
+        <h3><a href="{% url 'committee_contribution_list' committee.pk 1 %}">Contributions</a></h3>
+        <p>Top 10 contributions by amount</p>
           <div class="table-responsive">
             <table class="table table-bordered table-hover"> <!-- table table-bordered table-hover -->
               <thead>
@@ -119,7 +120,8 @@
 
 <div class="row">
   <div class="col-xs-12">
-      <h3>Expenditures</h3>
+      <h3><a href="{% url 'committee_expenditure_list' committee.pk 1 %}">Expenditures</a></h3>
+      <p>Top 10 expenditures by amount</p>
         <div class="table-responsive">
           <table class="table table-bordered table-hover"> <!-- table table-bordered table-hover -->
             <thead>

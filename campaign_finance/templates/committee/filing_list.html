@@ -1,0 +1,101 @@
+{% extends 'base.html' %}
+{% load humanize %}
+
+{% block title %}
+{% endblock %}
+
+{% block javascript %}
+    <script>
+        $('.pagination').twbsPagination({
+            totalPages: {{ paginator.count }},
+            visiblePages: 5,
+            startPage: {{ page_obj.number }},
+            prev: '&laquo;',
+            next: '&rsaquo;',
+            onPageClick: function (event, page) {
+                window.location.href = "{{ base_url }}" + page + '/';
+            }
+        });
+    </script>
+{% endblock %}
+
+{% block content %}
+
+<div class="container">
+  <header>
+    <h1>{{ committee.name }}</h1>
+    <ol class="breadcrumb">
+      <li><a href="/browser">Home</a></li>
+      <li><a href="{{ committee.filer.get_absolute_url }}">Filer</a></li>
+      <li class="active">{{ committee.name }} ({{ committee.filer_id_raw }})</li>
+    </ol>
+  </header>
+
+{% include "paginator.html" %}
+
+  <div class="row">
+    <div class="col-xs-12">
+    <h3>Filings</h3>
+      <div class="table-responsive">
+        <table id="datatable" class="table table-bordered table-hover"> <!-- table table-bordered table-hover -->
+          <thead>
+            <tr>
+              <th>Filing No.</th>
+              <th>Form</th>
+              <th>Cycle</th>
+              <th>itemized mon. contribs</th>
+              <th>unitemized mon. contribs</th>
+              <th>total mon. contribs</th>
+              <th>non mon. contribs</th>
+              <th>total contribs</th>
+              <th>itemized expn</th>
+              <th>unitemized expn</th>
+              <th>total expn</th>
+              <th>outstanding debts</th>
+            </tr>
+          </thead>
+          <tbody>
+          {% for filing in committee_filings %}
+            <tr>
+              <td>
+                <a href="{{ filing.get_absolute_url }}">{{ filing.filing_id_raw }}</a>
+              </td>
+              <td>{{ filing.form_id }}</td>
+              <td>{{ filing.cycle.name }}</td>
+              {% if filing.summary_set.all %}
+                {% for summary in filing.summary_set.all %}
+                  <td>${{ summary.itemized_monetary_contribs | intcomma }}</td>
+                  <td>${{ summary.unitemized_monetary_contribs | intcomma }}</td>
+                  <td>${{ summary.total_monetary_contribs | intcomma }}</td>
+                  <td>${{ summary.non_monetary_contribs | intcomma }}</td>
+                  <td>${{ summary.total_contribs | intcomma }}</td>
+                  <td>${{ summary.itemized_expenditures | intcomma }}</td>
+                  <td>${{ summary.unitemized_expenditures | intcomma }}</td>
+                  <td>${{ summary.total_expenditures | intcomma }}</td>
+                  <td>${{ summary.outstanding_debts | intcomma }}</td>
+                {% endfor %}
+              {% else %}
+                <td>N/A</td>
+                <td>N/A</td>
+                <td>N/A</td>
+                <td>N/A</td>
+                <td>N/A</td>
+                <td>N/A</td>
+                <td>N/A</td>
+                <td>N/A</td>
+                <td>N/A</td>
+              {% endif %}
+            </tr>
+          {% endfor %}
+          </tbody>
+        </table>
+      </div>
+
+    </div>
+  </div>
+
+
+{% include "paginator.html" %}
+
+</div>
+{% endblock %}

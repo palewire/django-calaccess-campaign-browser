@@ -70,7 +70,7 @@ class CommitteeContributionView(generic.ListView):
         """
         committee = Committee.objects.get(pk=self.kwargs['pk'])
         self.committee = committee
-        return committee.contribution_set.all()
+        return committee.contribution_set.all().order_by('-cycle')
 
     def get_context_data(self, **kwargs):
         context = super(CommitteeContributionView, self).get_context_data(**kwargs)
@@ -125,12 +125,32 @@ class CommitteeExpenditureView(generic.ListView):
         """
         committee = Committee.objects.get(pk=self.kwargs['pk'])
         self.committee = committee
-        return committee.expenditure_set.all()
+        return committee.expenditure_set.all().order_by('-cycle')
 
     def get_context_data(self, **kwargs):
         context = super(CommitteeExpenditureView, self).get_context_data(**kwargs)
         context['committee'] = self.committee
         context['base_url'] = "/committee/%s/expenditures/" % self.committee.pk
+        return context
+
+class CommitteeFilingView(generic.ListView):
+    model = Filing
+    context_object_name = 'committee_filings'
+    allow_empty = False
+    paginate_by = 25
+
+    def get_queryset(self):
+        """
+        Returns the expends related to this committee.
+        """
+        committee = Committee.objects.get(pk=self.kwargs['pk'])
+        self.committee = committee
+        return committee.filing_set.all().order_by('-cycle')
+
+    def get_context_data(self, **kwargs):
+        context = super(CommitteeFilingView, self).get_context_data(**kwargs)
+        context['committee'] = self.committee
+        context['base_url'] = "/committee/%s/filings/" % self.committee.pk
         return context
 
 
