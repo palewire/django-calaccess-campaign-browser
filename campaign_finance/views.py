@@ -63,7 +63,13 @@ class CommitteeContributionView(generic.ListView):
         Returns the contributions related to this committee.
         """
         committee = Committee.objects.get(pk=self.kwargs['pk'])
+        self.committee = committee
         return committee.contribution_set.all()
+
+    def get_context_data(self, **kwargs):
+        context = super(CommitteeContributionView, self).get_context_data(**kwargs)
+        context['committee'] = self.committee
+        return context
 
 
 class CommitteeExpenditureView(generic.ListView):
@@ -74,7 +80,13 @@ class CommitteeExpenditureView(generic.ListView):
         Returns the expends related to this committee.
         """
         committee = Committee.objects.get(pk=self.kwargs['pk'])
+        self.committee = committee
         return committee.expenditure_set.all()
+
+    def get_context_data(self, **kwargs):
+        context = super(CommitteeExpenditureView, self).get_context_data(**kwargs)
+        context['committee'] = self.committee
+        return context
 
 
 class FilingDetailView(generic.DetailView):
