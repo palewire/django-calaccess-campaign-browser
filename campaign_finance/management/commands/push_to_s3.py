@@ -127,7 +127,7 @@ class Command(BaseCommand):
             print "Attempting to save", file_name
             obj.s3_file.save(file_path, File(open(file_path)), save=True)
             obj.save()
-            print "saved ", file_name
+            print "saved", file_name
 
         except Exception, e:
             raise e
