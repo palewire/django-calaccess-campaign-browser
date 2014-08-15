@@ -140,6 +140,8 @@ class Command(BaseCommand):
         csv_name = os.path.split(file_path)[1]
         zip_name = os.path.join(self.zip_dir,  (csv_name + '.zip'))
 
+        print "zipping", csv_name
+
         with ZipFile(zip_name, 'w') as myzip:
             myzip.write(file_path)
 
