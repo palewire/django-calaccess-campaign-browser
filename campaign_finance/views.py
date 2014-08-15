@@ -19,6 +19,8 @@ from campaign_finance.models import (
     Contribution,
     FlatFile
 )
+
+
 #
 # Mixins
 #
@@ -66,8 +68,7 @@ class CSVResponseMixin(DataPrepMixin):
         """
         data, fields = self.prep_context_for_serialization(context)
         response = HttpResponse(mimetype='text/csv')
-        filename = ''
-        response['Content-Disposition'] = 'attachment; filename=contributions.csv'
+        response['Content-Disposition'] = 'attachment; filename=download.csv'
         writer = csv.DictWriter(response, fieldnames=fields)
         writer.writeheader()
         [writer.writerow(i) for i in data]
