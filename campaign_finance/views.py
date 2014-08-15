@@ -7,13 +7,29 @@ from django.utils.encoding import smart_text
 from django.core.urlresolvers import reverse
 from django.http import Http404, HttpResponse
 from campaign_finance.models import Filer, Committee, Filing, Expenditure, Contribution
-# from django.http import JsonResponse
+
 
 #
 # Mixins
 #
 
-class JSONResponseMixin(object):
+class DataPrepMixin(object):
+    """
+    Provides a method for preping a context object
+    for serialization as JSON or CSV.
+    """
+    def prep_context_for_serialization(self, context):
+        field_names = self.model._meta.get_all_field_names()
+        values = self.get_queryset().values_list(*field_names)
+        data_list = []
+        for i in values:
+            d = {field_names[index]:val for index, val in enumerate(i)}
+            data_list.append(d)
+
+        return (data_list, field_names)
+
+
+class JSONResponseMixin(DataPrepMixin):
     """
     A mixin that can be used to render a JSON response.
     """
@@ -21,22 +37,66 @@ class JSONResponseMixin(object):
         """
         Returns a JSON response, transforming 'context' to make the payload.
         """
-        return JsonResponse(
-            self.get_data(context),
+        data, fields = self.prep_context_for_serialization(context)
+        return HttpResponse(
+            json.dumps(data, default=smart_text),
+            content_type='application/json',
             **response_kwargs
         )
 
-    def get_data(self, context):
+
+class CSVResponseMixin(DataPrepMixin):
+    """
+    A mixin that can be used to render a CSV response.
+    """
+    def render_to_csv_response(self, context, **response_kwargs):
         """
-        Returns an object that will be serialized as JSON by json.dumps().
+        Returns a CSV file response, transforming 'context' to make the payload.
         """
-        # Note: This is *EXTREMELY* naive; in reality, you'll need
-        # to do much more complex handling to ensure that arbitrary
-        # objects -- such as Django model instances or querysets
-        # -- can be serialized as JSON.
+        data, fields = self.prep_context_for_serialization(context)
+        response = HttpResponse(mimetype='text/csv')
+        filename = ''
+        response['Content-Disposition'] = 'attachment; filename=contributions.csv'
+        writer = csv.DictWriter(response, fieldnames=fields)
+        writer.writeheader()
+        [writer.writerow(i) for i in data]
+        return response
+
+
+#
+# Generic
+#
+
+class CommitteeDataView(JSONResponseMixin, CSVResponseMixin, generic.ListView):
+    """
+    Custom generic view for our committee specific data pages
+    """
+    allow_empty = False
+    paginate_by = 25
+
+    def get_context_data(self, **kwargs):
+        context = super(CommitteeDataView, self).get_context_data(**kwargs)
+        context['committee'] = self.committee
+        context['base_url'] = self.committee.get_absolute_url
         return context
 
+    def render_to_response(self, context, **kwargs):
+        """
+        Return a normal response, or CSV or JSON depending
+        on a URL param from the user.
+        """
+        # See if the user has requested a special format
+        format = self.request.GET.get('format', '')
+        # If it's a CSV
+        if 'csv' in format:
+            return self.render_to_csv_response(context)
 
+        # If it's JSON
+        if 'json' in format:
+            return self.render_to_json_response(context)
+        
+        # And if it's none of the above return something normal
+        return super(CommitteeDataView, self).render_to_response(context, **kwargs)
 
 #
 # Views
@@ -89,11 +149,9 @@ class CommitteeDetailView(generic.DetailView):
         return context
 
 
-class CommitteeContributionView(generic.ListView):
-    model = Committee
+class CommitteeContributionView(CommitteeDataView):
+    model = Contribution
     context_object_name = 'committee_contributions'
-    allow_empty = False
-    paginate_by = 25
 
     def get_queryset(self):
         """
@@ -103,52 +161,10 @@ class CommitteeContributionView(generic.ListView):
         self.committee = committee
         return committee.contribution_set.all().order_by('-cycle')
 
-    def get_context_data(self, **kwargs):
-        context = super(CommitteeContributionView, self).get_context_data(**kwargs)
-        context['committee'] = self.committee
-        context['base_url'] = "/committee/%s/contributions/" % self.committee.pk
 
-        return context
-
-
-    def render_to_response(self, context, **kwargs):
-        """
-        Return a normal response, or CSV or JSON depending
-        on a URL param from the user.
-        """
-        # See if the user has requested a special format
-        format = self.request.GET.get('format', '')
-        # For either CSV or JSON we'll need to format the data specially
-        if 'csv' in format or 'json' in format:
-            field_names = Contribution._meta.get_all_field_names()
-            values = context['committee'].contribution_set.values_list(*field_names)
-            data_list = []
-            for i in values:
-                d = {field_names[index]:val for index, val in enumerate(i)}
-                data_list.append(d)
-
-        # If it's a CSV
-        if 'csv' in format:
-            response = HttpResponse(mimetype='text/csv')
-            response['Content-Disposition'] = 'attachment; filename=contributions.csv'
-            writer = csv.DictWriter(response, fieldnames=field_names)
-            writer.writeheader()
-            [writer.writerow(i) for i in data_list]
-            return response
-
-        # If it's JSON
-        if 'json' in format:
-            return HttpResponse(json.dumps(data_list, default=smart_text), content_type="application/json")
-
-        # And if it's none of the above return something normal
-        return super(CommitteeContributionView, self).render_to_response(context, **kwargs)
-
-
-class CommitteeExpenditureView(generic.ListView):
+class CommitteeExpenditureView(CommitteeDataView):
     model = Expenditure
     context_object_name = 'committee_expenditures'
-    allow_empty = False
-    paginate_by = 25
 
     def get_queryset(self):
         """
@@ -158,17 +174,10 @@ class CommitteeExpenditureView(generic.ListView):
         self.committee = committee
         return committee.expenditure_set.all().order_by('-cycle')
 
-    def get_context_data(self, **kwargs):
-        context = super(CommitteeExpenditureView, self).get_context_data(**kwargs)
-        context['committee'] = self.committee
-        context['base_url'] = "/committee/%s/expenditures/" % self.committee.pk
-        return context
 
-class CommitteeFilingView(generic.ListView):
+class CommitteeFilingView(CommitteeDataView):
     model = Filing
     context_object_name = 'committee_filings'
-    allow_empty = False
-    paginate_by = 25
 
     def get_queryset(self):
         """
@@ -177,12 +186,6 @@ class CommitteeFilingView(generic.ListView):
         committee = Committee.objects.get(pk=self.kwargs['pk'])
         self.committee = committee
         return committee.filing_set.all().order_by('-cycle')
-
-    def get_context_data(self, **kwargs):
-        context = super(CommitteeFilingView, self).get_context_data(**kwargs)
-        context['committee'] = self.committee
-        context['base_url'] = "/committee/%s/filings/" % self.committee.pk
-        return context
 
 
 class FilingDetailView(generic.DetailView):
