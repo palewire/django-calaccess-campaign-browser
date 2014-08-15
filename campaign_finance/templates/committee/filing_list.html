@@ -27,7 +27,7 @@
 
 <div class="row">
     <div class="col-xs-12">
-    <h2>
+    <h3>
           Filings
           <div class="btn-group">
               <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown">
@@ -38,7 +38,7 @@
                 <li><a href="{% url 'committee_filing_list' committee.pk 1 %}?format=json">Download JSON</a></li>
               </ul>
           </div>
-    </h2>
+    </h3>
     <p class="totals">
         Total contributions: ${{committee.total_contributions  | intcomma}}
         <br>

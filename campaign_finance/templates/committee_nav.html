@@ -1,8 +1,4 @@
-<!-- </div> -->
-<!-- <div data-spy="affix" data-offset-top="197" data-offset-bottom="0" class="section-select"> -->
-
-{% include "breadcrumb_committee.html" %}
-
+<h2>{{ committee.name }}</h2>
     <nav id="navbar-example" class="navbar navbar-default navbar-static" role="navigation">
       <div class="container-fluid">
         <div class="navbar-header">
@@ -12,10 +8,15 @@
             <span class="icon-bar"></span>
             <span class="icon-bar"></span>
           </button>
-          <span class="navbar-brand"><a href="{% url 'committee_detail' committee.pk %}">{{ committee.name|truncatechars:25 }}</a></span>
+          <!-- <span class="navbar-brand"><a href="{% url 'committee_detail' committee.pk %}">{{ committee.name|truncatechars:25 }}</a></span> -->
+        <ol class="breadcrumb">
+          <li><a href="{% url 'filer_list' 1 %}">Home</a></li>
+          <li><a href="{{ committee.filer.get_absolute_url }}">Filer</a></li>
+          <li class="active"><a href="{% url 'committee_detail' committee.pk %}">Committee Overview</a> ({{ committee.name|truncatechars:15 }} )</li>
+        </ol>
         </div>
         <div class="collapse navbar-collapse bs-example-js-navbar-collapse">
-          <ul class="nav navbar-nav">
+          <ul class="align-right nav navbar-nav">
             <li class="dropdown">
               <a id="drop1" href="#" role="button" class="dropdown-toggle" data-toggle="dropdown">Filings <span class="caret"></span></a>
               <ul class="dropdown-menu" role="menu" aria-labelledby="drop1">
@@ -48,6 +49,3 @@
         </div><!-- /.nav-collapse -->
       </div><!-- /.container-fluid -->
     </nav>
-<!-- </div> -->
-
-<!-- <div class="container" -->

@@ -12,3 +12,27 @@
     top:0px;
     width:100%;
 }
+.breadcrumb {
+    padding: 10px 10px;
+    margin-bottom: 0px;
+    list-style: none;
+    background-color: #f8f8f8;
+    border-radius: 4px;
+}
+.align-right{
+    float:right;
+}
+.navbar-nav>li>a {
+    padding-top: 10px;
+    padding-bottom: 10px;
+    line-height: 1;
+}
+.navbar {
+    position: relative;
+    min-height: 20px;
+    /*border: 1px solid transparent;*/
+    margin-bottom:0px;
+}
+ol{
+    line-height:1;
+}
