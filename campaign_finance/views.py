@@ -50,7 +50,7 @@ class CommitteeDetailView(generic.DetailView):
 
 
 class CommitteeContributionView(generic.ListView):
-    model = Contribution
+    model = Committee
     context_object_name = 'committee_contributions'
     allow_empty = False
     paginate_by = 25
@@ -66,8 +66,10 @@ class CommitteeContributionView(generic.ListView):
     def get_context_data(self, **kwargs):
         context = super(CommitteeContributionView, self).get_context_data(**kwargs)
         context['committee'] = self.committee
-        print context
+        context['base_url'] = "/committee/%s/contributions/" % self.committee.pk
+
         return context
+
 
     def render_to_response(self, context, **kwargs):
         """
@@ -105,6 +107,8 @@ class CommitteeContributionView(generic.ListView):
 class CommitteeExpenditureView(generic.ListView):
     model = Expenditure
     context_object_name = 'committee_expenditures'
+    allow_empty = False
+    paginate_by = 25
 
     def get_queryset(self):
         """
@@ -117,6 +121,7 @@ class CommitteeExpenditureView(generic.ListView):
     def get_context_data(self, **kwargs):
         context = super(CommitteeExpenditureView, self).get_context_data(**kwargs)
         context['committee'] = self.committee
+        context['base_url'] = "/committee/%s/expenditures/" % self.committee.pk
         return context
 
 

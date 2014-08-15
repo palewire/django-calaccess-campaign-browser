@@ -31,13 +31,14 @@ urlpatterns = patterns(
         views.FilerDetailView.as_view(template_name='filer/detail.html'),
         name='filer_detail'
     ),
-    url(r'^committee/(?P<pk>\d+)/contributions/$',
+    url(r'^committee/(?P<pk>\d+)/contributions/(?P<page>[\d+]+)/$',
         views.CommitteeContributionView.as_view(
             template_name='committee/contribution_list.html'
         ),
-        name='committee_contribution_list'
+        name='committee_contribution_list',
     ),
-    url(r'^committee/(?P<pk>\d+)/expenditures/$',
+
+    url(r'^committee/(?P<pk>\d+)/expenditures/(?P<page>[\d+]+)/$',
         views.CommitteeExpenditureView.as_view(
             template_name='committee/expenditure_list.html'
         ),
