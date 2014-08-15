@@ -41,7 +41,7 @@
               </ul>
           </div>
     </h3>
-  <p>Ten latest filings</p>
+  <p>Latest filings (limit of 10)</p>
     <div class="table-responsive">
       <table id="datatable" class="table table-bordered table-hover"> <!-- table table-bordered table-hover -->
         <thead>
@@ -53,16 +53,15 @@
             <th>unitemized mon. contribs</th>
             <th>total mon. contribs</th>
             <th>non mon. contribs</th>
-            <th>total contribs</th>
+            <th class="success">total contribs</th>
             <th>itemized expn</th>
             <th>unitemized expn</th>
-            <th>total expn</th>
+            <th class="danger">total expn</th>
             <th>outstanding debts</th>
           </tr>
         </thead>
         <tbody>
-        <!-- {% regroup committee.filing_set.all by filing.cycle as filing_list %} -->
-        {% for filing in filing_set %}
+        {% for filing in filing_set_short %}
           <tr>
             <td>
               <a href="{{ filing.get_absolute_url }}">{{ filing.filing_id_raw }}</a>
@@ -75,10 +74,10 @@
                 <td>${{ summary.unitemized_monetary_contribs | intcomma }}</td>
                 <td>${{ summary.total_monetary_contribs | intcomma }}</td>
                 <td>${{ summary.non_monetary_contribs | intcomma }}</td>
-                <td>${{ summary.total_contribs | intcomma }}</td>
+                <td class="success">${{ summary.total_contribs | intcomma }}</td>
                 <td>${{ summary.itemized_expenditures | intcomma }}</td>
                 <td>${{ summary.unitemized_expenditures | intcomma }}</td>
-                <td>${{ summary.total_expenditures | intcomma }}</td>
+                <td class="danger">${{ summary.total_expenditures | intcomma }}</td>
                 <td>${{ summary.outstanding_debts | intcomma }}</td>
               {% endfor %}
             {% else %}
@@ -97,6 +96,9 @@
         </tbody>
       </table>
     </div>
+    {% if filing_set|length > 10 %}
+        <p class="view-more"><a href="{% url 'committee_filing_list' committee.pk 1 %}">View more... </a></p>
+    {% endif %}
 
   </div>
 </div>
@@ -123,23 +125,26 @@
                     <th>cycle</th>
                     <th>filing</th>
                     <th>raw_org_name</th>
-                    <th>amount</th>
+                    <th class="success">amount</th>
                     <!-- <th>person_flag</th> -->
                 </tr>
               </thead>
               <tbody>
-                  {% for contribution in contribution_set %}
+                  {% for contribution in contribution_set_short %}
                     <tr>
                         <td>{{ contribution.cycle }}</td>
                         <td><a href="{{ contribution.filing.get_absolute_url }}">{{ contribution.filing.pk }}</a></td>
                         <td>{{ contribution.raw_org_name }}</td>
-                        <td>${{ contribution.amount | intcomma }}</td>
+                        <td class="success">${{ contribution.amount | intcomma }}</td>
                         <!-- <td>{{ contribution.person_flag }}</td> -->
                     </tr>
                   {% endfor %}
               </tbody>
             </table>
           </div>
+          {% if contribution_set|length > 10 %}
+            <p class="view-more"><a href="{% url 'committee_contribution_list' committee.pk 1 %}">View more... </a></p>
+          {% endif %}
     </div>
   </div>
 
@@ -167,25 +172,28 @@
                   <th>cycle</th>
                   <th>filing</th>
                   <th>name</th>
-                  <th>amount</th>
+                  <th class="danger">amount</th>
                   <!-- <th>person_flag</th> -->
               </tr>
             </thead>
             <tbody>
-                {% for expenditure in expenditure_set %}
+                {% for expenditure in expenditure_set_short %}
                   <tr>
                       <td>{{expenditure.expn_date}}</td>
                       <td>{{expenditure.expn_code}}</td>
                       <td>{{ expenditure.cycle }}</td>
                       <td><a href="{{ expenditure.filing.get_absolute_url }}">{{ expenditure.filing.pk }}</a></td>
                       <td>{{ expenditure.name }}</td>
-                      <td>${{ expenditure.amount  | intcomma}}</td>
+                      <td class="danger">${{ expenditure.amount  | intcomma}}</td>
                       <!-- <td>{{ expenditure.person_flag }}</td> -->
                   </tr>
                 {% endfor %}
             </tbody>
           </table>
         </div>
+        {% if expenditure_set|length > 10 %}
+            <p class="view-more"><a href="{% url 'committee_expenditure_list' committee.pk 1 %}">View more... </a></p>
+        {% endif %}
   </div>
 </div>
 

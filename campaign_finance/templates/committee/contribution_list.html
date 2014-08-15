@@ -57,7 +57,7 @@
                     <th>cycle</th>
                     <th>filing</th>
                     <th>raw_org_name</th>
-                    <th>amount</th>
+                    <th class="success">amount</th>
                     <!-- <th>person_flag</th> -->
                 </tr>
               </thead>
@@ -67,7 +67,7 @@
                         <td>{{ contribution.cycle }}</td>
                         <td><a href="{{ contribution.filing.get_absolute_url }}">{{ contribution.filing.pk }}</a></td>
                         <td>{{ contribution.raw_org_name }}</td>
-                        <td><a href="{{ contribution.get_absolute_url }}">${{ contribution.amount | intcomma }}</a></td>
+                        <td class="success"><a href="{{ contribution.get_absolute_url }}">${{ contribution.amount | intcomma }}</a></td>
                         <!-- <td>{{ contribution.person_flag }}</td> -->
                     </tr>
                   {% endfor %}
