@@ -83,9 +83,12 @@ class CommitteeDetailView(generic.DetailView):
     def get_context_data(self, **kwargs):
         context = super(CommitteeDetailView, self).get_context_data(**kwargs)
         context['committee'] = self.object
-        context['filing_set'] = Filing.objects.filter(committee=self.object).order_by('-end_date')[:10]
-        context['contribution_set'] = Contribution.objects.filter(committee=self.object).order_by('-amount')[:10]
-        context['expenditure_set'] = Expenditure.objects.filter(committee=self.object).order_by('-amount')[:10]
+        context['filing_set'] = Filing.objects.filter(committee=self.object).order_by('-end_date')
+        context['filing_set_short'] = context['filing_set'][:10]
+        context['contribution_set'] = Contribution.objects.filter(committee=self.object).order_by('-amount')
+        context['contribution_set_short'] = context['contribution_set'][:10]
+        context['expenditure_set'] = Expenditure.objects.filter(committee=self.object).order_by('-amount')
+        context['expenditure_set_short'] = context['expenditure_set'][:10]
         return context
 
 
