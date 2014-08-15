@@ -4,21 +4,18 @@
     <li>
         <img width="50px" src="{% static "images/bear.gif" %}" alt="">
     </li>
-    <li class="active"><a href="{% url 'filer_list' 1 %}">Candidates</a></li>
-    <li><a href="{% url 'filer_list' 2 %}">Committees</a></li>
-    <li><a href="https://github.com/california-civic-data-coalition/django-calaccess-campaign-finance" target="_blank">Github</a></li>
+    <li><a href="{% url 'filer_list' 1 %}"><i class="fa fa-user"></i> Candidates</a></li>
+    <li><a href="{% url 'committee_detail' 2 %}"><i class="fa fa-users"></i> Committees</a></li>
+    <li><a href="https://github.com/california-civic-data-coalition/django-calaccess-campaign-finance" target="_blank"><i class="fa fa-github"></i> Github</a></li>
   </ul>
 </header>
 
 <script>
-$(document).ready(function(){
-$('ul li').click(function(e) {
-    $('ul li.active').removeClass('active');
-    var $this = $(this);
-    if (!$this.hasClass('active')) {
-        $this.addClass('active');
-    }
-    e.preventDefault();
-});
-});
+var url = window.location;
+// Will only work if string in href matches with location
+$('ul.nav a[href="' + url + '"]').parent().addClass('active');
+// Will also work for relative and absolute hrefs
+$('ul.nav a').filter(function() {
+    return this.href == url;
+}).parent().addClass('active');
 </script>
