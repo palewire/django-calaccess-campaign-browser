@@ -143,6 +143,11 @@ class ExpenditureDetailView(generic.DetailView):
     template_name = 'expenditure/detail.html'
 
 
+class FilingDetailView(generic.DetailView):
+    model = Filing
+    template = 'templates/filing/detail.html'
+
+
 class FilerListView(generic.ListView):
     model = Filer
     template = 'templates/filer/list.html'
@@ -214,9 +219,4 @@ class CommitteeFilingView(CommitteeDataView):
         committee = Committee.objects.get(pk=self.kwargs['pk'])
         self.committee = committee
         return committee.filing_set.all().order_by('-cycle')
-
-
-class FilingDetailView(generic.DetailView):
-    model = Filing
-    template = 'templates/filing/detail.html'
 
