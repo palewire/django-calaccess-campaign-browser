@@ -13,3 +13,9 @@
     background-size: cover;
     display: inline-block;
 }
+
+.jumbotron .label {
+    display: block;
+    width: 400px;
+    margin: 30px auto 0 auto;
+}
