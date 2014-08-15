@@ -1,0 +1,92 @@
+{% extends 'base.html' %}
+{% load humanize %}
+
+{% block title %}
+{% endblock %}
+
+{% block content %}
+<div class="container">
+    <h1>${{ object.amount }} <small><a href="{{ object.committee.get_absolute_url }}">{{ object.committee }}</a></small></h1>
+
+    <p><strong>Election cycle:  </strong> {{ object.cycle }}</p>
+    <p><strong>Expenditure date:</strong> {{ object.expn_date }}</p>
+    <p><strong>Filing: </strong> {{ object.filing }}</p>
+
+    <h3>Basics</h3>
+    <table class="table table-responsive">
+        <thead>
+            <tr>
+                <th>City</th>
+                <th>State</th>
+                <th>Zip</th>
+                <th>First Name</th>
+                <th>Last Name</th>
+                <th>Description</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td>{{ object.payee_city }}</td>
+                <td>{{ object.payee_st }}</td>
+                <td>{{ object.payee_zip4 }}</td>
+                <td>{{ object.payee_namf }}</td>
+                <td>{{ object.payee_naml }}{% if object.ctrib_nams %}, {{ object.ctrib_nams }}{% endif %}</td>
+                <td>{{ object.expn_dscr }}</td>
+            </tr>
+        </tbody>
+    </table>
+
+    <h3>Details</h3>
+    <table class="table table-responsive">
+        <thead>
+            <tr>
+                <th>Backref ID</th>
+                <th>Committee ID</th>
+                <th>Individual ID</th>
+                <th>Form type</th>
+                <th>Line Item</th>
+                <th>Memo Code</th>
+                <th>Memo Ref Number</th>
+                <th>Organization ID</th>
+                <th>Transaction ID</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td>{{ object.bakref_tid }}</td>
+                <td>{{ object.cmte_id }}</td>
+                <td>{{ object.individual_id }}</td>
+                <td>{{ object.form_type }}</td>
+                <td>{{ object.line_item }}</td>
+                <td>{{ object.memo_code }}</td>
+                <td>{{ object.memo_refno }}</td>
+                <td>{{ object.org_id }}</td>
+                <td>{{ object.tran_id }}</td>
+            </tr>
+        </tbody>
+    </table>
+
+    <table class="table table-responsive">
+        <thead>
+            <tr>
+                <th>entity_cd</th>
+                <th>expn_chkno</th>
+                <th>expn_code</th>
+                <th>expn_code_display</th>
+                <th>g_from_e_f</th>
+
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td>{{ object.entity_cd }}</td>
+                <td>{{ object.expn_chkno }}</td>
+                <td>{{ object.expn_code }}</td>
+                <td>{{ object.expn_code_display }}</td>
+                <td>{{ object.g_from_e_f }}</td>
+            </tr>
+        </tbody>
+    </table>
+</div>
+
+{% endblock %}

@@ -2,8 +2,7 @@ from django.db import models
 from django.core.urlresolvers import reverse
 from django.utils.text import slugify
 from django.db.models import Sum
-
-# Create your models here.
+from hurry.filesize import size
 
 
 class Filer(models.Model):
@@ -75,6 +74,14 @@ class Committee(models.Model):
         return total
 
     total_contributions = property(_total_contributions)
+
+    def _total_expenditures(self):
+        qs = Filing.objects.filter(committee=self)
+        total = Summary.objects.filter(filing__in=qs).aggregate(
+            tot=Sum('total_expenditures'))['tot']
+        return total
+
+    total_expenditures = property(_total_expenditures)
 
     def links(self):
         d = {}
@@ -310,6 +317,9 @@ class Expenditure(models.Model):
         self.expn_code_display = self.get_expn_code_display()
         super(self.__class__, self).save(**kwargs)
 
+    def get_absolute_url(self):
+        return reverse('expenditure_detail', args=[str(self.pk)])
+
 
 class Contribution(models.Model):
     cycle = models.ForeignKey(Cycle)
@@ -386,6 +396,9 @@ class Contribution(models.Model):
             obj = None
         return obj
 
+    def get_absolute_url(self):
+        return reverse('contribution_detail', args=[str(self.pk)])
+
 
 class Stats(models.Model):
 
@@ -421,3 +434,19 @@ class Stats(models.Model):
     def __unicode__(self):
         name_str = '%s-%s' % (self.filer_type, self.stat_type)
         return name_str
+
+class FlatFile(models.Model):
+    file_name = models.CharField(max_length=255)
+    s3_file = models.FileField(upload_to='files')
+    description = models.TextField()
+    created_date = models.DateTimeField(auto_now_add=True)
+    modified_date = models.DateTimeField(auto_now=True)
+
+    def _get_file_size(self):
+        return size( self.s3_file.size )
+    size = property(_get_file_size)
+
+
+
+    def __unicode__(self):
+        return self.file_name

@@ -1,0 +1,21 @@
+.jumbotron {
+    background: transparent;
+    text-align: center;
+}
+
+.jumbotron h1 {
+    /*display: inline-block;*/
+}
+
+.jumbotron .logo {
+    width: 200px;
+    height: 200px;
+    background-size: cover;
+    display: inline-block;
+}
+
+.jumbotron .label {
+    display: block;
+    width: 400px;
+    margin: 30px auto 0 auto;
+}
