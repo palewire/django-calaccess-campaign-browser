@@ -429,3 +429,10 @@ class Stats(models.Model):
     def __unicode__(self):
         name_str = '%s-%s' % (self.filer_type, self.stat_type)
         return name_str
+
+class Flatfile(models.Model):
+    file_name = models.CharField(max_length=255)
+    s3_file = models.FileField(upload_to='files')
+
+    def __unicode__(self):
+        return self.file_name

@@ -25,9 +25,10 @@ INSTALLED_APPS = (
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'django.contrib.humanize',
+    'django.contrib.humanize',
+    'storages',
     'calaccess',
     'campaign_finance',
-    'django.contrib.humanize'
 )
 
 MIDDLEWARE_CLASSES = (
