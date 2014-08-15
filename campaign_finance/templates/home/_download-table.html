@@ -1,3 +1,4 @@
+{% for file in files %}
 <section class="file-explainer" id="summary">
   <div class="page-header">
     <h4>Summary.csv </h4>
@@ -17,85 +18,14 @@
     <tbody>
       <tr>
         <td>
-          <a href="//s3.amazonaws.com/california-civic-data-coalition/summary.csv">
-            <i class="fa fa-download"></i> Summary.csv
+          <a href="{{ file.s3_file.url }}">
+            <i class="fa fa-download"></i>{{ file.file_name }}
           </a>
         </td>
-        <td>
-          19.3 MB
-        </td>
-        <td>
-          Aug. 14, 2014
-        </td>
+        <td>{{ file.size }}</td>
+        <td>{{ file.modified_date }}</td>
       </tr>
     </tbody>
   </table>
 </section>
-
-<section class="file-explainer" id="expenditures">
-  <div class="page-header">
-    <h4>Expenditures.csv </h4>
-  </div>
-
-  <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit. Quo necessitatibus beatae est esse blanditiis, debitis eaque. Dolores qui, voluptates at consequuntur non quisquam distinctio doloribus similique, labore quae ex, nemo!</p>
-
-  <table class="table table-condensed">
-    <thead>
-      <tr>
-        <th>File</th>
-        <th>Size</th>
-        <th>Modified Date</th>
-      </tr>
-    </thead>
-
-    <tbody>
-      <tr>
-        <td>
-          <a href="//s3.amazonaws.com/california-civic-data-coalition/expenditures.csv">
-            <i class="fa fa-download"></i> Expenditures.csv
-          </a>
-        </td>
-        <td>
-          735.2 MB
-        </td>
-        <td>
-          Aug. 14, 2014
-        </td>
-      </tr>
-    </tbody>
-  </table>
-</section>
-
-<section class="file-explainer" id="contributions">
-  <div class="page-header">
-    <h4>Contributions.csv </h4>
-  </div>
-
-  <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit. Quo necessitatibus beatae est esse blanditiis, debitis eaque. Dolores qui, voluptates at consequuntur non quisquam distinctio doloribus similique, labore quae ex, nemo!</p>
-
-  <table class="table table-condensed">
-    <thead>
-      <tr>
-        <th>File</th>
-        <th>Size</th>
-        <th>Modified Date</th>
-      </tr>
-    </thead>
-
-    <tbody>
-      <tr>
-        <td>
-          <a href="//s3.amazonaws.com/california-civic-data-coalition/contributions.csv">
-            <i class="fa fa-download"></i> Contributions.csv
-          </a>
-        </td>
-        <td>
-          1.7 GB
-        </td>
-        <td>
-          Aug. 14, 2014
-        </td>
-      </tr>
-    </tbody>
-  </table>
-</section>
+{% endfor %}

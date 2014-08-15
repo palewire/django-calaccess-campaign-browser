@@ -5,7 +5,15 @@ from django.views import generic
 from django.db.models import Sum, Count
 from django.core.urlresolvers import reverse
 from django.http import Http404, HttpResponse
-from campaign_finance.models import Filer, Committee, Filing, Expenditure, Contribution
+from campaign_finance.models import (
+    Filer,
+    Committee,
+    Filing,
+    Expenditure,
+    Contribution,
+    FlatFile
+)
+
 from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 
 
@@ -26,11 +34,10 @@ class CSVResponseMixin(object):
         return response
 
 
-
 class IndexView(generic.ListView):
-    model = Filer
+    model = FlatFile
     template = 'templates/home/index.html'
-    context_object_name = 'filers'
+    context_object_name = 'files'
 
 
 class FilerListView(generic.ListView):

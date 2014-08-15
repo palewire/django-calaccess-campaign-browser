@@ -3,6 +3,8 @@ from django.core.urlresolvers import reverse
 from django.utils.text import slugify
 from django.db.models import Sum
 
+from hurry.filesize import size
+
 # Create your models here.
 
 
@@ -433,8 +435,15 @@ class Stats(models.Model):
 class FlatFile(models.Model):
     file_name = models.CharField(max_length=255)
     s3_file = models.FileField(upload_to='files')
+    description = models.TextField()
     created_date = models.DateTimeField(auto_now_add=True)
     modified_date = models.DateTimeField(auto_now=True)
+
+    def _get_file_size(self):
+        return size( self.s3_file.size )
+    size = property(_get_file_size)
+
+
 
     def __unicode__(self):
         return self.file_name
