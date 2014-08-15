@@ -4,3 +4,11 @@
 .view-more{
     margin-top:-10px;
 }
+.section-select{
+    width:100%;
+    z-index: 100;
+}
+.affix{
+    top:0px;
+    width:100%;
+}
