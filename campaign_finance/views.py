@@ -57,24 +57,40 @@ class CommitteeDetailView(generic.DetailView):
 
 class CommitteeContributionView(generic.ListView):
     model = Contribution
+    context_object_name = 'committee_contributions'
+    allow_empty = False
+    paginate_by = 25
 
     def get_queryset(self):
         """
         Returns the contributions related to this committee.
         """
         committee = Committee.objects.get(pk=self.kwargs['pk'])
+        self.committee = committee
         return committee.contribution_set.all()
+
+    def get_context_data(self, **kwargs):
+        context = super(CommitteeContributionView, self).get_context_data(**kwargs)
+        context['committee'] = self.committee
+        return context
 
 
 class CommitteeExpenditureView(generic.ListView):
     model = Expenditure
+    context_object_name = 'committee_expenditures'
 
     def get_queryset(self):
         """
         Returns the expends related to this committee.
         """
         committee = Committee.objects.get(pk=self.kwargs['pk'])
+        self.committee = committee
         return committee.expenditure_set.all()
+
+    def get_context_data(self, **kwargs):
+        context = super(CommitteeExpenditureView, self).get_context_data(**kwargs)
+        context['committee'] = self.committee
+        return context
 
 
 class FilingDetailView(generic.DetailView):
