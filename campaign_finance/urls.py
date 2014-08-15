@@ -59,6 +59,14 @@ urlpatterns = patterns(
         views.FilingDetailView.as_view(template_name='filing/detail.html'),
         name='filing_detail'
     ),
+    url(r'^contribution/(?P<pk>\d+)/$',
+        views.ContributionDetailView.as_view(),
+        name='contribution_detail'
+    ),
+    url(r'^expenditure/(?P<pk>\d+)/$',
+        views.ExpenditureDetailView.as_view(),
+        name='expenditure_detail',
+    ),
 
     # API
     url(r'^api/', include(v1_api.urls)),

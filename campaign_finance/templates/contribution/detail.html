@@ -1,0 +1,220 @@
+{% extends 'base.html' %}
+{% load humanize %}
+
+{% block title %}
+{% endblock %}
+
+{% block content %}
+<div class="container">
+    <table>
+        <tr>
+            <td>amount</td>
+            <td>{{ object.amount }}</td>
+        </tr>
+        <tr>
+            <td>bakref_tid</td>
+            <td>{{ object.bakref_tid }}</td>
+        </tr>
+        <tr>
+            <td>cmte_id</td>
+            <td>{{ object.cmte_id }}</td>
+        </tr>
+        <tr>
+            <td>committee</td>
+            <td>{{ object.committee }}</td>
+        </tr>
+        <tr>
+            <td>ctrib_adr1</td>
+            <td>{{ object.ctrib_adr1 }}</td>
+        </tr>
+        <tr>
+            <td>ctrib_adr2</td>
+            <td>{{ object.ctrib_adr2 }}</td>
+        </tr>
+        <tr>
+            <td>ctrib_city</td>
+            <td>{{ object.ctrib_city }}</td>
+        </tr>
+        <tr>
+            <td>ctrib_dscr</td>
+            <td>{{ object.ctrib_dscr }}</td>
+        </tr>
+        <tr>
+            <td>ctrib_emp</td>
+            <td>{{ object.ctrib_emp }}</td>
+        </tr>
+        <tr>
+            <td>ctrib_namf</td>
+            <td>{{ object.ctrib_namf }}</td>
+        </tr>
+        <tr>
+            <td>ctrib_naml</td>
+            <td>{{ object.ctrib_naml }}</td>
+        </tr>
+        <tr>
+            <td>ctrib_nams</td>
+            <td>{{ object.ctrib_nams }}</td>
+        </tr>
+        <tr>
+            <td>ctrib_namt</td>
+            <td>{{ object.ctrib_namt }}</td>
+        </tr>
+        <tr>
+            <td>ctrib_occ</td>
+            <td>{{ object.ctrib_occ }}</td>
+        </tr>
+        <tr>
+            <td>ctrib_self</td>
+            <td>{{ object.ctrib_self }}</td>
+        </tr>
+        <tr>
+            <td>ctrib_st</td>
+            <td>{{ object.ctrib_st }}</td>
+        </tr>
+        <tr>
+            <td>ctrib_zip4</td>
+            <td>{{ object.ctrib_zip4 }}</td>
+        </tr>
+        <tr>
+            <td>cum_oth</td>
+            <td>{{ object.cum_oth }}</td>
+        </tr>
+        <tr>
+            <td>cum_ytd</td>
+            <td>{{ object.cum_ytd }}</td>
+        </tr>
+        <tr>
+            <td>cycle</td>
+            <td>{{ object.cycle }}</td>
+        </tr>
+        <tr>
+            <td>date_thru</td>
+            <td>{{ object.date_thru }}</td>
+        </tr>
+        <tr>
+            <td>dupe</td>
+            <td>{{ object.dupe }}</td>
+        </tr>
+        <tr>
+            <td>entity_cd</td>
+            <td>{{ object.entity_cd }}</td>
+        </tr>
+        <tr>
+            <td>filing</td>
+            <td>{{ object.filing }}</td>
+        </tr>
+        <tr>
+            <td>form_type</td>
+            <td>{{ object.form_type }}</td>
+        </tr>
+        <tr>
+            <td>id</td>
+            <td>{{ object.id }}</td>
+        </tr>
+        <tr>
+            <td>individual_id</td>
+            <td>{{ object.individual_id }}</td>
+        </tr>
+        <tr>
+            <td>intr_adr1</td>
+            <td>{{ object.intr_adr1 }}</td>
+        </tr>
+        <tr>
+            <td>intr_adr2</td>
+            <td>{{ object.intr_adr2 }}</td>
+        </tr>
+        <tr>
+            <td>intr_city</td>
+            <td>{{ object.intr_city }}</td>
+        </tr>
+        <tr>
+            <td>intr_cmteid</td>
+            <td>{{ object.intr_cmteid }}</td>
+        </tr>
+        <tr>
+            <td>intr_emp</td>
+            <td>{{ object.intr_emp }}</td>
+        </tr>
+        <tr>
+            <td>intr_namf</td>
+            <td>{{ object.intr_namf }}</td>
+        </tr>
+        <tr>
+            <td>intr_naml</td>
+            <td>{{ object.intr_naml }}</td>
+        </tr>
+        <tr>
+            <td>intr_nams</td>
+            <td>{{ object.intr_nams }}</td>
+        </tr>
+        <tr>
+            <td>intr_namt</td>
+            <td>{{ object.intr_namt }}</td>
+        </tr>
+        <tr>
+            <td>intr_occ</td>
+            <td>{{ object.intr_occ }}</td>
+        </tr>
+        <tr>
+            <td>intr_self</td>
+            <td>{{ object.intr_self }}</td>
+        </tr>
+        <tr>
+            <td>intr_st</td>
+            <td>{{ object.intr_st }}</td>
+        </tr>
+        <tr>
+            <td>intr_zip4</td>
+            <td>{{ object.intr_zip4 }}</td>
+        </tr>
+        <tr>
+            <td>line_item</td>
+            <td>{{ object.line_item }}</td>
+        </tr>
+        <tr>
+            <td>memo_code</td>
+            <td>{{ object.memo_code }}</td>
+        </tr>
+        <tr>
+            <td>memo_refno</td>
+            <td>{{ object.memo_refno }}</td>
+        </tr>
+        <tr>
+            <td>org_id</td>
+            <td>{{ object.org_id }}</td>
+        </tr>
+        <tr>
+            <td>person_flag</td>
+            <td>{{ object.person_flag }}</td>
+        </tr>
+        <tr>
+            <td>raw_org_name</td>
+            <td>{{ object.raw_org_name }}</td>
+        </tr>
+        <tr>
+            <td>rcpt_date</td>
+            <td>{{ object.rcpt_date }}</td>
+        </tr>
+        <tr>
+            <td>rec_type</td>
+            <td>{{ object.rec_type }}</td>
+        </tr>
+        <tr>
+            <td>tran_id</td>
+            <td>{{ object.tran_id }}</td>
+        </tr>
+        <tr>
+            <td>tran_type</td>
+            <td>{{ object.tran_type }}</td>
+        </tr>
+        <tr>
+            <td>xref_match</td>
+            <td>{{ object.xref_match }}</td>
+        </tr>
+        <tr>
+            <td>xref_schnm</td>
+            <td>{{ object.xref_schnm }}</td>
+        </tr>
+    </table>
+</div>
+{% endblock %}

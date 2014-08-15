@@ -1,0 +1,161 @@
+{% extends 'base.html' %}
+{% load humanize %}
+
+{% block title %}
+{% endblock %}
+
+{% block content %}
+<div class="container">
+    <table>
+        <tr>
+            <td>amount</td>
+            <td>{{ object.amount }}</td>
+        </tr>
+        <tr>
+            <td>bakref_tid</td>
+            <td>{{ object.bakref_tid }}</td>
+        </tr>
+        <tr>
+            <td>cmte_id</td>
+            <td>{{ object.cmte_id }}</td>
+        </tr>
+        <tr>
+            <td>committee</td>
+            <td>{{ object.committee }}</td>
+        </tr>
+        <tr>
+            <td>cum_ytd</td>
+            <td>{{ object.cum_ytd }}</td>
+        </tr>
+        <tr>
+            <td>cycle</td>
+            <td>{{ object.cycle }}</td>
+        </tr>
+        <tr>
+            <td>dupe</td>
+            <td>{{ object.dupe }}</td>
+        </tr>
+        <tr>
+            <td>entity_cd</td>
+            <td>{{ object.entity_cd }}</td>
+        </tr>
+        <tr>
+            <td>expn_chkno</td>
+            <td>{{ object.expn_chkno }}</td>
+        </tr>
+        <tr>
+            <td>expn_code</td>
+            <td>{{ object.expn_code }}</td>
+        </tr>
+        <tr>
+            <td>expn_code_display</td>
+            <td>{{ object.expn_code_display }}</td>
+        </tr>
+        <tr>
+            <td>expn_date</td>
+            <td>{{ object.expn_date }}</td>
+        </tr>
+        <tr>
+            <td>expn_dscr</td>
+            <td>{{ object.expn_dscr }}</td>
+        </tr>
+        <tr>
+            <td>filing</td>
+            <td>{{ object.filing }}</td>
+        </tr>
+        <tr>
+            <td>form_type</td>
+            <td>{{ object.form_type }}</td>
+        </tr>
+        <tr>
+            <td>g_from_e_f</td>
+            <td>{{ object.g_from_e_f }}</td>
+        </tr>
+        <tr>
+            <td>id</td>
+            <td>{{ object.id }}</td>
+        </tr>
+        <tr>
+            <td>individual_id</td>
+            <td>{{ object.individual_id }}</td>
+        </tr>
+        <tr>
+            <td>line_item</td>
+            <td>{{ object.line_item }}</td>
+        </tr>
+        <tr>
+            <td>memo_code</td>
+            <td>{{ object.memo_code }}</td>
+        </tr>
+        <tr>
+            <td>memo_refno</td>
+            <td>{{ object.memo_refno }}</td>
+        </tr>
+        <tr>
+            <td>name</td>
+            <td>{{ object.name }}</td>
+        </tr>
+        <tr>
+            <td>org_id</td>
+            <td>{{ object.org_id }}</td>
+        </tr>
+        <tr>
+            <td>payee_adr1</td>
+            <td>{{ object.payee_adr1 }}</td>
+        </tr>
+        <tr>
+            <td>payee_adr2</td>
+            <td>{{ object.payee_adr2 }}</td>
+        </tr>
+        <tr>
+            <td>payee_city</td>
+            <td>{{ object.payee_city }}</td>
+        </tr>
+        <tr>
+            <td>payee_namf</td>
+            <td>{{ object.payee_namf }}</td>
+        </tr>
+        <tr>
+            <td>payee_naml</td>
+            <td>{{ object.payee_naml }}</td>
+        </tr>
+        <tr>
+            <td>payee_nams</td>
+            <td>{{ object.payee_nams }}</td>
+        </tr>
+        <tr>
+            <td>payee_namt</td>
+            <td>{{ object.payee_namt }}</td>
+        </tr>
+        <tr>
+            <td>payee_st</td>
+            <td>{{ object.payee_st }}</td>
+        </tr>
+        <tr>
+            <td>payee_zip4</td>
+            <td>{{ object.payee_zip4 }}</td>
+        </tr>
+        <tr>
+            <td>person_flag</td>
+            <td>{{ object.person_flag }}</td>
+        </tr>
+        <tr>
+            <td>raw_org_name</td>
+            <td>{{ object.raw_org_name }}</td>
+        </tr>
+        <tr>
+            <td>tran_id</td>
+            <td>{{ object.tran_id }}</td>
+        </tr>
+        <tr>
+            <td>xref_match</td>
+            <td>{{ object.xref_match }}</td>
+        </tr>
+        <tr>
+            <td>xref_schnm</td>
+            <td>{{ object.xref_schnm }}</td>
+        </tr>
+    </table>
+</div>
+
+{% endblock %}

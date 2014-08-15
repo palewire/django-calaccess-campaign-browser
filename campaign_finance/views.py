@@ -17,6 +17,16 @@ class IndexView(generic.ListView):
     context_object_name = 'filers'
 
 
+class ContributionDetailView(generic.DetailView):
+    model = Contribution
+    template_name = 'contribution/detail.html'
+
+
+class ExpenditureDetailView(generic.DetailView):
+    model = Expenditure
+    template_name = 'expenditure/detail.html'
+
+
 class FilerListView(generic.ListView):
     model = Filer
     template = 'templates/filer/list.html'
