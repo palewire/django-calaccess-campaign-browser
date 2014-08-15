@@ -4,6 +4,21 @@
 {% block title %}
 {% endblock %}
 
+{% block javascript %}
+    <script>
+        $('.pagination').twbsPagination({
+            totalPages: {{ paginator.count }},
+            visiblePages: 5,
+            startPage: {{ page_obj.number }},
+            prev: '&laquo;',
+            next: '&rsaquo;',
+            onPageClick: function (event, page) {
+                window.location.href = "{{ base_url }}" + page + '/';
+            }
+        });
+    </script>
+{% endblock %}
+
 {% block content %}
 
 <div class="container">
@@ -22,6 +37,8 @@
         Contribs: ${{committee.total_contributions  | intcomma}}
     </div>
 </div>
+
+  {% include "paginator.html" %}
 
   <div class="row">
     <div class="col-xs-12">
@@ -52,6 +69,6 @@
           </div>
     </div>
   </div>
-
+  {% include "paginator.html" %}
 </div>
 {% endblock %}

@@ -58,6 +58,8 @@ class CommitteeDetailView(generic.DetailView):
 class CommitteeContributionView(generic.ListView):
     model = Contribution
     context_object_name = 'committee_contributions'
+    allow_empty = False
+    paginate_by = 25
 
     def get_queryset(self):
         """

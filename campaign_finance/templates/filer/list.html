@@ -5,16 +5,16 @@
 
 {% block javascript %}
     <script>
-    $('.pagination').twbsPagination({
-        totalPages: {{ paginator.count }},
-        visiblePages: 5,
-        startPage: {{ page_obj.number }},
-        prev: '&laquo;',
-        next: '&rsaquo;',
-        onPageClick: function (event, page) {
-            window.location.href = "{{ base_url }}" + page + '/';
-        }
-    });
+        $('.pagination').twbsPagination({
+            totalPages: {{ paginator.count }},
+            visiblePages: 5,
+            startPage: {{ page_obj.number }},
+            prev: '&laquo;',
+            next: '&rsaquo;',
+            onPageClick: function (event, page) {
+                window.location.href = "{{ base_url }}" + page + '/';
+            }
+        });
     </script>
 {% endblock %}
 
