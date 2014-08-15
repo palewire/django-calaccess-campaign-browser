@@ -5,11 +5,11 @@ from campaign_finance.models import (
     Summary,
     Expenditure,
     Contribution,
-    Flatfile
+    FlatFile
 )
 
 admin.site.register(Committee)
 admin.site.register(Filer)
 admin.site.register(Expenditure)
 admin.site.register(Contribution)
-admin.site.register(Flatfile)
+admin.site.register(FlatFile)
