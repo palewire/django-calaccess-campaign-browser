@@ -7,7 +7,7 @@
         <span class="icon-bar"></span>
         <span class="icon-bar"></span>
       </button>
-      <span class="navbar-brand" href="#">{{ committee.name|truncatechars:25 }}</span>
+      <span class="navbar-brand"><a href="{% url 'committee_detail' committee.pk %}">{{ committee.name|truncatechars:25 }}</a></span>
     </div>
     <div class="collapse navbar-collapse bs-example-js-navbar-collapse">
       <ul class="nav navbar-nav">

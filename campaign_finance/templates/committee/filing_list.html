@@ -64,10 +64,10 @@
                   <th>unitemized mon. contribs</th>
                   <th>total mon. contribs</th>
                   <th>non mon. contribs</th>
-                  <th>total contribs</th>
+                  <th class="success">total contribs</th>
                   <th>itemized expn</th>
                   <th>unitemized expn</th>
-                  <th>total expn</th>
+                  <th class="danger">total expn</th>
                   <th>outstanding debts</th>
                 </tr>
               </thead>
@@ -85,10 +85,10 @@
                       <td>${{ summary.unitemized_monetary_contribs | intcomma }}</td>
                       <td>${{ summary.total_monetary_contribs | intcomma }}</td>
                       <td>${{ summary.non_monetary_contribs | intcomma }}</td>
-                      <td>${{ summary.total_contribs | intcomma }}</td>
+                      <td class="success">${{ summary.total_contribs | intcomma }}</td>
                       <td>${{ summary.itemized_expenditures | intcomma }}</td>
                       <td>${{ summary.unitemized_expenditures | intcomma }}</td>
-                      <td>${{ summary.total_expenditures | intcomma }}</td>
+                      <td class="danger">${{ summary.total_expenditures | intcomma }}</td>
                       <td>${{ summary.outstanding_debts | intcomma }}</td>
                     {% endfor %}
                   {% else %}

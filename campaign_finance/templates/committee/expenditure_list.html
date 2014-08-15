@@ -55,7 +55,7 @@
                     <th>cycle</th>
                     <th>filing</th>
                     <th>raw_org_name</th>
-                    <th>amount</th>
+                    <th class="danger">amount</th>
                     <!-- <th>person_flag</th> -->
                 </tr>
               </thead>
@@ -65,7 +65,7 @@
                         <td>{{ expenditure.cycle }}</td>
                         <td><a href="{{ expenditure.filing.get_absolute_url }}">{{ expenditure.filing.pk }}</a></td>
                         <td>{{ expenditure.raw_org_name }}</td>
-                        <td>${{ expenditure.amount | intcomma }}</td>
+                        <td class="danger">${{ expenditure.amount | intcomma }}</td>
                         <!-- <td>{{ expenditure.person_flag }}</td> -->
                     </tr>
                   {% endfor %}
