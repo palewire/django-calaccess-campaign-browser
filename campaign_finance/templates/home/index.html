@@ -27,9 +27,12 @@
         <h1>California Campaign Finance</h1>
         <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit. Voluptatem nam accusamus saepe voluptatibus reprehenderit. Quas debitis quae maiores itaque eum, beatae rerum vel id, magni aliquid perspiciatis, vitae quis. Beatae.</p>
 
-        <a href="" class="btn btn-lg btn-danger">
-          <i class="fa fa-dowload"></i> Download (~290 MB)
+        {% for file in bulk_download %}
+        <a href="{{ file.s3_file.url }}" class="btn btn-lg btn-danger">
+          <i class="fa fa-dowload"></i> Download ({{ file.size }})
         </a>
+        <p class="label label-info">last updated {{ file.modified_date }}</p>
+        {% endfor %}
       </div>
 
       <div class="col-lg-8 col-lg-offset-2">
