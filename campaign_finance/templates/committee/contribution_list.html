@@ -24,25 +24,32 @@
 <div class="container">
   <header>
     <h1>{{ committee.name }}</h1>
+    <a href="{% url 'committee_contribution_list' committee.pk 1 %}?format=csv">TEST</a>
     <ol class="breadcrumb">
-      <li><a href="/">Home</a></li>
+      <li><a href="{% url 'filer_list' 1 %}">Home</a></li>
       <li><a href="{{ committee.filer.get_absolute_url }}">Filer</a></li>
       <li class="active">{{ committee.name }} ({{ committee.filer_id_raw }})</li>
     </ol>
   </header>
 
-<div class="row">
-    <div class="col-xs-12">
-        <h3>Totals</h3>
-        <p class="totals">Contributions: ${{committee.total_contributions  | intcomma}}</p>
-    </div>
-</div>
-
-  {% include "paginator.html" %}
+ {% include "committee_nav.html" %}
 
   <div class="row">
     <div class="col-xs-12">
-        <h3>Contributions</h3>
+        <h2>
+              Contributions
+              <div class="btn-group">
+                  <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown">
+                    Download data <span class="caret"></span>
+                  </button>
+                  <ul class="dropdown-menu" role="menu">
+                    <li><a href="{% url 'committee_contribution_list' committee.pk 1 %}?format=csv">Download CSV</a></li>
+                    <li><a href="{% url 'committee_contribution_list' committee.pk 1 %}?format=json">Download JSON</a></li>
+                  </ul>
+              </div>
+        </h2>
+        <p class="totals">Total contributions: ${{committee.total_contributions  | intcomma}}</p>
+        {% include "paginator.html" %}
           <div class="table-responsive">
             <table class="table table-bordered table-hover"> <!-- table table-bordered table-hover -->
               <thead>

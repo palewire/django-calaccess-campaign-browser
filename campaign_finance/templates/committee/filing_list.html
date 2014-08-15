@@ -25,80 +25,88 @@
   <header>
     <h1>{{ committee.name }}</h1>
     <ol class="breadcrumb">
-      <li><a href="/browser">Home</a></li>
+      <li><a href="{% url 'filer_list' 1 %}">Home</a></li>
       <li><a href="{{ committee.filer.get_absolute_url }}">Filer</a></li>
       <li class="active">{{ committee.name }} ({{ committee.filer_id_raw }})</li>
     </ol>
   </header>
 
+{% include "committee_nav.html" %}
+
 <div class="row">
-  <div class="col-xs-12">
-      <h3>Totals</h3>
-      <p class="totals">Contributions: ${{committee.total_contributions  | intcomma}}
-      <br>
-      Expenditures: ${{committee.total_expenditures | intcomma}}</p>
-  </div>
-</div>
-
-{% include "paginator.html" %}
-
-  <div class="row">
     <div class="col-xs-12">
-    <h3>Filings</h3>
-      <div class="table-responsive">
-        <table id="datatable" class="table table-bordered table-hover"> <!-- table table-bordered table-hover -->
-          <thead>
-            <tr>
-              <th>Filing No.</th>
-              <th>Form</th>
-              <th>Cycle</th>
-              <th>itemized mon. contribs</th>
-              <th>unitemized mon. contribs</th>
-              <th>total mon. contribs</th>
-              <th>non mon. contribs</th>
-              <th>total contribs</th>
-              <th>itemized expn</th>
-              <th>unitemized expn</th>
-              <th>total expn</th>
-              <th>outstanding debts</th>
-            </tr>
-          </thead>
-          <tbody>
-          {% for filing in committee_filings %}
-            <tr>
-              <td>
-                <a href="{{ filing.get_absolute_url }}">{{ filing.filing_id_raw }}</a>
-              </td>
-              <td>{{ filing.form_id }}</td>
-              <td>{{ filing.cycle.name }}</td>
-              {% if filing.summary_set.all %}
-                {% for summary in filing.summary_set.all %}
-                  <td>${{ summary.itemized_monetary_contribs | intcomma }}</td>
-                  <td>${{ summary.unitemized_monetary_contribs | intcomma }}</td>
-                  <td>${{ summary.total_monetary_contribs | intcomma }}</td>
-                  <td>${{ summary.non_monetary_contribs | intcomma }}</td>
-                  <td>${{ summary.total_contribs | intcomma }}</td>
-                  <td>${{ summary.itemized_expenditures | intcomma }}</td>
-                  <td>${{ summary.unitemized_expenditures | intcomma }}</td>
-                  <td>${{ summary.total_expenditures | intcomma }}</td>
-                  <td>${{ summary.outstanding_debts | intcomma }}</td>
-                {% endfor %}
-              {% else %}
-                <td>N/A</td>
-                <td>N/A</td>
-                <td>N/A</td>
-                <td>N/A</td>
-                <td>N/A</td>
-                <td>N/A</td>
-                <td>N/A</td>
-                <td>N/A</td>
-                <td>N/A</td>
-              {% endif %}
-            </tr>
-          {% endfor %}
-          </tbody>
-        </table>
-      </div>
+    <h2>
+          Filings
+          <div class="btn-group">
+              <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown">
+                Download data <span class="caret"></span>
+              </button>
+              <ul class="dropdown-menu" role="menu">
+                <li><a href="{% url 'committee_filing_list' committee.pk 1 %}?format=csv">Download CSV</a></li>
+                <li><a href="{% url 'committee_filing_list' committee.pk 1 %}?format=json">Download JSON</a></li>
+              </ul>
+          </div>
+    </h2>
+    <p class="totals">
+        Total contributions: ${{committee.total_contributions  | intcomma}}
+        <br>
+        Total expenditures: ${{committee.total_expenditures  | intcomma}}
+    </p>
+    {% include "paginator.html" %}
+          <div class="table-responsive">
+            <table id="datatable" class="table table-bordered table-hover"> <!-- table table-bordered table-hover -->
+              <thead>
+                <tr>
+                  <th>Filing No.</th>
+                  <th>Form</th>
+                  <th>Cycle</th>
+                  <th>itemized mon. contribs</th>
+                  <th>unitemized mon. contribs</th>
+                  <th>total mon. contribs</th>
+                  <th>non mon. contribs</th>
+                  <th>total contribs</th>
+                  <th>itemized expn</th>
+                  <th>unitemized expn</th>
+                  <th>total expn</th>
+                  <th>outstanding debts</th>
+                </tr>
+              </thead>
+              <tbody>
+              {% for filing in committee_filings %}
+                <tr>
+                  <td>
+                    <a href="{{ filing.get_absolute_url }}">{{ filing.filing_id_raw }}</a>
+                  </td>
+                  <td>{{ filing.form_id }}</td>
+                  <td>{{ filing.cycle.name }}</td>
+                  {% if filing.summary_set.all %}
+                    {% for summary in filing.summary_set.all %}
+                      <td>${{ summary.itemized_monetary_contribs | intcomma }}</td>
+                      <td>${{ summary.unitemized_monetary_contribs | intcomma }}</td>
+                      <td>${{ summary.total_monetary_contribs | intcomma }}</td>
+                      <td>${{ summary.non_monetary_contribs | intcomma }}</td>
+                      <td>${{ summary.total_contribs | intcomma }}</td>
+                      <td>${{ summary.itemized_expenditures | intcomma }}</td>
+                      <td>${{ summary.unitemized_expenditures | intcomma }}</td>
+                      <td>${{ summary.total_expenditures | intcomma }}</td>
+                      <td>${{ summary.outstanding_debts | intcomma }}</td>
+                    {% endfor %}
+                  {% else %}
+                    <td>N/A</td>
+                    <td>N/A</td>
+                    <td>N/A</td>
+                    <td>N/A</td>
+                    <td>N/A</td>
+                    <td>N/A</td>
+                    <td>N/A</td>
+                    <td>N/A</td>
+                    <td>N/A</td>
+                  {% endif %}
+                </tr>
+              {% endfor %}
+              </tbody>
+            </table>
+          </div>
 
     </div>
   </div>
