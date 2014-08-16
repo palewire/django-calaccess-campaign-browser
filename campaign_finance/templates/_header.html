@@ -1,13 +1,21 @@
 {% load staticfiles %}
 <header class="container">
-  <ul class="nav nav-pills">
+  <ul class="nav nav-pills red-border">
     <li>
-      <a href="">
         <img width="50px" src="{% static "images/bear.gif" %}" alt="">
-      </a>
     </li>
-    <li class="active"><a href="#">Home</a></li>
-    <li><a href="#">Profile</a></li>
-    <li><a href="#">Messages</a></li>
+    <li><a href="{% url 'filer_list' 1 %}"><i class="fa fa-user"></i> Candidates</a></li>
+    <li><a href="{% url 'committee_detail' 2 %}"><i class="fa fa-users"></i> Committees</a></li>
+    <li><a href="https://github.com/california-civic-data-coalition/django-calaccess-campaign-finance" target="_blank"><i class="fa fa-github"></i> Github</a></li>
   </ul>
 </header>
+
+<script>
+var url = window.location;
+// Will only work if string in href matches with location
+$('ul.nav a[href="' + url + '"]').parent().addClass('active');
+// Will also work for relative and absolute hrefs
+$('ul.nav a').filter(function() {
+    return this.href == url;
+}).parent().addClass('active');
+</script>

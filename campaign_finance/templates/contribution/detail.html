@@ -6,6 +6,9 @@
 
 {% block content %}
 <div class="container">
+
+    {% include "breadcrumb_filing.html" %}
+
     <h1>${{ object.amount }} <small><a href="{{ object.committee.get_absolute_url }}">{{ object.committee }}</a></small></h1>
 
     <p>{{ object.description }}</p>
