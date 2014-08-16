@@ -22,19 +22,11 @@
 {% block content %}
 
 <div class="container">
-  <header>
-    <h1>{{ committee.name }}</h1>
-    <ol class="breadcrumb">
-      <li><a href="{% url 'filer_list' 1 %}">Home</a></li>
-      <li><a href="{{ committee.filer.get_absolute_url }}">Filer</a></li>
-      <li class="active">{{ committee.name }} ({{ committee.filer_id_raw }})</li>
-    </ol>
-  </header>
 
 {% include "committee_nav.html" %}
 <div class="row">
     <div class="col-xs-12">
-    <h2>
+    <h3>
           Expenditures
           <div class="btn-group">
               <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown">
@@ -45,7 +37,7 @@
                 <li><a href="{% url 'committee_expenditure_list' committee.pk 1 %}?format=json">Download JSON</a></li>
               </ul>
           </div>
-    </h2>
+    </h3>
     <p class="totals">Total expenditures: ${{committee.total_expenditures  | intcomma}}</p>
     {% include "paginator.html" %}
           <div class="table-responsive">
