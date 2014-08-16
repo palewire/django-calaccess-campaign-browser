@@ -73,7 +73,9 @@ urlpatterns = patterns(
         views.ExpenditureDetailView.as_view(),
         name='expenditure_detail',
     ),
-
+    url(
+        r'^search/$', views.search, name='search'
+    ),
     # API
     url(r'^api/', include(v1_api.urls)),
 
