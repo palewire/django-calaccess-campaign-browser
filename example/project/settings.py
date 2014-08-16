@@ -55,7 +55,7 @@ DATABASES = {
     }
 }
 
-BUILD_DIR = os.path.join(BASE_DIR, 'build')
+BUILD_DIR = os.path.join(BASE_DIR, '..', '_build')
 BAKERY_VIEWS = (
     'campaign_finance.views.IndexView',
 )
