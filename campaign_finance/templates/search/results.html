@@ -1,0 +1,52 @@
+{% extends 'base.html' %}
+{% load humanize %}
+
+
+{% block content %}
+<div class="container">
+    <h1>Search contributions</h1>
+    <div class="row" style="margin-bottom:40px">
+        <form class="form-inline" role="form" method="GET" action="/search/">
+            <div class="form-group col-md-8">
+                <input type="text" class="form-control" style="width:100%" id="q" name="q" {% if query_string %}value="{{ query_string }}"{% else %}placeholder="Search contributions"{% endif %}>
+            </div>
+            <button type="submit" class="btn btn-default">Submit</button>
+        </form>
+    </div>
+    <div class="row">
+        <strong>Results:</strong> {{ results|length }}
+        <table class="table table-responsive">
+            <thead>
+                <tr>
+                    <th>ID</th>
+                    <th>Amount</th>
+                    <th>City</th>
+                    <th>State</th>
+                    <th>Zip</th>
+                    <th>First Name</th>
+                    <th>Last Name</th>
+                    <th>Employer</th>
+                    <th>Occupation</th>
+                    <th>Committee</th>
+                </tr>
+            </thead>
+            <tbody>
+            {% for i in results %}
+                <tr>
+                    <td>{{ i.pk }}</td>
+                    <td>{{ i.amount }}</td>
+                    <td>{{ i.ctrib_city }}</td>
+                    <td>{{ i.ctrib_st }}</td>
+                    <td>{{ i.ctrib_zip4 }}</td>
+                    <td>{{ i.ctrib_namf }}</td>
+                    <td>{{ i.ctrib_naml }}</td>
+                    <td>{{ i.ctrib_emp }}</td>
+                    <td>{{ i.ctrib_occ }}</td>
+                    <td>{{ i.committee }}</td>
+                </tr>
+            {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+{% endblock %}
