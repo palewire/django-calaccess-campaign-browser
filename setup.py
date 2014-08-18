@@ -38,12 +38,13 @@ setup(
     ],
     include_package_data=True,
     license='MIT',
-    description='A Django app to refine and investigate campaign finance data drawn from the California Secretary of State’s CAL-ACCESS database',
+    description='A Django app to refine and investigate campaign finance data \
+drawn from the California Secretary of State’s CAL-ACCESS database',
     url='https://github.com/california-civic-data-coalition',
     author='California Civic Data Coalition',
     author_email='awilliams@cironline.org',
     install_requires=(
-        'django-calaccess-raw-data>=0.2',
+        'django-calaccess-raw-data>=0.0.2',
         'django>=1.6',
         'csvkit==0.6.1',
         'python-dateutil==2.1',
