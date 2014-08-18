@@ -86,7 +86,7 @@ class Committee(models.Model):
     def links(self):
         d = {}
         try:
-            from calaccess.models import FilerLinksCd, FilernameCd, LookupCode
+            from calaccess_raw.models import FilerLinksCd, FilernameCd, LookupCode
             qs_links = FilerLinksCd.objects.filter(
                 filer_id_a=self.filer_id_raw)
             for q in qs_links:
@@ -122,7 +122,7 @@ class Committee(models.Model):
                 }
 
         except:
-            print 'Raw data not available. Install and run calaccess app.'
+            print 'Raw data not available. Install and run calaccess_raw app.'
 
         return d
 
@@ -218,7 +218,7 @@ class Expenditure(models.Model):
     treasurer info, support/opposition info, etc.
     This just pulls in who got paid and how much
     And tries to prep the data for categorization by orgs and individuals
-    Data comes from calaccess.models.ExpnCd
+    Data comes from calaccess_raw.models.ExpnCd
     '''
     EXPENDITURE_CODE_CHOICES = (
         ('CMP', 'campaign paraphernalia/misc.'),
@@ -301,7 +301,7 @@ class Expenditure(models.Model):
 
     def raw(self):
         try:
-            from calaccess.models import ExpnCd
+            from calaccess_raw.models import ExpnCd
             obj = ExpnCd.objects.get(
                 amend_id=self.amend_id,
                 filing_id=self.filing_id,
@@ -309,7 +309,7 @@ class Expenditure(models.Model):
                 bakref_tid=self.bakref_tid
             )
         except:
-            print 'Raw data not available. Install and run calaccess app.'
+            print 'Raw data not available. Install and run calaccess_raw app.'
             obj = None
         return obj
 
@@ -383,7 +383,7 @@ class Contribution(models.Model):
 
     def raw(self):
         try:
-            from calaccess.models import RcptCd
+            from calaccess_raw.models import RcptCd
             obj = RcptCd.objects.get(
                 amend_id=self.amend_id,
                 filing_id=self.filing_id,
@@ -434,6 +434,7 @@ class Stats(models.Model):
     def __unicode__(self):
         name_str = '%s-%s' % (self.filer_type, self.stat_type)
         return name_str
+
 
 class FlatFile(models.Model):
     file_name = models.CharField(max_length=255)

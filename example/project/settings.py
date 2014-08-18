@@ -28,7 +28,7 @@ INSTALLED_APPS = (
     'django.contrib.humanize',
     'storages',
     'bakery',
-    'calaccess',
+    'calaccess_raw',
     'campaign_finance',
 )
 

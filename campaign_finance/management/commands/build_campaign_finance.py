@@ -5,7 +5,7 @@ from django.db import reset_queries
 from django.db.models import Q
 
 try:
-    from calaccess.models import (
+    from calaccess_raw.models import (
         FilernameCd,
         FilerFilingsCd,
         FilerLinksCd,

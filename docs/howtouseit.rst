@@ -14,7 +14,7 @@ that contains the raw government database it will work with to refine to your Dj
 
    INSTALLED_APPS = (
        ...
-       'calaccess',
+       'calaccess_raw',
        'campaign_finance',
    )
 

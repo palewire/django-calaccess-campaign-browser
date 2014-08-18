@@ -1,5 +1,5 @@
 try:
-    from calaccess.models import (
+    from calaccess_raw.models import (
         FilernameCd,
         FilerFilingsCd,
         FilerLinksCd,
