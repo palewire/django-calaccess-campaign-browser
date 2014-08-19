@@ -8,13 +8,13 @@ from calaccess_campaign_browser.models import Committee, Filer
 class Command(BaseCommand):
 
     def handle(self, *args, **options):
-        '''
+        """
         Take a look in the Filings table and just
         load up the filers that have filed a 460 or a 450.
         Load the candidates first,
         linking them to all the committees they control.
         Then load the rest of the committees.
-        '''
+        """
         candidate_cmte_list = []
         # all filers of type candidate
         all_candidate_filer_ids = (
