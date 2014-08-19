@@ -37,6 +37,7 @@ paramiko==1.11.0
 pathtools==0.1.2
 pep8==1.5.7
 progressbar==2.2
+py==1.4.23
 pycrypto==2.6
 pyflakes==0.8.1
 pypandoc==0.8.0
@@ -50,5 +51,8 @@ sh==1.09
 six==1.5.2
 sphinx-autobuild==0.2.3
 tornado==3.1.1
+tox==1.7.2
+virtualenv==1.11.6
 watchdog==0.6.0
+wsgiref==0.1.2
 xlrd==0.9.3

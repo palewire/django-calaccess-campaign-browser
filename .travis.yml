@@ -10,8 +10,8 @@ install:
  - pip install -q Django==$DJANGO_VERSION
  - python setup.py install
 script:
- - pep8 campaign_finance
- - pyflakes campaign_finance
+ - pep8 calaccess_campaign_browser
+ - pyflakes calaccess_campaign_browser
  - coverage run setup.py test
 after_success:
  - coveralls
