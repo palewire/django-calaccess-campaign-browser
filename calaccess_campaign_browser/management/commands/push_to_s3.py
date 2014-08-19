@@ -1,11 +1,10 @@
 import os
+import fnmatch
+from django.conf import settings
 from optparse import make_option
 from zipfile import ZipFile, ZIP_DEFLATED
-
 from django.core.management.base import BaseCommand
 from django.core.files.base import File
-from django.conf import settings
-
 from calaccess_campaign_browser.models import FlatFile
 
 custom_options = (
@@ -39,11 +38,13 @@ custom_options = (
     ),
 )
 
+
 def listdir_fullpath(d):
     """
     Like listdir() but with the full path
     """
     return [os.path.join(d, f) for f in os.listdir(d)]
+
 
 def all_files(root, patterns='*', single_level=False, yield_folders=False):
     # Expand patterns form semicolon-separated string to list
@@ -66,7 +67,6 @@ class Command(BaseCommand):
     help = 'Take flatfiles from export_campaign_finance and send em to S3'
     option_list = BaseCommand.option_list + custom_options
 
-
     def set_options(self, *args, **kwargs):
         self.data_dir = os.path.join(
             settings.BASE_DIR, 'data')
@@ -75,7 +75,6 @@ class Command(BaseCommand):
         self.zip_dir = os.path.join(
             self.data_dir, 'zip')
         os.path.exists(self.zip_dir) or os.mkdir(self.zip_dir)
-
 
     def handle(self, *args, **options):
         self.set_options(*args, **options)
@@ -91,12 +90,10 @@ class Command(BaseCommand):
         if options['create_bulk_download']:
             self.create_bulk_download()
 
-
     def contributions(self):
         file_path = os.path.join(self.data_dir, 'contributions.csv')
         get_zip = self.zip_this_file(file_path)
         self.load_model(get_zip)
-
 
     def expenditures(self):
         file_path = os.path.join(self.data_dir, 'expenditures.csv')
@@ -108,13 +105,14 @@ class Command(BaseCommand):
         get_zip = self.zip_this_file(file_path)
         self.load_model(get_zip)
 
-
     def create_bulk_download(self):
-        full_path_list = listdir_fullpath( self.data_dir )
-        full_path_list.remove( os.path.join(self.data_dir, 'zip') )
+        full_path_list = listdir_fullpath(self.data_dir)
+        full_path_list.remove(os.path.join(self.data_dir, 'zip'))
 
         zip_subdir = 'bulk_campaign_finance'
-        zip_file_name = '%s.zip' % os.path.join(self.data_dir, 'zip' ,zip_subdir)
+        zip_file_name = '%s.zip' % os.path.join(
+            self.data_dir, 'zip', zip_subdir
+        )
 
         print "attempting to create bulk zip"
         with ZipFile(zip_file_name, 'w', ZIP_DEFLATED) as myzip:
@@ -124,10 +122,8 @@ class Command(BaseCommand):
                 # debugger()
                 myzip.write(file_path, zip_path)
 
-
         print "bulk zip created"
-        self.load_model( zip_file_name )
-
+        self.load_model(zip_file_name)
 
     def load_model(self, file_path):
         """
@@ -148,7 +144,6 @@ class Command(BaseCommand):
 
         except Exception, e:
             raise e
-
 
     def zip_this_file(self, file_path):
         """

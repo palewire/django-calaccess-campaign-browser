@@ -86,7 +86,9 @@ class Committee(models.Model):
     def links(self):
         d = {}
         try:
-            from calaccess_raw.models import FilerLinksCd, FilernameCd, LookupCode
+            from calaccess_raw.models import (
+                FilerLinksCd, FilernameCd, LookupCode
+            )
             qs_links = FilerLinksCd.objects.filter(
                 filer_id_a=self.filer_id_raw)
             for q in qs_links:
@@ -444,10 +446,8 @@ class FlatFile(models.Model):
     modified_date = models.DateTimeField(auto_now=True)
 
     def _get_file_size(self):
-        return size( self.s3_file.size )
+        return size(self.s3_file.size)
     size = property(_get_file_size)
-
-
 
     def __unicode__(self):
         return self.file_name

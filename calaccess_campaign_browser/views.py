@@ -5,18 +5,9 @@ import json
 from django.db.models import Q
 from django.views import generic
 from django.shortcuts import render
-from django.db.models import Sum, Count
 from django.utils.encoding import smart_text
-from django.core.urlresolvers import reverse
-from django.http import Http404, HttpResponse
-from django.core.paginator import (
-    Paginator,
-    EmptyPage,
-    PageNotAnInteger
-)
-
+from django.http import HttpResponse
 from bakery.views import BuildableListView
-
 from calaccess_campaign_browser.models import (
     Filer,
     Committee,
@@ -25,7 +16,6 @@ from calaccess_campaign_browser.models import (
     Contribution,
     FlatFile
 )
-
 
 #
 # Mixins
@@ -42,7 +32,7 @@ class DataPrepMixin(object):
         values = self.get_queryset().values_list(*field_names)
         data_list = []
         for i in values:
-            d = {field_names[index]:val for index, val in enumerate(i)}
+            d = {field_names[index]: val for index, val in enumerate(i)}
             data_list.append(d)
 
         return (data_list, field_names)
@@ -70,7 +60,8 @@ class CSVResponseMixin(DataPrepMixin):
     """
     def render_to_csv_response(self, context, **response_kwargs):
         """
-        Returns a CSV file response, transforming 'context' to make the payload.
+        Returns a CSV file response, transforming 'context'
+        to make the payload.
         """
         data, fields = self.prep_context_for_serialization(context)
         response = HttpResponse(mimetype='text/csv')
@@ -79,7 +70,6 @@ class CSVResponseMixin(DataPrepMixin):
         writer.writeheader()
         [writer.writerow(i) for i in data]
         return response
-
 
 #
 # Views
@@ -115,7 +105,9 @@ class CommitteeDataView(JSONResponseMixin, CSVResponseMixin, generic.ListView):
             return self.render_to_json_response(context)
 
         # And if it's none of the above return something normal
-        return super(CommitteeDataView, self).render_to_response(context, **kwargs)
+        return super(CommitteeDataView, self).render_to_response(
+            context, **kwargs
+        )
 
 
 class IndexView(BuildableListView):
@@ -135,7 +127,9 @@ class IndexView(BuildableListView):
         """
         Returns the contributions related to this committee.
         """
-        files = FlatFile.objects.all().exclude(file_name='bulk_campaign_finance.zip')
+        files = FlatFile.objects.all().exclude(
+            file_name='bulk_campaign_finance.zip'
+        )
         return files
 
 
@@ -174,16 +168,18 @@ class FilerDetailView(generic.DetailView):
 
 class CommitteeDetailView(generic.DetailView):
     model = Committee
-    # context_object_name = 'committee'
 
     def get_context_data(self, **kwargs):
         context = super(CommitteeDetailView, self).get_context_data(**kwargs)
         context['committee'] = self.object
-        context['filing_set'] = Filing.objects.filter(committee=self.object).order_by('-end_date')
+        context['filing_set'] = Filing.objects.filter(
+            committee=self.object).order_by('-end_date')
         context['filing_set_short'] = context['filing_set'][:10]
-        context['contribution_set'] = Contribution.objects.filter(committee=self.object).order_by('-amount')
+        context['contribution_set'] = Contribution.objects.filter(
+            committee=self.object).order_by('-amount')
         context['contribution_set_short'] = context['contribution_set'][:10]
-        context['expenditure_set'] = Expenditure.objects.filter(committee=self.object).order_by('-amount')
+        context['expenditure_set'] = Expenditure.objects.filter(
+            committee=self.object).order_by('-amount')
         context['expenditure_set_short'] = context['expenditure_set'][:10]
         return context
 
@@ -227,36 +223,34 @@ class CommitteeFilingView(CommitteeDataView):
         return committee.filing_set.all().order_by('-cycle')
 
 
+findterms = re.compile(r'"([^"]+)"|(\S+)').findall
+normspace = re.compile(r'\s{2,}').sub
 
-#
-# Search biz
-# Taken from Julien Phalip
-# http://julienphalip.com/post/2825034077/adding-search-to-a-django-site-in-a-snap
-#
-
-findterms=re.compile(r'"([^"]+)"|(\S+)').findall
-normspace=re.compile(r'\s{2,}').sub
 
 def normalize_query(query_string,):
     """
-    Splits the query string in invidual keywords, getting rid of unecessary spaces
-    and grouping quoted words together.
+    Splits the query string in invidual keywords, getting rid of unecessary
+    spaces and grouping quoted words together.
+
     Example:
-    
+
     >>> normalize_query('  some random  words "with   quotes  " and   spaces')
     ['some', 'random', 'words', 'with quotes', 'and', 'spaces']
     """
-    return [normspace(' ', (t[0] or t[1]).strip()) for t in findterms(query_string)] 
+    return [
+        normspace(' ', (t[0] or t[1]).strip()) for t in findterms(query_string)
+    ]
+
 
 def get_query(query_string, search_fields):
     """
     Returns a query, that is a combination of Q objects. That combination
     aims to search keywords within a model by testing the given search fields.
     """
-    query = None # Query to search for every search term        
+    query = None  # Query to search for every search term
     terms = normalize_query(query_string)
     for term in terms:
-        or_query = None # Query to search for a given term in each field
+        or_query = None  # Query to search for a given term in each field
         for field_name in search_fields:
             q = Q(**{"%s__icontains" % field_name: term})
             if or_query is None:
@@ -269,18 +263,19 @@ def get_query(query_string, search_fields):
             query = query & or_query
     return query
 
+
 def search(request):
     query_string = ''
     results = None
     if ('q' in request.GET) and request.GET['q'].strip():
         query_string = request.GET['q']
-        query = get_query(query_string, ['ctrib_city', 'ctrib_st', 'ctrib_zip4',
-            'ctrib_namf', 'ctrib_naml', 'ctrib_emp', 'ctrib_occ'])
+        query = get_query(query_string, [
+            'ctrib_city', 'ctrib_st', 'ctrib_zip4',
+            'ctrib_namf', 'ctrib_naml', 'ctrib_emp', 'ctrib_occ'
+        ])
         results = Contribution.objects.filter(query)
-
     context = {
         'query_string': query_string,
         'results': results
     }
-
     return render(request, 'search/results.html', context)

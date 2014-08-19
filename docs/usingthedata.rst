@@ -30,4 +30,3 @@ A few other sample questions: How much of the variation in election results are 
     -For each candidate, how much they got or spent?  
     -How much did each vote cost?  
     -For each candidate, how many votes they got or how much they won/lost by.  
-
