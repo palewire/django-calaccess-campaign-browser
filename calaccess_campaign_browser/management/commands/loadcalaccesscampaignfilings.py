@@ -1,22 +1,9 @@
 import gc
-from django.core.management.base import BaseCommand
-from django.db import reset_queries
 from django.db.models import Q
-
-try:
-    from calaccess_raw.models import (
-        FilerFilingsCd,
-        SmryCd
-    )
-
-except:
-    print 'you need to load the raw calaccess data app'
-
-from calaccess_campaign_browser.models import (
-    Committee,
-    Cycle,
-    Filing,
-)
+from django.db import reset_queries
+from django.core.management.base import BaseCommand
+from calaccess_raw.models import FilerFilingsCd, SmryCd
+from calaccess_campaign_browser.models import Committee, Cycle, Filing
 
 
 def queryset_iterator(queryset, chunksize=1000):
