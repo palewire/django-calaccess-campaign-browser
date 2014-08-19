@@ -70,10 +70,10 @@ class Command(BaseCommand):
     help = 'Isolate recipient committee campaign finance data'
 
     def handle(self, *args, **options):
-        # self.load_filers()
-        # self.load_filings()
-        # self.load_summary()
-        # self.load_contributions()
+        self.load_filers()
+        self.load_filings()
+        self.load_summary()
+        self.load_contributions()
         self.load_expenditures()
 
     def load_filers(self):
