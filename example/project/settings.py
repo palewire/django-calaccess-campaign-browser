@@ -29,7 +29,7 @@ INSTALLED_APPS = (
     'storages',
     'bakery',
     'calaccess_raw',
-    'campaign_finance',
+    'calaccess_campaign_browser',
 )
 
 MIDDLEWARE_CLASSES = (
