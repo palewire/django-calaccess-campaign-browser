@@ -29,7 +29,7 @@ class TestCommand(Command):
 
 setup(
     name='django-calaccess-campaign-browser',
-    version='0.0.1',
+    version='0.0.2',
     packages=[
         'calaccess_campaign_browser',
         'calaccess_campaign_browser.management',
