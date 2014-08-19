@@ -17,7 +17,7 @@ from django.core.paginator import (
 
 from bakery.views import BuildableListView
 
-from campaign_finance.models import (
+from calaccess_campaign_browser.models import (
     Filer,
     Committee,
     Filing,

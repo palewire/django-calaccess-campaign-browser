@@ -16,7 +16,7 @@ try:
 except:
     print 'you need to load the raw calaccess data app'
 
-from campaign_finance.models import (
+from calaccess_campaign_browser.models import (
     Committee,
     Contribution,
     Cycle,

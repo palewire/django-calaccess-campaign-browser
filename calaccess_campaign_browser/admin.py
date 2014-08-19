@@ -1,5 +1,5 @@
 from django.contrib import admin
-from campaign_finance.models import (
+from calaccess_campaign_browser.models import (
     Committee,
     Filer,
     Summary,

@@ -22,19 +22,19 @@ class TestCommand(Command):
                     'ENGINE': 'django.db.backends.sqlite3'
                 }
             },
-            INSTALLED_APPS=('campaign_finance',)
+            INSTALLED_APPS=('calaccess_campaign_browser',)
         )
         from django.core.management import call_command
-        call_command('test', 'campaign_finance')
+        call_command('test', 'calaccess_campaign_browser')
 
 setup(
-    name='django-calaccess-campaign-finance',
-    version='0.3',
+    name='django-calaccess-campaign-browser',
+    version='0.0.1',
     packages=[
-        'campaign_finance',
-        'campaign_finance.management',
-        'campaign_finance.management.commands',
-        'campaign_finance.utils',
+        'calaccess_campaign_browser',
+        'calaccess_campaign_browser.management',
+        'calaccess_campaign_browser.management.commands',
+        'calaccess_campaign_browser.utils',
     ],
     include_package_data=True,
     license='MIT',
@@ -53,7 +53,6 @@ drawn from the California Secretary of State’s CAL-ACCESS database',
         'requests==2.2.1',
         'progressbar>=2.2',
         'hurry.filesize==0.9',
-        'pypandoc==0.8.0',
     ),
     cmdclass={'test': TestCommand}
 )

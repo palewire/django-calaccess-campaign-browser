@@ -11,7 +11,7 @@ try:
 except:
     print 'Install the calaccess parser before running this script'
 
-from campaign_finance.models import (
+from calaccess_campaign_browser.models import (
     Committee,
     Contribution,
     Cycle,

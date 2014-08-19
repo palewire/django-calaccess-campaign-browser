@@ -2,14 +2,14 @@ from django.conf.urls import patterns, include, url
 from tastypie.api import Api
 from django.views.generic.base import RedirectView
 
-from campaign_finance.api import FilerResource
-from campaign_finance import views
+from calaccess_campaign_browser.api import FilerResource
+from calaccess_campaign_browser import views
 
 v1_api = Api(api_name='v1')
 v1_api.register(FilerResource())
 
 urlpatterns = patterns(
-    'campaign_finance.views',
+    'calaccess_campaign_browser.views',
     url(
         r'^$',
         views.IndexView.as_view(template_name='home/index.html'),

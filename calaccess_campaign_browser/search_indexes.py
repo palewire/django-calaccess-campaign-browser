@@ -1,5 +1,5 @@
 from haystack import indexes
-from campaign_finance.models import Filer
+from calaccess_campaign_browser.models import Filer
 
 
 class FilerIndex(indexes.SearchIndex, indexes.Indexable):

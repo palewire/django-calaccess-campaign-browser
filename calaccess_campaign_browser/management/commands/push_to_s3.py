@@ -6,7 +6,7 @@ from django.core.management.base import BaseCommand
 from django.core.files.base import File
 from django.conf import settings
 
-from campaign_finance.models import FlatFile
+from calaccess_campaign_browser.models import FlatFile
 
 custom_options = (
     make_option(

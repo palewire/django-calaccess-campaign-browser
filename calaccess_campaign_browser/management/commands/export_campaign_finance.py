@@ -6,7 +6,7 @@ from django.core.management.base import BaseCommand
 from django.conf import settings
 from django.utils.datastructures import SortedDict
 
-from campaign_finance.models import (
+from calaccess_campaign_browser.models import (
     Contribution,
     Cycle,
     Expenditure,
