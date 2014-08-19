@@ -65,7 +65,6 @@ class Command(BaseCommand):
         call_command("loadcalaccesscampaignfilers")
         call_command("loadcalaccesscampaignfilings")
         call_command("loadcalaccesscampaignsummary")
-        self.load_summary()
         self.load_contributions()
         self.load_expenditures()
 
