@@ -5,7 +5,7 @@ Install the application and its dependencies with ``pip``
 
 .. code-block:: bash
 
-   $ pip install django-calaccess-campaign-finance
+   $ pip install django-calaccess-campaign-browser
 
 Add this ``campaign_finance`` app as well as the underlying ``calaccess`` app
 that contains the raw government database it will work with to refine to your Django project's ``settings.py`` file:
@@ -15,7 +15,7 @@ that contains the raw government database it will work with to refine to your Dj
    INSTALLED_APPS = (
        ...
        'calaccess_raw',
-       'campaign_finance',
+       'calaccess_campaign_browser',
    )
 
 Also in the Django settings, configure a database connection. Currently this application only supports MySQL backends.
@@ -75,7 +75,7 @@ In your project ``urls.py`` file, add this app's URLs:
 .. code-block:: python
 
    urlpatterns = patterns('',
-       url(r'^browser/', include('campaign_finance.urls')),
+       url(r'^browser/', include('calaccess_campaign_browser.urls')),
    )
 
 Start the development server and visit ``http://127.0.0.1:8000/browser/`` to

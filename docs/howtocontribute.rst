@@ -8,22 +8,22 @@ First create a new virtualenv.
 
 .. code-block:: bash
 
-    $ virtualenv django-calaccess-campaign-finance
+    $ virtualenv django-calaccess-campaign-browser
 
 Jump in.
 
 .. code-block:: bash
 
-    $ cd django-calaccess-campaign-finance
+    $ cd django-calaccess-campaign-browser
     $ . bin/activate
 
-Clone the repository from `GitHub <https://github.com/california-civic-data-coalition/django-calaccess-campaign-finance>`_.
+Clone the repository from `GitHub <https://github.com/california-civic-data-coalition/django-calaccess-campaign-browser>`_.
 
-Make sure you have the `django-calaccess-parser <https://github.com/california-civic-data-coalition/django-calaccess-campaign-parser>`_ installed otherwise NONE OF THIS WILL WORK.
+Make sure you have the `django-calaccess-raw-data <https://github.com/california-civic-data-coalition/django-calaccess-raw-data>`_ installed otherwise NONE OF THIS WILL WORK.
 
 .. code-block:: bash
 
-    $ git clone https://github.com/california-civic-data-coalition/django-calaccess-campaign-finance.git repo
+    $ git clone https://github.com/california-civic-data-coalition/django-calaccess-campaign-browser.git repo
 
 Move into it and install the Python dependencies.
 
@@ -35,11 +35,11 @@ Move into it and install the Python dependencies.
 Make sure you have MySQL installed. If you don't, now is the time to hit Google and figure out how. If
 you're using Apple's OSX operating system, you can `install via Homebrew <http://benjsicam.me/blog/how-to-install-mysql-on-mac-os-x-using-homebrew-tutorial/>`_. If you need to clean up after a previous MySQL installation, `this might help <http://stackoverflow.com/questions/4359131/brew-install-mysql-on-mac-os/6378429#6378429>`_.
 
-Then create a new database named ``campaign_finance``.
+Then create a new database named ``campaign_browser``.
 
 .. code-block:: bash
 
-    mysqladmin -h localhost -u root -p create campaign_finance
+    mysqladmin -h localhost -u root -p create campaign_browser
 
 If you have a different username, substitute it above. You'll be prompted for that user's mysql password.
 
@@ -51,7 +51,7 @@ might look something like this.
     DATABASES = {
         'default': {
             'ENGINE': 'django.db.backends.mysql',
-            'NAME': 'campaign_finance',
+            'NAME': 'campaign_browser',
             'USER': 'yourusername', # <-- This
             'PASSWORD': 'yourpassword', # <-- And this
             'HOST': 'localhost',

@@ -44,7 +44,7 @@ MIDDLEWARE_CLASSES = (
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.mysql',
-        'NAME': 'campaign_finance',
+        'NAME': 'campaign_browser',
         'USER': 'root',
         'PASSWORD': 'mysql',
         'HOST': '',
