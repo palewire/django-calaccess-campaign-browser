@@ -1,3 +1,4 @@
+build/
 _build/
 .tox/
 example/project/settings_local.py
