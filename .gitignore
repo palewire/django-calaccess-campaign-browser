@@ -1,3 +1,4 @@
+.tox/
 example/project/settings_local.py
 example/.static/
 *.pyc
