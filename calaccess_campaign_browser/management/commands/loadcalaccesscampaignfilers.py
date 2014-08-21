@@ -56,7 +56,7 @@ class Command(BaseCommand):
 
     def load_candidate_committees(self):
         """
-        Link candidate filers to committees that are directly linked to
+        Connect candidate filers to committees that are directly linked to
         their campaigns and then load those committees into a consolidated
         table.
         """
