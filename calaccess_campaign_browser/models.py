@@ -5,14 +5,14 @@ from django.db.models import Sum
 from hurry.filesize import size
 
 
-class Candidate(models.Model):
-    """
-    A human being running for public office.
+#class Candidate(models.Model):
+#    """
+#    A human being running for public office.
 
-    May be linked to one-to-many committees of varying types, some of them
-    directly controlled by their campaign and others may be independent.
-    """
-    pass
+#    May be linked to one-to-many committees of varying types, some of them
+#    directly controlled by their campaign and others may be independent.
+#    """
+#    pass
 
 
 class Filer(models.Model):
@@ -28,6 +28,9 @@ class Filer(models.Model):
     # fields updated by other tables
     xref_filer_id = models.CharField(max_length=32L, null=True)
     name = models.CharField(max_length=255L, null=True)
+
+    class Meta:
+        ordering = ("name",)
 
     def __unicode__(self):
         return self.name
