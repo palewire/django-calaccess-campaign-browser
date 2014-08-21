@@ -14,12 +14,7 @@ class Command(BaseCommand):
         """
         print "- Loading candidates into consolidated Filer model"
         c = connection.cursor()
-        model_list = [
-            Filer
-        ]
-        for m in model_list:
-            print m
-            c.execute('DELETE FROM %s' % m._meta.db_table)
+        c.execute('DELETE FROM %s' % Filer._meta.db_table)
         sql = """
         INSERT INTO %s (
             filer_id,
@@ -34,12 +29,19 @@ class Command(BaseCommand):
          FILERNAME_CD.`STATUS` as status,
          FILERNAME_CD.`EFFECT_DT` as effective_date,
          FILERNAME_CD.`XREF_FILER_ID` as xref_filer_id,
+        -- Marking these as candidate record in our target data file
          'cand' as filer_type,
+        -- Combining and cleaning up the name data from the source
          REPLACE(TRIM(CONCAT(`NAMT`, " ", `NAMF`, " ", `NAML`, " ", `NAMS`)), '  ', ' ') as name
         FROM FILERNAME_CD
         INNER JOIN (
+            -- Joining against a subquery that returns the last record
+            -- in the source table because there are duplicates and we
+            -- do not know of any logical way to better infer the most 
+            -- recent or complete record.
             SELECT FILER_ID, MAX(`id`) as `id`
             FROM FILERNAME_CD
+            -- This filter limits the source data to only candidate filers
             WHERE `FILER_TYPE` = 'CANDIDATE/OFFICEHOLDER'
             GROUP BY 1
         ) as max
