@@ -29,7 +29,7 @@ class Command(BaseCommand):
          FILERNAME_CD.`STATUS` as status,
          FILERNAME_CD.`EFFECT_DT` as effective_date,
          FILERNAME_CD.`XREF_FILER_ID` as xref_filer_id,
-        -- Marking these as candidate record in our target data file
+        -- Marking these as candidate record in our target data table
          'cand' as filer_type,
         -- Combining and cleaning up the name data from the source
          REPLACE(TRIM(CONCAT(`NAMT`, " ", `NAMF`, " ", `NAML`, " ", `NAMS`)), '  ', ' ') as name
