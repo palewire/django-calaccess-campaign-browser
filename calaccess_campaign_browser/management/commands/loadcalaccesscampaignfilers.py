@@ -1,6 +1,6 @@
 from django.db import connection
 from django.core.management.base import BaseCommand
-from calaccess_campaign_browser.models import *
+from calaccess_campaign_browser.models import Filer
 
 
 class Command(BaseCommand):
