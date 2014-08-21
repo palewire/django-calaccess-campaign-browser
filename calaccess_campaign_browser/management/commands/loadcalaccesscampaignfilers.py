@@ -8,6 +8,12 @@ from calaccess_campaign_browser.models import Committee, Filer
 class Command(BaseCommand):
 
     def handle(self, *args, **options):
+        # Imaginary restructure
+        self.load_candidates()
+        self.load_committees()
+        self.link_committees_to_candidates()
+
+    def oldschool(self, *args, **kwargs):
         """
         Take a look in the Filings table and just
         load up the filers that have filed a 460 or a 450.
