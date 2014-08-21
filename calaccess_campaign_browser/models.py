@@ -41,7 +41,6 @@ class Filer(models.Model):
 
 
 class Committee(models.Model):
-
     '''
         If a Candidate controls the committee, the filer is associated with the
         Candidate Filer record, not the committee Filer record
@@ -403,7 +402,6 @@ class Contribution(models.Model):
 
 
 class Stats(models.Model):
-
     '''
         Flexible model for housing aggregate stats
         Should be able to add any stat you like for
