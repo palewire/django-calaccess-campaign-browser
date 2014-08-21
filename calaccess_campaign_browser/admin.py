@@ -36,7 +36,23 @@ class FilerAdmin(BaseAdmin):
     date_hierarchy = "effective_date"
 
 
-admin.site.register(Committee)
+class CommitteeAdmin(BaseAdmin):
+    list_display = (
+        "filer_id_raw",
+        "name",
+        "filer",
+        "committee_type",
+    )
+    list_filter = (
+        "committee_type",
+    )
+    search_fields = (
+        "name",
+        "filer_id_raw",
+    )
+
+
+admin.site.register(Committee, CommitteeAdmin)
 admin.site.register(Filer, FilerAdmin)
 admin.site.register(Expenditure)
 admin.site.register(Contribution)

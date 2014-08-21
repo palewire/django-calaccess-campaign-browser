@@ -70,6 +70,9 @@ class Committee(models.Model):
     name = models.CharField(max_length=255, null=True)
     committee_type = models.CharField(max_length=50, choices=CMTE_TYPE_OPTIONS)
 
+    class Meta:
+        ordering = ("name",)
+
     def __unicode__(self):
         return self.name
 

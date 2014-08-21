@@ -1,12 +1,16 @@
 from django.db import connection
 from django.core.management.base import BaseCommand
-from calaccess_campaign_browser.models import Filer
+from calaccess_campaign_browser.models import Filer, Committee
 
 
 class Command(BaseCommand):
 
     def handle(self, *args, **options):
+        c = connection.cursor()
+        c.execute('DELETE FROM %s' % Filer._meta.db_table)
+        c.execute('DELETE FROM %s' % Committee._meta.db_table)
         self.load_candidates()
+        self.load_candidate_committees()
 
     def load_candidates(self):
         """
@@ -14,7 +18,6 @@ class Command(BaseCommand):
         """
         print "- Loading candidates into consolidated Filer model"
         c = connection.cursor()
-        c.execute('DELETE FROM %s' % Filer._meta.db_table)
         sql = """
         INSERT INTO %s (
             filer_id,
@@ -48,6 +51,82 @@ class Command(BaseCommand):
         ON FILERNAME_CD.`id` = max.`id`
         """ % (
             Filer._meta.db_table,
+        )
+        c.execute(sql)
+
+    def load_candidate_committees(self):
+        """
+        Link candidate filers to committees that are directly linked to
+        their campaigns and then load those committees into a consolidated
+        table.
+        """
+        print "- Loading committees for candidate filers"
+        c = connection.cursor()
+        sql = """
+        INSERT INTO %s (
+            filer_id,
+            filer_id_raw,
+            name,
+            committee_type
+        )
+        SELECT
+            candidates2committees.`candidate_filer_pk` as filer_id,
+            distinct_filers.`filer_id` as filer_id_raw,
+            distinct_filers.`name` as name,
+            'cand' as committee_type
+        FROM (
+            -- Two queries that going together via a UNION to return
+            -- the corresponding committee filer ids that are linked
+            -- to the candidate filer records from either direction (ie. A or B)
+            SELECT 
+                f.`id` as candidate_filer_pk,
+                f.`FILER_ID` as candidate_filer_id,
+                committee_filer_id_a.`FILER_ID_A` as committee_filer_id
+            FROM calaccess_campaign_browser_filer f
+            INNER JOIN (
+                SELECT DISTINCT `FILER_ID_A`, `FILER_ID_B`
+                FROM FILER_LINKS_CD
+                WHERE LINK_TYPE = '12011'
+                AND `FILER_ID_A` IS NOT NULL
+            ) as committee_filer_id_a
+            ON f.`FILER_ID` = committee_filer_id_a.`FILER_ID_B`
+            AND f.`FILER_ID` <> committee_filer_id_a.`FILER_ID_A`
+
+            UNION
+
+            SELECT
+                f.`id` as candidate_filer_pk,
+                f.`FILER_ID` as candidate_filer_id,
+                committee_filer_id_a.`FILER_ID_B` as committee_filer_id
+            FROM calaccess_campaign_browser_filer f
+            INNER JOIN (
+                SELECT DISTINCT `FILER_ID_A`, `FILER_ID_B`
+                FROM FILER_LINKS_CD
+                WHERE LINK_TYPE = '12011'
+                AND `FILER_ID_B` IS NOT NULL
+            ) as committee_filer_id_a
+            ON f.`FILER_ID` = committee_filer_id_a.`FILER_ID_A`
+            AND f.`FILER_ID` <> committee_filer_id_a.`FILER_ID_B`
+        ) as candidates2committees
+        INNER JOIN (
+            SELECT
+             FILERNAME_CD.`FILER_ID` as filer_id,
+             REPLACE(TRIM(CONCAT(`NAMT`, " ", `NAMF`, " ", `NAML`, " ", `NAMS`)), '  ', ' ') as name
+            FROM FILERNAME_CD
+            INNER JOIN (
+                -- Joining against a subquery that returns the last record
+                -- in the source table because there are duplicates and we
+                -- do not know of any logical way to better infer the most 
+                -- recent or complete record.
+                SELECT FILER_ID, MAX(`id`) as `id`
+                FROM FILERNAME_CD
+                GROUP BY 1
+            ) as max
+            ON FILERNAME_CD.`id` = max.`id`
+        ) as distinct_filers
+        ON candidates2committees.`committee_filer_id` = distinct_filers.`filer_id`;
+        """ % (
+            Committee._meta.db_table,
         )
         c.execute(sql)
 
