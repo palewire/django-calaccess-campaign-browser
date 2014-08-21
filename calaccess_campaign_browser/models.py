@@ -5,6 +5,16 @@ from django.db.models import Sum
 from hurry.filesize import size
 
 
+class Candidate(models.Model):
+    """
+    A human being running for public office.
+
+    May be linked to one-to-many committees of varying types, some of them
+    directly controlled by their campaign and others may be independent.
+    """
+    pass
+
+
 class Filer(models.Model):
     FILER_TYPE_OPTIONS = (
         ('pac', 'Political Action Committee'),
@@ -27,16 +37,13 @@ class Filer(models.Model):
 
     def _create_slug(self):
         return slugify(self.name)
-
     slug = property(_create_slug)
 
     def _total_contributions(self):
-
         qs = Filing.objects.filter(committee__filer=self)
         total = Summary.objects.filter(filing__in=qs).aggregate(
             tot=Sum('total_contribs'))['tot']
         return total
-
     total_contributions = property(_total_contributions)
 
 
