@@ -75,7 +75,7 @@ class Command(BaseCommand):
             distinct_filers.`name` as name,
             'cand' as committee_type
         FROM (
-            -- Two queries that going together via a UNION to return
+            -- Two queries that join together via a UNION to return
             -- the corresponding committee filer ids that are linked
             -- to the candidate filer records from either direction (ie. A or B)
             SELECT 
