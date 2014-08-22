@@ -26,7 +26,7 @@
 {% include "committee_nav.html" %}
 
 <div class="row">
-    <div class="col-xs-12">
+    <div class="col-12-lg">
     <h3>
           Filings
           <div class="btn-group">
@@ -44,7 +44,13 @@
         <br>
         Total expenditures: ${{committee.total_expenditures  | intcomma}}
     </p>
-    {% include "paginator.html" %}
+    </div>
+</div>
+
+{% include "paginator.html" %}
+
+<div class="row">
+    <div class="col-12-lg">
           <div class="table-responsive">
             <table id="datatable" class="table table-bordered table-hover"> <!-- table table-bordered table-hover -->
               <thead>
