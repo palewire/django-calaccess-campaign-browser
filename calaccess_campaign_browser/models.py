@@ -51,7 +51,7 @@ class Filer(models.Model):
 
 
 class Committee(models.Model):
-    '''
+    """
         If a Candidate controls the committee, the filer is associated with the
         Candidate Filer record, not the committee Filer record
         But the committee Filer record can still be accessed using filer_id_raw
@@ -59,7 +59,7 @@ class Committee(models.Model):
         and committee filers that are not candidate controlled
         link back to one, committee filer
         If there's a better way I'm open to suggestions
-    '''
+    """
     CMTE_TYPE_OPTIONS = (
         ('cand', 'Candidate Committee'),
         ('pac', 'Non-Candidate Committee'),
@@ -158,9 +158,11 @@ class Committee(models.Model):
 class Cycle(models.Model):
     name = models.IntegerField()
 
+    class Meta:
+        ordering = ("-name",)
+
     def __unicode__(self):
-        str_name = '%s' % self.name
-        return str_name
+        return '%s' % self.name
 
 
 class Filing(models.Model):
@@ -171,7 +173,7 @@ class Filing(models.Model):
     form_id = models.CharField(max_length=7)
     start_date = models.DateField(null=True)
     end_date = models.DateField(null=True)
-    dupe = models.BooleanField(default=False)
+    dupe = models.BooleanField('duplicate', default=False)
 
     def __unicode__(self):
         str_name = '%s (%s - %s)' % (self.filing_id_raw,

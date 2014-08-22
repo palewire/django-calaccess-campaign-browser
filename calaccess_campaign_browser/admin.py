@@ -5,7 +5,8 @@ from calaccess_campaign_browser.models import (
     Summary,
     Expenditure,
     Contribution,
-    FlatFile
+    FlatFile,
+    Cycle,
 )
 
 class BaseAdmin(admin.ModelAdmin):
@@ -52,8 +53,13 @@ class CommitteeAdmin(BaseAdmin):
     )
 
 
+class CycleAdmin(BaseAdmin):
+    list_display = ("name",)
+
+
 admin.site.register(Committee, CommitteeAdmin)
 admin.site.register(Filer, FilerAdmin)
+admin.site.register(Cycle, CycleAdmin)
 admin.site.register(Expenditure)
 admin.site.register(Contribution)
 admin.site.register(FlatFile)
