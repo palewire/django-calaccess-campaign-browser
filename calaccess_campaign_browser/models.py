@@ -176,9 +176,11 @@ class Filing(models.Model):
     dupe = models.BooleanField('duplicate', default=False)
 
     def __unicode__(self):
-        str_name = '%s (%s - %s)' % (self.filing_id_raw,
-                                     self.start_date, self.end_date)
-        return str_name
+        return '%s (%s-%s)' % (
+            self.filing_id_raw,
+            self.start_date,
+            self.end_date
+        )
 
     def get_absolute_url(self):
         return reverse('filing_detail', args=[str(self.pk)])

@@ -10,8 +10,8 @@ class Command(BaseCommand):
         Loads raw filings into consolidated tables
         """
         c = connection.cursor()
-        c.execute('DELETE FROM %s' % Cycle._meta.db_table)
         c.execute('DELETE FROM %s' % Filing._meta.db_table)
+        c.execute('DELETE FROM %s' % Cycle._meta.db_table)
         self.load_cycles()
         self.load_filings()
         self.mark_duplicates()
@@ -20,9 +20,7 @@ class Command(BaseCommand):
         print "- Loading cycles"
         c = connection.cursor()
         sql = """
-            INSERT INTO %s (
-                `name`
-            )
+            INSERT INTO %s (`name`)
             SELECT `session_id`
             FROM FILER_FILINGS_CD
             GROUP BY 1
@@ -33,7 +31,39 @@ class Command(BaseCommand):
         c.execute(sql)
 
     def load_filings(self):
-        pass
+        print "- Loading filings"
+        c = connection.cursor()
+        sql = """
+        INSERT INTO %s (
+          cycle_id,
+          committee_id,
+          filing_id_raw,
+          form_id,
+          amend_id,
+          start_date,
+          end_date,
+          dupe
+        )
+        SELECT 
+          cycle.id as cycle_id,
+          c.id as committee_id,
+          ff.FILING_ID as filing_id_raw,
+          ff.form_id as form_id,
+          ff.filing_sequence as amend_id,
+          ff.rpt_start as start_date,
+          ff.rpt_end as end_date,
+          false
+        FROM FILER_FILINGS_CD as ff
+        INNER JOIN calaccess_campaign_browser_committee as c
+        ON ff.`filer_id` = c.`filer_id_raw`
+        INNER JOIN calaccess_campaign_browser_cycle as cycle
+        ON ff.session_id = cycle.name
+        WHERE `FORM_ID` IN ('F450', 'F460')
+        LIMIT 500;
+        """ % (
+            Filing._meta.db_table,
+        )
+        c.execute(sql)
 
     def mark_duplicates(self):
         pass

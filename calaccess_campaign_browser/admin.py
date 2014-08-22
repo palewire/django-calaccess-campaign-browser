@@ -7,6 +7,7 @@ from calaccess_campaign_browser.models import (
     Contribution,
     FlatFile,
     Cycle,
+    Filing,
 )
 
 class BaseAdmin(admin.ModelAdmin):
@@ -14,6 +15,28 @@ class BaseAdmin(admin.ModelAdmin):
 
     def get_readonly_fields(self, *args, **kwargs):
         return [f.name for f in self.model._meta.fields]
+
+
+class FilingAdmin(BaseAdmin):
+    list_display = (
+        "filing_id_raw",
+        "committee",
+        "form_id",
+        "cycle",
+        "start_date",
+        "end_date",
+        "amend_id",
+        "dupe",
+    )
+    list_filter = (
+        "form_id",
+        "dupe",
+        "cycle",
+    )
+    search_fields = (
+        "filing_id_raw",
+        "committee",
+    )
 
 
 class FilerAdmin(BaseAdmin):
@@ -60,6 +83,7 @@ class CycleAdmin(BaseAdmin):
 admin.site.register(Committee, CommitteeAdmin)
 admin.site.register(Filer, FilerAdmin)
 admin.site.register(Cycle, CycleAdmin)
+admin.site.register(Filing, FilingAdmin)
 admin.site.register(Expenditure)
 admin.site.register(Contribution)
 admin.site.register(FlatFile)
