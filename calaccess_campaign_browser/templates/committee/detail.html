@@ -1,8 +1,7 @@
 {% extends 'base.html' %}
 {% load humanize %}
 
-{% block title %}
-{% endblock %}
+{% block title %}{{ committee.name }} - Committee - {{ block.super }}{% endblock %}
 
 {% block content %}
 
