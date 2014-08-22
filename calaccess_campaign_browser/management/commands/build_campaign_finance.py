@@ -8,6 +8,6 @@ class Command(BaseCommand):
     def handle(self, *args, **options):
         call_command("loadcalaccesscampaignfilers")
         call_command("loadcalaccesscampaignfilings")
-        call_command("loadcalaccesscampaignsummary")
+        call_command("loadcalaccesscampaignsummaries")
         call_command("loadcalaccesscampaigncontribs")
         call_command("loadcalaccesscampaignexpends")
