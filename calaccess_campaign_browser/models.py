@@ -21,7 +21,7 @@ class Filer(models.Model):
         ('cand', 'Candidate'),
     )
     # straight out of the filer table
-    filer_id = models.IntegerField()
+    filer_id = models.IntegerField(db_index=True)
     status = models.CharField(max_length=255, null=True)
     filer_type = models.CharField(max_length=10L, choices=FILER_TYPE_OPTIONS)
     effective_date = models.DateField(null=True)
@@ -66,7 +66,7 @@ class Committee(models.Model):
         ('linked-pac', 'Non-Candidate Committee, linked to other committees'),
     )
     filer = models.ForeignKey(Filer)
-    filer_id_raw = models.IntegerField()
+    filer_id_raw = models.IntegerField(db_index=True)
     name = models.CharField(max_length=255, null=True)
     committee_type = models.CharField(max_length=50, choices=CMTE_TYPE_OPTIONS)
 
@@ -168,7 +168,7 @@ class Cycle(models.Model):
 class Filing(models.Model):
     cycle = models.ForeignKey(Cycle)
     committee = models.ForeignKey(Committee)
-    filing_id_raw = models.IntegerField()
+    filing_id_raw = models.IntegerField(db_index=True)
     amend_id = models.IntegerField()
     form_id = models.CharField(max_length=7)
     start_date = models.DateField(null=True)

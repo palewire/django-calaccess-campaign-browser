@@ -18,7 +18,7 @@ class Command(BaseCommand):
         """
         Load all of the distinct candidate filers into the Filing table.
         """
-        print "- Loading candidates into consolidated Filer model"
+        print "- Extracting candidates and loading into Filer model"
         c = connection.cursor()
         sql = """
         INSERT INTO %s (
@@ -62,7 +62,7 @@ class Command(BaseCommand):
         their campaigns and then load those committees into a consolidated
         table.
         """
-        print "- Loading committees for candidate filers"
+        print "- Loading committees linked to candidate filers into Committee model"
         c = connection.cursor()
         sql = """
         INSERT INTO %s (
@@ -133,7 +133,7 @@ class Command(BaseCommand):
         c.execute(sql)
 
     def load_pac_filers(self):
-        print "- Loading recipient committees not associated witha candidate into filers"
+        print "- Finding recipient committees not associated with candidates and loading into Filer model as PACs"
         c = connection.cursor()
         sql = """
         INSERT INTO %s (
@@ -187,7 +187,7 @@ class Command(BaseCommand):
         """
         Load PAC filers into the committees table.
         """
-        print "- Loading PAC filers into committees table"
+        print "- Duplicating PAC filers in Committee model"
         c = connection.cursor()
         sql = """
             INSERT INTO %s (

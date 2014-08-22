@@ -65,30 +65,53 @@ class Command(BaseCommand):
         c.execute(sql)
 
     def mark_duplicates(self):
-        pass
+        print "- Marking duplicates"
+        c = connection.cursor()
 
-#        # get dupe filings flagged
-#        d = {}
-#        for f in Filing.objects.all():
-#            id_num = f.filing_id_raw
-#            if id_num not in d:
-#                d[id_num] = 1
-#            else:
-#                d[id_num] += 1
+        # Mark all recurring filing ids as duplicates
+        sql = """CREATE TABLE tmp_filing_dupes (filing_id_raw int);"""
+        c.execute(sql)
 
-#        filing_id_list = []
-#        for k, v in d.items():
-#            if v > 1:
-#                filing_id_list.append(k)
-#                # print '%s\t%s' % (k,v)
+        sql = """
+        INSERT INTO tmp_filing_dupes (filing_id_raw)
+        SELECT filing_id_raw
+        FROM calaccess_campaign_browser_filing
+        GROUP BY 1
+        HAVING COUNT(*) > 1;
+        """
+        c.execute(sql)
 
-#        for id_num in filing_id_list:
-#            qs = Filing.objects.filter(filing_id_raw=id_num).order_by('-id')
-#            keeper = qs[0]
-#            for q in qs.exclude(id=keeper.id):
-#                q.dupe = True
-#                q.save()
+        sql = """
+        UPDATE calaccess_campaign_browser_filing
+        INNER JOIN tmp_filing_dupes
+        ON calaccess_campaign_browser_filing.`filing_id_raw` = tmp_filing_dupes.`filing_id_raw`
+        SET dupe = true;
+        """
+        c.execute(sql)
 
-#        print 'flagged dupe filings'
-#        gc.collect()
-#        reset_queries()
+        sql = """DROP TABLE tmp_filing_dupes;"""
+        c.execute(sql)
+
+        # Unmark all those with the maximum id number among their set
+        sql = """CREATE TABLE tmp_filing_max_dupes (filing_id_raw int, max_id int);"""
+        c.execute(sql)
+
+        sql = """
+        INSERT INTO tmp_filing_max_dupes (filing_id_raw, max_id)
+        SELECT f.`filing_id_raw`, MAX(`id`) as max_id
+        FROM calaccess_campaign_browser_filing as f
+        WHERE dupe = true
+        GROUP BY 1
+        """
+        c.execute(sql)
+
+        sql = """
+        UPDATE calaccess_campaign_browser_filing
+        INNER JOIN tmp_filing_max_dupes
+        ON calaccess_campaign_browser_filing.`id` = tmp_filing_max_dupes.`max_id`
+        SET dupe = false;
+        """
+        c.execute(sql)
+
+        sql = """DROP TABLE tmp_filing_max_dupes;"""
+        c.execute(sql)

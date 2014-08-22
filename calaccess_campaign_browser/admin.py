@@ -35,7 +35,6 @@ class FilingAdmin(BaseAdmin):
     )
     search_fields = (
         "filing_id_raw",
-        "committee",
     )
 
 
