@@ -1,7 +1,6 @@
 {% extends 'base.html' %}
 
-{% block title %}
-{% endblock %}
+{% block title %}{{ filer.name }} - Candidates and PACs - {{ block.super }}{% endblock %}
 
 {% block content %}
 <div class="container">
@@ -30,7 +29,7 @@
                 <a href="{{ committee.get_absolute_url }}">{{ committee.name }}</a>
               </td>
               <td>{{ committee.filer_id_raw }}</td>
-              <td>{{ committee.committe_type }}</td>
+              <td>{{ committee.get_committee_type_display }}</td>
             </tr>
           {% endfor %}
           </tbody>
