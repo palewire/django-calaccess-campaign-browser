@@ -116,6 +116,22 @@ class ExpenditureAdmin(BaseAdmin):
     date_hierarchy = "expn_date"
 
 
+class SummaryAdmin(BaseAdmin):
+    list_display = (
+        "id",
+        "committee",
+        "filing",
+        "form_type",
+        "total_contribs",
+        "total_expenditures"
+        "dupe"
+    )
+    list_filter = (
+        "dupe",
+        "form_type"
+    )
+
+
 admin.site.register(Committee, CommitteeAdmin)
 admin.site.register(Filer, FilerAdmin)
 admin.site.register(Cycle, CycleAdmin)
@@ -123,4 +139,4 @@ admin.site.register(Filing, FilingAdmin)
 admin.site.register(Expenditure, ExpenditureAdmin)
 admin.site.register(Contribution, ContributionAdmin)
 admin.site.register(FlatFile)
-admin.site.register(Summary)
+admin.site.register(Summary, SummaryAdmin)
