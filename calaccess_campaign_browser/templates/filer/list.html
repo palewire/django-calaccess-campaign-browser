@@ -1,7 +1,6 @@
 {% extends 'base.html' %}
 
-{% block title %}
-{% endblock %}
+{% block title %}Candidates and PACs - {{ block.super }}{% endblock %}
 
 {% block javascript %}
     <script>
@@ -20,6 +19,12 @@
 
 {% block content %}
 <div class="container">
+  <div class="row">
+    <div class="col-12-lg">
+        <h1>Candidates and PACs</h1>
+    </div>
+  </div>
+
   {% include "paginator.html" %}
   <div class="row">
     <div class="col-12-lg">
