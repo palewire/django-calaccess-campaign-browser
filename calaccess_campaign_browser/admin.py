@@ -81,6 +81,7 @@ class CycleAdmin(BaseAdmin):
 
 class ContributionAdmin(BaseAdmin):
     list_display = (
+        "id",
         "raw_org_name",
         "committee",
         "rcpt_date",
@@ -96,11 +97,30 @@ class ContributionAdmin(BaseAdmin):
     date_hierarchy = "rcpt_date"
 
 
+class ExpenditureAdmin(BaseAdmin):
+    list_display = (
+        "id",
+        "name",
+        "raw_org_name",
+        "committee",
+        "expn_date",
+        "dupe",
+    )
+    list_filter = (
+        "dupe",
+    )
+    search_fields = (
+        "name",
+        "raw_org_name",
+    )
+    date_hierarchy = "expn_date"
+
+
 admin.site.register(Committee, CommitteeAdmin)
 admin.site.register(Filer, FilerAdmin)
 admin.site.register(Cycle, CycleAdmin)
 admin.site.register(Filing, FilingAdmin)
-admin.site.register(Expenditure)
+admin.site.register(Expenditure, ExpenditureAdmin)
 admin.site.register(Contribution, ContributionAdmin)
 admin.site.register(FlatFile)
 admin.site.register(Summary)

@@ -283,7 +283,6 @@ class Expenditure(models.Model):
         max_length=3L, blank=True,
         choices=EXPENDITURE_CODE_CHOICES
     )
-    expn_code_display = models.CharField(max_length=255, blank=True)
     expn_date = models.DateField(null=True)
     expn_dscr = models.CharField(max_length=400L, blank=True)
     form_type = models.CharField(max_length=6L, blank=True)
@@ -330,10 +329,6 @@ class Expenditure(models.Model):
             print 'Raw data not available. Install and run calaccess_raw app.'
             obj = None
         return obj
-
-    def save(self, **kwargs):
-        self.expn_code_display = self.get_expn_code_display()
-        super(self.__class__, self).save(**kwargs)
 
     def get_absolute_url(self):
         return reverse('expenditure_detail', args=[str(self.pk)])
