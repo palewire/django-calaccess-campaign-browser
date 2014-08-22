@@ -187,44 +187,53 @@ class Filing(models.Model):
 
 
 class Summary(models.Model):
+    cycle = models.ForeignKey(Cycle)
+    committee = models.ForeignKey(Committee)
+    filing = models.ForeignKey(Filing)
     FORM_TYPE_CHOICES = (
         ('F460', 'Recipient Committee Campaign Statement'),
         ('F450', 'Recipient Committee Campaign Statement -- Short Form'),
     )
-    cycle = models.ForeignKey(Cycle)
-    committee = models.ForeignKey(Committee)
-    filing = models.ForeignKey(Filing)
     form_type = models.CharField(max_length=10, choices=FORM_TYPE_CHOICES)
     itemized_monetary_contribs = models.DecimalField(
-        max_digits=16, decimal_places=2)
+        max_digits=16,
+        decimal_places=2
+    )
     unitemized_expenditures = models.DecimalField(
-        max_digits=16, decimal_places=2)
-    total_expenditures = models.DecimalField(max_digits=16, decimal_places=2)
+        max_digits=16,
+        decimal_places=2
+    )
+    total_expenditures = models.DecimalField(
+        max_digits=16, decimal_places=2
+    )
     total_monetary_contribs = models.DecimalField(
-        max_digits=16, decimal_places=2)
+        max_digits=16,
+        decimal_places=2
+    )
     unitemized_monetary_contribs = models.DecimalField(
-        max_digits=16, decimal_places=2)
+        max_digits=16,
+        decimal_places=2
+    )
     non_monetary_contribs = models.DecimalField(
-        max_digits=16, decimal_places=2)
+        max_digits=16,
+        decimal_places=2
+    )
     itemized_expenditures = models.DecimalField(
-        max_digits=16, decimal_places=2)
+        max_digits=16,
+        decimal_places=2
+    )
     total_contribs = models.DecimalField(max_digits=16, decimal_places=2)
     outstanding_debts = models.DecimalField(max_digits=16, decimal_places=2)
     ending_cash_balance = models.DecimalField(max_digits=16, decimal_places=2)
     dupe = models.BooleanField(default=False)
 
     def __unicode__(self):
-        str_name = (
-            '{0} {1} ({2} - {3})'
-            .format(
-                self.cycle.name,
-                self.committee.name,
-                self.filing.start_date,
-                self.filing.end_date
-            )
+        return '{0} {1} ({2} - {3})'.format(
+            self.cycle.name,
+            self.committee.name,
+            self.filing.start_date,
+            self.filing.end_date
         )
-
-        return str_name
 
 
 class Expenditure(models.Model):

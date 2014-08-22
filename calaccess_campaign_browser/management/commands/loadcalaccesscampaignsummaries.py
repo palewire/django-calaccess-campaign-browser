@@ -1,108 +1,245 @@
-import gc
-from django.db import reset_queries
-from calaccess_raw.models import SmryCd
+from django.db import connection
 from django.core.management.base import BaseCommand
-from calaccess_campaign_browser.models import Filing, Summary
-from calaccess_campaign_browser.utils.querysetiterator import queryset_iterator
+from calaccess_campaign_browser.models import Summary
 
 
 class Command(BaseCommand):
 
-    def handle(self):
-        '''
-        Currently using a dictonary to parse the summary
-        information by form type, schedule and line number.
-        '''
-        summary_form_dict = {
-            'F460': {
-                # 'name': 'Recipient Committee Campaign Statement',
-                'itemized_monetary_contribs': {'sked': 'A', 'line_item': 1},
-                'unitemized_monetary_contribs': {'sked': 'A', 'line_item': 2},
-                'total_monetary_contribs': {'sked': 'A', 'line_item': 3},
-                'non_monetary_contribs': {'sked': 'F460', 'line_item': 4},
-                'total_contribs': {'sked': 'F460', 'line_item': 5},
-                'itemized_expenditures': {'sked': 'E', 'line_item': 1},
-                'unitemized_expenditures': {'sked': 'E', 'line_item': 2},
-                'total_expenditures': {'sked': 'E', 'line_item': 4},
-                'ending_cash_balance': {'sked': 'F460', 'line_item': 16},
-                'outstanding_debts': {'sked': 'F460', 'line_item': 19},
-            },
-            'F450': {
-                # 'Recipient Committee Campaign Statement -- Short Form'
-                # 'name': "" -- Short Form',
-                'itemized_monetary_contribs': None,
-                'unitemized_monetary_contribs': None,
-                'total_monetary_contribs': {'sked': 'F450', 'line_item': 7},
-                'non_monetary_contribs': {'sked': 'F450', 'line_item': 8},
-                'total_contribs': {'sked': '450', 'line_item': 10},
-                'itemized_expenditures': {'sked': 'F450', 'line_item': 1},
-                'unitemized_expenditures': {'sked': 'F450', 'line_item': 2},
-                'total_expenditures': {'sked': 'E', 'line_item': 6},
-                'ending_cash_balance': {'sked': 'F460', 'line_item': 15},
-                'outstanding_debts': None,
-            }
-        }
-        insert_stats = {}
-        i = 0
-        bulk_recrods = []
-        for f in queryset_iterator(Filing.objects.all()):
-            qs = SmryCd.objects.filter(
-                filing_id=f.filing_id_raw, amend_id=f.amend_id)
-            f_id = '%s-%s' % (f.filing_id_raw, f.amend_id)
-            insert_stats[f_id] = qs.count()
+    def handle(self, *args, **options):
+        print "- Loading summary totals for filings"
+        c = connection.cursor()
+        c.execute('DELETE FROM %s' % Summary._meta.db_table)
+        self.load_form_F460()
+        self.load_form_F450()
 
-            if qs.count() > 0:
-                query_dict = summary_form_dict[f.form_id]
-                insert = Summary()
-                insert.committee = f.committee
-                insert.cycle = f.cycle
-                insert.form_type = f.form_id
-                insert.filing = f
-                insert.dupe = f.dupe
-                for k, v in query_dict.items():
-                    try:
-                        insert.__dict__[k] = qs.get(
-                            form_type=v['sked'],
-                            line_item=v['line_item']
-                        ).amount_a
-
-                    except:
-                        insert.__dict__[k] = 0
-                i += 1
-                bulk_recrods.append(insert)
-                if i % 5000 == 0:
-                    Summary.objects.bulk_create(bulk_recrods)
-                    bulk_recrods = []
-                    print '%s records created ...' % i
-                    reset_queries()
-                    gc.collect()
-
-        if len(bulk_recrods) > 0:
-            Summary.objects.bulk_create(bulk_recrods)
-            bulk_recrods = []
-            print '%s records created ...' % i
-
-        print 'loaded summary'
-
-        filings_no_data_cnt = 0
-        filings_with_data_cnt = 0
-        for v in insert_stats.values():
-            if v == 0:
-                filings_no_data_cnt += 1
-            elif v > 0:
-                filings_with_data_cnt += 1
-
-        total_filing_cnt = Filing.objects.count()
-        pct_filings_have_data = (
-            filings_with_data_cnt / float(total_filing_cnt)) * 100
-
-        print (
-            '{0} total filings processed, {1} percent have data'
-            .format(total_filing_cnt, pct_filings_have_data)
+    def load_form_F460(self):
+        print "-- Loading summary totals for Form F460"
+        c = connection.cursor()
+        sql = """
+        INSERT INTO calaccess_campaign_browser_summary (
+            filing_id,
+            committee_id,
+            cycle_id,
+            form_type,
+            dupe,
+            itemized_monetary_contribs,
+            unitemized_monetary_contribs,
+            total_monetary_contribs,
+            non_monetary_contribs,
+            total_contribs,
+            itemized_expenditures,
+            unitemized_expenditures,
+            total_expenditures,
+            ending_cash_balance,
+            outstanding_debts
         )
+        SELECT
+            f.id as filing_id,
+            f.committee_id,
+            f.cycle_id,
+            f.form_id as form_type,
+            f.dupe,
+            COALESCE(itemized_monetary_contribs.amount_a, 0) as itemized_monetary_contribs,
+            COALESCE(unitemized_monetary_contribs.amount_a, 0) as unitemized_monetary_contribs,
+            COALESCE(total_monetary_contribs.amount_a, 0) as total_monetary_contribs,
+            COALESCE(non_monetary_contribs.amount_a, 0) as non_monetary_contribs,
+            COALESCE(total_contribs.amount_a, 0) as total_contribs,
+            COALESCE(itemized_expenditures.amount_a, 0) as itemized_expenditure,
+            COALESCE(unitemized_expenditures.amount_a, 0) as unitemized_expenditure,
+            COALESCE(total_expenditures.amount_a, 0) as total_expenditures,
+            COALESCE(ending_cash_balance.amount_a, 0) as ending_cash_balance,
+            COALESCE(outstanding_debts.amount_a, 0) as outstanding_debts
 
-        if Summary.objects.count() == filings_with_data_cnt:
-            print 'All filings with data represented in Summary table'
+        FROM calaccess_campaign_browser_filing as f
 
-        reset_queries()
-        gc.collect()
+        LEFT OUTER JOIN (
+            SELECT filing_id, amend_id, amount_a
+            FROM SMRY_CD
+            WHERE form_type = 'A'
+            AND line_item = 1
+        ) as itemized_monetary_contribs
+        ON f.filing_id_raw = itemized_monetary_contribs.filing_id
+        AND f.amend_id = itemized_monetary_contribs.amend_id
+
+        LEFT OUTER JOIN (
+            SELECT filing_id, amend_id, amount_a
+            FROM SMRY_CD
+            WHERE form_type = 'A'
+            AND line_item = 2
+        ) as unitemized_monetary_contribs
+        ON f.filing_id_raw = unitemized_monetary_contribs.filing_id
+        AND f.amend_id = unitemized_monetary_contribs.amend_id
+
+        LEFT OUTER JOIN (
+            SELECT filing_id, amend_id, amount_a
+            FROM SMRY_CD
+            WHERE form_type = 'A'
+            AND line_item = 3
+        ) as total_monetary_contribs
+        ON f.filing_id_raw = total_monetary_contribs.filing_id
+        AND f.amend_id = total_monetary_contribs.amend_id
+
+        LEFT OUTER JOIN (
+            SELECT filing_id, amend_id, amount_a
+            FROM SMRY_CD
+            WHERE form_type = 'F460'
+            AND line_item = 4
+        ) as non_monetary_contribs
+        ON f.filing_id_raw = non_monetary_contribs.filing_id
+        AND f.amend_id = non_monetary_contribs.amend_id
+
+        LEFT OUTER JOIN (
+            SELECT filing_id, amend_id, amount_a
+            FROM SMRY_CD
+            WHERE form_type = 'F460'
+            AND line_item = 5
+        ) as total_contribs
+        ON f.filing_id_raw = total_contribs.filing_id
+        AND f.amend_id = total_contribs.amend_id
+
+        LEFT OUTER JOIN (
+            SELECT filing_id, amend_id, amount_a
+            FROM SMRY_CD
+            WHERE form_type = 'E'
+            AND line_item = 1
+        ) as itemized_expenditures
+        ON f.filing_id_raw = itemized_expenditures.filing_id
+        AND f.amend_id = itemized_expenditures.amend_id
+
+        LEFT OUTER JOIN (
+            SELECT filing_id, amend_id, amount_a
+            FROM SMRY_CD
+            WHERE form_type = 'E'
+            AND line_item = 2
+        ) as unitemized_expenditures
+        ON f.filing_id_raw = unitemized_expenditures.filing_id
+        AND f.amend_id = unitemized_expenditures.amend_id
+
+        LEFT OUTER JOIN (
+            SELECT filing_id, amend_id, amount_a
+            FROM SMRY_CD
+            WHERE form_type = 'E'
+            AND line_item = 4
+        ) as total_expenditures
+        ON f.filing_id_raw = total_expenditures.filing_id
+        AND f.amend_id = total_expenditures.amend_id
+
+        LEFT OUTER JOIN (
+            SELECT filing_id, amend_id, amount_a
+            FROM SMRY_CD
+            WHERE form_type = 'F460'
+            AND line_item = 16
+        ) as ending_cash_balance
+        ON f.filing_id_raw = ending_cash_balance.filing_id
+        AND f.amend_id = ending_cash_balance.amend_id
+
+        LEFT OUTER JOIN (
+            SELECT filing_id, amend_id, amount_a
+            FROM SMRY_CD
+            WHERE form_type = 'F460'
+            AND line_item = 19
+        ) as outstanding_debts
+        ON f.filing_id_raw = outstanding_debts.filing_id
+        AND f.amend_id = outstanding_debts.amend_id
+
+        WHERE f.form_id = 'F460'
+        """
+        c.execute(sql)
+
+    def load_form_f450(self):
+        print "-- Loading summary totals for Form F450"
+        c = connection.cursor()
+        sql = """
+        INSERT INTO calaccess_campaign_browser_summary (
+            filing_id,
+            committee_id,
+            cycle_id,
+            form_type,
+            dupe,
+            itemized_monetary_contribs,
+            unitemized_monetary_contribs,
+            total_monetary_contribs,
+            non_monetary_contribs,
+            total_contribs,
+            itemized_expenditures,
+            unitemized_expenditures,
+            total_expenditures,
+            ending_cash_balance,
+            outstanding_debts
+        )
+        SELECT
+            f.id as filing_id,
+            f.committee_id,
+            f.cycle_id,
+            f.form_id as form_type,
+            f.dupe,
+            null as itemized_monetary_contribs,
+            null as unitemized_monetary_contribs,
+            COALESCE(total_monetary_contribs.amount_a, 0) as total_monetary_contribs,
+            COALESCE(non_monetary_contribs.amount_a, 0) as non_monetary_contribs,
+            COALESCE(total_contribs.amount_a, 0) as total_contribs,
+            COALESCE(itemized_expenditures.amount_a, 0) as itemized_expenditure,
+            COALESCE(unitemized_expenditures.amount_a, 0) as unitemized_expenditure,
+            COALESCE(total_expenditures.amount_a, 0) as total_expenditures,
+            null as ending_cash_balance,
+            null as outstanding_debts
+
+        FROM calaccess_campaign_browser_filing as f
+
+        LEFT OUTER JOIN (
+            SELECT filing_id, amend_id, amount_a
+            FROM SMRY_CD
+            WHERE form_type = 'F450'
+            AND line_item = 7
+        ) as total_monetary_contribs
+        ON f.filing_id_raw = total_monetary_contribs.filing_id
+        AND f.amend_id = total_monetary_contribs.amend_id
+
+        LEFT OUTER JOIN (
+            SELECT filing_id, amend_id, amount_a
+            FROM SMRY_CD
+            WHERE form_type = 'F450'
+            AND line_item = 8
+        ) as non_monetary_contribs
+        ON f.filing_id_raw = non_monetary_contribs.filing_id
+        AND f.amend_id = non_monetary_contribs.amend_id
+
+        LEFT OUTER JOIN (
+            SELECT filing_id, amend_id, amount_a
+            FROM SMRY_CD
+            WHERE form_type = 'F450'
+            AND line_item = 10
+        ) as total_contribs
+        ON f.filing_id_raw = total_contribs.filing_id
+        AND f.amend_id = total_contribs.amend_id
+
+        LEFT OUTER JOIN (
+            SELECT filing_id, amend_id, amount_a
+            FROM SMRY_CD
+            WHERE form_type = 'F450'
+            AND line_item = 1
+        ) as itemized_expenditures
+        ON f.filing_id_raw = itemized_expenditures.filing_id
+        AND f.amend_id = itemized_expenditures.amend_id
+
+        LEFT OUTER JOIN (
+            SELECT filing_id, amend_id, amount_a
+            FROM SMRY_CD
+            WHERE form_type = 'F450'
+            AND line_item = 2
+        ) as unitemized_expenditures
+        ON f.filing_id_raw = unitemized_expenditures.filing_id
+        AND f.amend_id = unitemized_expenditures.amend_id
+
+        LEFT OUTER JOIN (
+            SELECT filing_id, amend_id, amount_a
+            FROM SMRY_CD
+            WHERE form_type = 'E'
+            AND line_item = 6
+        ) as total_expenditures
+        ON f.filing_id_raw = total_expenditures.filing_id
+        AND f.amend_id = total_expenditures.amend_id
+
+        WHERE f.form_id = 'F450'
+        """
+        c.execute(sql)
