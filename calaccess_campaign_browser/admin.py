@@ -123,7 +123,7 @@ class SummaryAdmin(BaseAdmin):
         "filing",
         "form_type",
         "total_contribs",
-        "total_expenditures"
+        "total_expenditures",
         "dupe"
     )
     list_filter = (
