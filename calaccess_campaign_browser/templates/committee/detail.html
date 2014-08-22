@@ -32,7 +32,7 @@
               </ul>
           </div>
     </h3>
-  <p>Latest filings (limit of 10)</p>
+  <p>Latest filings (limit of 25)</p>
     <div class="table-responsive">
       <table id="datatable" class="table table-bordered table-hover"> <!-- table table-bordered table-hover -->
         <thead>
@@ -87,7 +87,7 @@
         </tbody>
       </table>
     </div>
-    {% if filing_set|length > 10 %}
+    {% if filing_set|length > 25 %}
         <p class="view-more"><a href="{% url 'committee_filing_list' committee.pk 1 %}">View more... </a></p>
     {% endif %}
 
@@ -108,7 +108,7 @@
                   </ul>
               </div>
         </h3>
-        <p>Top 10 contributions by amount</p>
+        <p>Top 25 contributions by amount</p>
           <div class="table-responsive">
             <table class="table table-bordered table-hover"> <!-- table table-bordered table-hover -->
               <thead>
@@ -133,7 +133,7 @@
               </tbody>
             </table>
           </div>
-          {% if contribution_set|length > 10 %}
+          {% if contribution_set|length > 25 %}
             <p class="view-more"><a href="{% url 'committee_contribution_list' committee.pk 1 %}">View more... </a></p>
           {% endif %}
     </div>
@@ -153,7 +153,7 @@
                 </ul>
             </div>
       </h3>
-      <p>Top 10 expenditures by amount</p>
+      <p>Top 25 expenditures by amount</p>
         <div class="table-responsive">
           <table class="table table-bordered table-hover"> <!-- table table-bordered table-hover -->
             <thead>
@@ -182,7 +182,7 @@
             </tbody>
           </table>
         </div>
-        {% if expenditure_set|length > 10 %}
+        {% if expenditure_set|length > 25 %}
             <p class="view-more"><a href="{% url 'committee_expenditure_list' committee.pk 1 %}">View more... </a></p>
         {% endif %}
   </div>

@@ -15,7 +15,7 @@
         <ol class="breadcrumb">
           <li><a href="{% url 'filer_list' 1 %}">Home</a></li>
           <li><a href="{{ committee.filer.get_absolute_url }}">Filer's committees</a></li>
-         <li class="active">Committee overview</li>
+         <li class="active"><a href="{{ committee.get_absolute_url }}">Committee overview</a></li>
         </ol>
         </div>
         <div class="collapse navbar-collapse bs-example-js-navbar-collapse">

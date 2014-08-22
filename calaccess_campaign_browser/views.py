@@ -81,7 +81,7 @@ class CommitteeDataView(JSONResponseMixin, CSVResponseMixin, generic.ListView):
     Custom generic view for our committee specific data pages
     """
     allow_empty = False
-    paginate_by = 25
+    paginate_by = 100
 
     def get_context_data(self, **kwargs):
         context = super(CommitteeDataView, self).get_context_data(**kwargs)
@@ -174,13 +174,13 @@ class CommitteeDetailView(generic.DetailView):
         context['committee'] = self.object
         context['filing_set'] = Filing.objects.filter(
             committee=self.object).order_by('-end_date')
-        context['filing_set_short'] = context['filing_set'][:10]
+        context['filing_set_short'] = context['filing_set'][:25]
         context['contribution_set'] = Contribution.objects.filter(
             committee=self.object).order_by('-amount')
-        context['contribution_set_short'] = context['contribution_set'][:10]
+        context['contribution_set_short'] = context['contribution_set'][:25]
         context['expenditure_set'] = Expenditure.objects.filter(
             committee=self.object).order_by('-amount')
-        context['expenditure_set_short'] = context['expenditure_set'][:10]
+        context['expenditure_set_short'] = context['expenditure_set'][:25]
         return context
 
 
