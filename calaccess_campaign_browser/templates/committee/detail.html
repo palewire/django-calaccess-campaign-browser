@@ -10,7 +10,7 @@
 {% include "committee_nav.html" %}
 
 <div class="row">
-    <div class="col-xs-12">
+    <div class="col-12-lg">
         <h3>Totals</h3>
         <p class="totals">Contributions: ${{committee.total_contributions  | intcomma}}
         <br>
@@ -19,7 +19,7 @@
 </div>
 
 <div class="row">
-  <div class="col-xs-12">
+  <div class="col-12-lg">
     <h3>
           <a href="{% url 'committee_filing_list' committee.pk 1 %}">Filings </a>
           <div class="btn-group">
@@ -95,7 +95,7 @@
 </div>
 
   <div class="row">
-    <div class="col-xs-12">
+    <div class="col-12-lg">
         <h3>
               <a href="{% url 'committee_contribution_list' committee.pk 1 %}">Contributions </a>
               <div class="btn-group">
@@ -140,7 +140,7 @@
   </div>
 
 <div class="row">
-  <div class="col-xs-12">
+  <div class="col-12-lg">
       <h3>
             <a href="{% url 'committee_expenditure_list' committee.pk 1 %}">Expenditures </a>
             <div class="btn-group">

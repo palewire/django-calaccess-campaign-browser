@@ -24,8 +24,9 @@
 <div class="container">
 
 {% include "committee_nav.html" %}
+
 <div class="row">
-    <div class="col-xs-12">
+    <div class="col-12-lg">
     <h3>
           Expenditures
           <div class="btn-group">
@@ -39,7 +40,13 @@
           </div>
     </h3>
     <p class="totals">Total expenditures: ${{committee.total_expenditures  | intcomma}}</p>
-    {% include "paginator.html" %}
+    </div>
+</div>
+
+{% include "paginator.html" %}
+
+<div class="row">
+    <div class="col-12-lg">
           <div class="table-responsive">
             <table class="table table-bordered table-hover"> <!-- table table-bordered table-hover -->
               <thead>

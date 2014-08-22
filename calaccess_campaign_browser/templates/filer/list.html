@@ -6,7 +6,7 @@
     <script>
         $('.pagination').twbsPagination({
             totalPages: {{ paginator.count }},
-            visiblePages: 5,
+            visiblePages: 10,
             startPage: {{ page_obj.number }},
             prev: '&laquo;',
             next: '&rsaquo;',
@@ -42,7 +42,7 @@
           {% for filer in filers %}
             <tr>
               <td>
-                <a href="{{ filer.get_absolute_url }}">{{ filer.name }}</a>
+                <a href="{{ filer.get_absolute_url }}">{{ filer }}</a>
               </td>
               <td>{{ filer.get_filer_type_display }}</td>
               <td>{{ filer.status }}</td>

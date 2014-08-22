@@ -1,3 +1,6 @@
+<div class="row">
+    <div class="col-12-lg">
+
 <h2>{{ committee.name }}</h2>
     <nav id="navbar-example" class="navbar navbar-default navbar-static" role="navigation">
       <div class="container-fluid">
@@ -11,8 +14,8 @@
           <!-- <span class="navbar-brand"><a href="{% url 'committee_detail' committee.pk %}">{{ committee.name|truncatechars:25 }}</a></span> -->
         <ol class="breadcrumb">
           <li><a href="{% url 'filer_list' 1 %}">Home</a></li>
-          <li><a href="{{ committee.filer.get_absolute_url }}">Filer</a></li>
-          <li class="active"><a href="{% url 'committee_detail' committee.pk %}">Committee Overview</a> ({{ committee.name|truncatechars:15 }} )</li>
+          <li><a href="{{ committee.filer.get_absolute_url }}">Filer's committees</a></li>
+         <li class="active">Committee overview</li>
         </ol>
         </div>
         <div class="collapse navbar-collapse bs-example-js-navbar-collapse">
@@ -49,3 +52,6 @@
         </div><!-- /.nav-collapse -->
       </div><!-- /.container-fluid -->
     </nav>
+
+</div>
+</div>

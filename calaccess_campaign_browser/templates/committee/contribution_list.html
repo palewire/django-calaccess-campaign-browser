@@ -1,8 +1,7 @@
 {% extends 'base.html' %}
 {% load humanize %}
 
-{% block title %}
-{% endblock %}
+{% block title %}Contributions - {{ committee.name }} - Committee - {{ block.super }}{% endblock %}
 
 {% block javascript %}
     <script>
@@ -26,7 +25,7 @@
  {% include "committee_nav.html" %}
 
   <div class="row">
-    <div class="col-xs-12">
+    <div class="col-12-lg">
         <h3>
               Contributions
               <div class="btn-group">
@@ -40,7 +39,13 @@
               </div>
         </h3>
         <p class="totals">Total contributions: ${{committee.total_contributions  | intcomma}}</p>
-        {% include "paginator.html" %}
+    </div>
+  </div>
+
+    {% include "paginator.html" %}
+
+  <div class="row">
+    <div class="col-12-lg">
           <div class="table-responsive">
             <table class="table table-bordered table-hover"> <!-- table table-bordered table-hover -->
               <thead>

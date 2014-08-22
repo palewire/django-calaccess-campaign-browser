@@ -33,6 +33,12 @@ class Filer(models.Model):
         ordering = ("name",)
 
     def __unicode__(self):
+        return self.short_name
+
+    @property
+    def short_name(self, character_limit=75):
+        if len(self.name) > character_limit:
+            return self.name[:character_limit] + "..."
         return self.name
 
     def get_absolute_url(self):

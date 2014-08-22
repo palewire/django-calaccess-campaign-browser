@@ -4,20 +4,22 @@
 
 {% block content %}
 <div class="container">
-  <header>
-    <h1>{{ filer.name }}</h1>
-    <ol class="breadcrumb">
-      <li><a href="/browser">Home</a></li>
-      <li class="active">{{ filer.name }}</li>
-    </ol>
-  </header>
+  <div class="row">
+    <div class="col-12-lg">
+        <h2>{{ filer.name }}</h2>
+        <ol class="breadcrumb">
+          <li><a href="/explore/1/">Home</a></li>
+          <li class="active">Filer's committees</li>
+        </ol>
+    </div>
+  </div>
   <div class="row">
     <div class="col-12-lg">
       <!-- <div class="table-responsive"> -->
         <table class="table table-bordered table-hover">
           <thead>
             <tr>
-              <th>Name</th>
+              <th>Committee name</th>
               <th>(Raw) Filing No.</th>
               <th>Type</th>
             </tr>
