@@ -59,7 +59,6 @@ class Command(BaseCommand):
         INNER JOIN calaccess_campaign_browser_cycle as cycle
         ON ff.session_id = cycle.name
         WHERE `FORM_ID` IN ('F450', 'F460')
-        LIMIT 500;
         """ % (
             Filing._meta.db_table,
         )
