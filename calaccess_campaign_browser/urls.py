@@ -12,8 +12,10 @@ urlpatterns = patterns(
     'calaccess_campaign_browser.views',
     url(
         r'^$',
-        views.IndexView.as_view(template_name='home/index.html'),
-        name='index'
+        RedirectView.as_view(
+            url='/explore/1/',
+            permanent=True,
+        ),
     ),
     url(
         r'^explore$',
