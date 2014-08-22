@@ -27,9 +27,10 @@
         <table class="table table-bordered table-hover">
           <thead>
             <tr>
-              <th>Name.</th>
-              <th>ID</th>
+              <th>Name</th>
               <th>Type</th>
+              <th>Status</th>
+              <th>Effective date</th>
             </tr>
           </thead>
           <tbody>
@@ -38,8 +39,9 @@
               <td>
                 <a href="{{ filer.get_absolute_url }}">{{ filer.name }}</a>
               </td>
-              <td>{{ filer.filer_id }}</td>
-              <td>{{ filer.filer_type }}</td>
+              <td>{{ filer.get_filer_type_display }}</td>
+              <td>{{ filer.status }}</td>
+              <td>{{ filer.effective_date }}</td>
             </tr>
           {% endfor %}
           </tbody>

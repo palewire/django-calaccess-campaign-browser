@@ -17,7 +17,7 @@ from hurry.filesize import size
 
 class Filer(models.Model):
     FILER_TYPE_OPTIONS = (
-        ('pac', 'Political Action Committee'),
+        ('pac', 'PAC'),
         ('cand', 'Candidate'),
     )
     # straight out of the filer table
