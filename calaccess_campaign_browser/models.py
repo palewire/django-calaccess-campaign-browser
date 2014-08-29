@@ -25,14 +25,13 @@ class Filer(models.Model):
         choices=FILER_TYPE_OPTIONS,
         db_index=True,
     )
+    name = models.CharField(max_length=255, null=True)
     effective_date = models.DateField(null=True)
-    # fields updated by other tables
     xref_filer_id = models.CharField(
         max_length=32,
         null=True,
         db_index=True
     )
-    name = models.CharField(max_length=255, null=True)
 
     class Meta:
         ordering = ("name",)
@@ -40,25 +39,25 @@ class Filer(models.Model):
     def __unicode__(self):
         return self.short_name
 
+    def get_absolute_url(self):
+        return reverse('filer_detail', args=[str(self.pk)])
+
     @property
     def short_name(self, character_limit=75):
         if len(self.name) > character_limit:
             return self.name[:character_limit] + "..."
         return self.name
 
-    def get_absolute_url(self):
-        return reverse('filer_detail', args=[str(self.pk)])
-
-    def _create_slug(self):
+    @property
+    def slug(self):
         return slugify(self.name)
-    slug = property(_create_slug)
 
-    def _total_contributions(self):
+    @property
+    def total_contributions(self):
         qs = Filing.objects.filter(committee__filer=self)
         total = Summary.objects.filter(filing__in=qs).aggregate(
             tot=Sum('total_contribs'))['tot']
         return total
-    total_contributions = property(_total_contributions)
 
 
 class Committee(models.Model):
