@@ -1,23 +1,25 @@
 {% extends 'base.html' %}
 {% load humanize %}
 
-{% block title %}
-{% endblock %}
+{% block title %}{{ filing.filing_id_raw }} - Filing - {{ committee.name }} - Committee - {{ block.super }}{% endblock %}
 
 {% block content %}
 <div class="container">
-  <div class="row">
-    <div class="col-lg-12">
-      <div class="page-header">
-        <h1>Filing No. {{ filing.filing_id_raw }} <small>{{ filing.form_id }}</small></h1>
-      </div>
-      <ol class="breadcrumb">
-        <li><a href="/browser">Home</a></li>
-        <li><a href="{{ filing.committee.filer.get_absolute_url }}">Filer</a></li>
-        <li><a href="{{ filing.committee.get_absolute_url }}">{{ filing.committee.name }} ({{ filing.committee.filer_id_raw }})</a></li>
-        <li class="active">{{ filing.filing_id_raw }}</li>
-      </ol>
 
+  <div class="row">
+    <div class="col-12-lg">
+        <h2>Filing No. {{ filing.filing_id_raw }} <small>{{ filing.form_id }}</small></h2>
+          <ol class="breadcrumb">
+            <li><a href="/browser">Home</a></li>
+            <li><a href="{{ filing.committee.filer.get_absolute_url }}">Filer</a></li>
+            <li><a href="{{ filing.committee.get_absolute_url }}">{{ filing.committee.name }} ({{ filing.committee.filer_id_raw }})</a></li>
+            <li class="active">{{ filing.filing_id_raw }}</li>
+          </ol>
+    </div>
+  </div>
+
+  <div class="row">
+    <div class="col-12-lg">
       <table class="table table-bordered table-hover">
         <thead>
           <tr>
