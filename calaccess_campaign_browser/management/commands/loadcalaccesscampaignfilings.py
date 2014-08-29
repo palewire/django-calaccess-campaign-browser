@@ -82,9 +82,9 @@ class Command(BaseCommand):
         c.execute(sql)
 
         sql = """
-        UPDATE calaccess_campaign_browser_filing
-        INNER JOIN tmp_filing_dupes
-        ON calaccess_campaign_browser_filing.`filing_id_raw` = tmp_filing_dupes.`filing_id_raw`
+        UPDATE calaccess_campaign_browser_filing as f
+        INNER JOIN tmp_filing_dupes as d
+        ON f.`filing_id_raw` = d.`filing_id_raw`
         SET dupe = true;
         """
         c.execute(sql)
@@ -93,7 +93,12 @@ class Command(BaseCommand):
         c.execute(sql)
 
         # Unmark all those with the maximum id number among their set
-        sql = """CREATE TABLE tmp_filing_max_dupes (filing_id_raw int, max_id int);"""
+        sql = """
+        CREATE TABLE tmp_filing_max_dupes (
+            filing_id_raw int,
+            max_id int
+        );
+        """
         c.execute(sql)
 
         sql = """
@@ -106,9 +111,9 @@ class Command(BaseCommand):
         c.execute(sql)
 
         sql = """
-        UPDATE calaccess_campaign_browser_filing
-        INNER JOIN tmp_filing_max_dupes
-        ON calaccess_campaign_browser_filing.`id` = tmp_filing_max_dupes.`max_id`
+        UPDATE calaccess_campaign_browser_filing as f
+        INNER JOIN tmp_filing_max_dupes as d
+        ON f.`id` = d.`max_id`
         SET dupe = false;
         """
         c.execute(sql)

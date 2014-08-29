@@ -5,29 +5,34 @@ from django.db.models import Sum
 from hurry.filesize import size
 
 
-#class Candidate(models.Model):
-#    """
-#    A human being running for public office.
-
-#    May be linked to one-to-many committees of varying types, some of them
-#    directly controlled by their campaign and others may be independent.
-#    """
-#    pass
-
-
 class Filer(models.Model):
+    """
+    An entity that files campaign finance disclosure documents.
+
+    That includes candidates for public office that have committees raising
+    money on their behalf (i.e. Jerry Brown) as well as Political Action
+    Committees (PACs) that contribute money to numerous candidates for office.
+    """
+    # straight out of the filer table
+    filer_id = models.IntegerField(db_index=True)
+    status = models.CharField(max_length=255, null=True)
     FILER_TYPE_OPTIONS = (
         ('pac', 'PAC'),
         ('cand', 'Candidate'),
     )
-    # straight out of the filer table
-    filer_id = models.IntegerField(db_index=True)
-    status = models.CharField(max_length=255, null=True)
-    filer_type = models.CharField(max_length=10L, choices=FILER_TYPE_OPTIONS)
+    filer_type = models.CharField(
+        max_length=10,
+        choices=FILER_TYPE_OPTIONS,
+        db_index=True,
+    )
     effective_date = models.DateField(null=True)
     # fields updated by other tables
-    xref_filer_id = models.CharField(max_length=32L, null=True)
-    name = models.CharField(max_length=255L, null=True)
+    xref_filer_id = models.CharField(
+        max_length=32,
+        null=True,
+        db_index=True
+    )
+    name = models.CharField(max_length=255, null=True)
 
     class Meta:
         ordering = ("name",)
@@ -66,15 +71,19 @@ class Committee(models.Model):
         link back to one, committee filer
         If there's a better way I'm open to suggestions
     """
+    filer = models.ForeignKey(Filer)
+    filer_id_raw = models.IntegerField(db_index=True)
+    name = models.CharField(max_length=255, null=True)
     CMTE_TYPE_OPTIONS = (
         ('cand', 'Candidate Committee'),
         ('pac', 'Non-Candidate Committee'),
         ('linked-pac', 'Non-Candidate Committee, linked to other committees'),
     )
-    filer = models.ForeignKey(Filer)
-    filer_id_raw = models.IntegerField(db_index=True)
-    name = models.CharField(max_length=255, null=True)
-    committee_type = models.CharField(max_length=50, choices=CMTE_TYPE_OPTIONS)
+    committee_type = models.CharField(
+        max_length=50,
+        choices=CMTE_TYPE_OPTIONS,
+        db_index=True,
+    )
 
     class Meta:
         ordering = ("name",)
@@ -162,7 +171,7 @@ class Committee(models.Model):
 
 
 class Cycle(models.Model):
-    name = models.IntegerField()
+    name = models.IntegerField(db_index=True)
 
     class Meta:
         ordering = ("-name",)
@@ -207,38 +216,59 @@ class Summary(models.Model):
     form_type = models.CharField(
         max_length=10,
         choices=FORM_TYPE_CHOICES,
+        db_index=True,
     )
     itemized_monetary_contribs = models.DecimalField(
         max_digits=16,
-        decimal_places=2
+        decimal_places=2,
+        null=True,
     )
     unitemized_expenditures = models.DecimalField(
         max_digits=16,
-        decimal_places=2
+        decimal_places=2,
+        null=True,
     )
     total_expenditures = models.DecimalField(
-        max_digits=16, decimal_places=2
+        max_digits=16,
+        decimal_places=2,
+        null=True,
     )
     total_monetary_contribs = models.DecimalField(
         max_digits=16,
-        decimal_places=2
+        decimal_places=2,
+        null=True,
     )
     unitemized_monetary_contribs = models.DecimalField(
         max_digits=16,
-        decimal_places=2
+        decimal_places=2,
+        null=True,
     )
     non_monetary_contribs = models.DecimalField(
         max_digits=16,
-        decimal_places=2
+        decimal_places=2,
+        null=True,
     )
     itemized_expenditures = models.DecimalField(
         max_digits=16,
-        decimal_places=2
+        decimal_places=2,
+        null=True,
     )
-    total_contribs = models.DecimalField(max_digits=16, decimal_places=2)
-    outstanding_debts = models.DecimalField(max_digits=16, decimal_places=2)
-    ending_cash_balance = models.DecimalField(max_digits=16, decimal_places=2)
-    dupe = models.BooleanField(default=False)
+    total_contribs = models.DecimalField(
+        max_digits=16,
+        decimal_places=2,
+        null=True,
+    )
+    outstanding_debts = models.DecimalField(
+        max_digits=16,
+        decimal_places=2,
+        null=True,
+    )
+    ending_cash_balance = models.DecimalField(
+        max_digits=16,
+        decimal_places=2,
+        null=True,
+    )
+    dupe = models.BooleanField(default=False, db_index=True)
 
     def __unicode__(self):
         return '{0} {1} ({2} - {3})'.format(
