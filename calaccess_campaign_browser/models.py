@@ -108,63 +108,42 @@ class Committee(models.Model):
         return total
 
     def links(self):
+        from calaccess_raw.models import FilerLinksCd, FilernameCd, LookupCode
         d = {}
-        try:
-            from calaccess_raw.models import (
-                FilerLinksCd, FilernameCd, LookupCode
-            )
-            qs_links = FilerLinksCd.objects.filter(
-                filer_id_a=self.filer_id_raw)
-            for q in qs_links:
-                qs_names = (
-                    FilernameCd
-                    .objects
-                    .filter(filer_id=q.filer_id_b)
-                    .order_by('-effect_dt')
-                    .exclude(naml=''))
+        qs_links = FilerLinksCd.objects.filter(
+            filer_id_a=self.filer_id_raw)
+        for q in qs_links:
+            qs_names = (
+                FilernameCd
+                .objects
+                .filter(filer_id=q.filer_id_b)
+                .order_by('-effect_dt')
+                .exclude(naml=''))
 
-                if qs_names > 0:
-                    # committee filer name object
-                    obj = qs_names[0]
-                    name = (
-                        "{0} {1} {2} {3}"
-                        .format(obj.namt, obj.namf, obj.naml, obj.nams)
-                        .strip()
-                    )
-
-                else:
-                    name = ''
-
-                d[q.filer_id_b] = {
-                    'link_type': (
-                        LookupCode
-                        .objects
-                        .get(code_id=q.link_type)
-                        .code_desc
-                    ),
-                    'filer_id_b': q.filer_id_b,
-                    'filer_name': name,
-                    'effective_date': q.effect_dt,
-                }
-
-        except:
-            print 'Raw data not available. Install and run calaccess_raw app.'
-
-        return d
-
-    def print_links(self):
-        d = self.links()
-        if d:
-            for v in d.values():
-                print (
-                    '{0}\t{1}\t{2}\t{3}'
-                    .format(
-                        v['filer_id_b'],
-                        v['link_type'],
-                        v['effective_date'],
-                        v['filer_name']
-                    )
+            if qs_names > 0:
+                # committee filer name object
+                obj = qs_names[0]
+                name = (
+                    "{0} {1} {2} {3}"
+                    .format(obj.namt, obj.namf, obj.naml, obj.nams)
+                    .strip()
                 )
+
+            else:
+                name = ''
+
+            d[q.filer_id_b] = {
+                'link_type': (
+                    LookupCode
+                    .objects
+                    .get(code_id=q.link_type)
+                    .code_desc
+                ),
+                'filer_id_b': q.filer_id_b,
+                'filer_name': name,
+                'effective_date': q.effect_dt,
+            }
+        return d
 
 
 class Cycle(models.Model):
