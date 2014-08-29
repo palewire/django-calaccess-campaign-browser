@@ -175,11 +175,15 @@ class Filing(models.Model):
     cycle = models.ForeignKey(Cycle)
     committee = models.ForeignKey(Committee)
     filing_id_raw = models.IntegerField(db_index=True)
-    amend_id = models.IntegerField()
-    form_id = models.CharField(max_length=7)
+    amend_id = models.IntegerField(db_index=True)
+    form_id = models.CharField(max_length=7, db_index=True)
     start_date = models.DateField(null=True)
     end_date = models.DateField(null=True)
-    dupe = models.BooleanField('duplicate', default=False)
+    dupe = models.BooleanField(
+        default=False,
+        db_index=True,
+        verbose_name='duplicate',
+    )
 
     def __unicode__(self):
         return '%s (%s-%s)' % (
@@ -200,7 +204,10 @@ class Summary(models.Model):
         ('F460', 'Recipient Committee Campaign Statement'),
         ('F450', 'Recipient Committee Campaign Statement -- Short Form'),
     )
-    form_type = models.CharField(max_length=10, choices=FORM_TYPE_CHOICES)
+    form_type = models.CharField(
+        max_length=10,
+        choices=FORM_TYPE_CHOICES,
+    )
     itemized_monetary_contribs = models.DecimalField(
         max_digits=16,
         decimal_places=2
