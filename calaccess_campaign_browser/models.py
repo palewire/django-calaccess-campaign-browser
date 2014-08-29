@@ -62,13 +62,13 @@ class Filer(models.Model):
 
 class Committee(models.Model):
     """
-        If a Candidate controls the committee, the filer is associated with the
-        Candidate Filer record, not the committee Filer record
-        But the committee Filer record can still be accessed using filer_id_raw
-        So candidate filers potentially link to multiple committes,
-        and committee filers that are not candidate controlled
-        link back to one, committee filer
-        If there's a better way I'm open to suggestions
+    If a Candidate controls the committee, the filer is associated with the
+    Candidate Filer record, not the committee Filer record
+    But the committee Filer record can still be accessed using filer_id_raw
+    So candidate filers potentially link to multiple committes,
+    and committee filers that are not candidate controlled
+    link back to one, committee filer
+    If there's a better way I'm open to suggestions
     """
     filer = models.ForeignKey(Filer)
     filer_id_raw = models.IntegerField(db_index=True)
@@ -93,21 +93,19 @@ class Committee(models.Model):
     def get_absolute_url(self):
         return reverse('committee_detail', args=[str(self.pk)])
 
-    def _total_contributions(self):
+    @property
+    def total_contributions(self):
         qs = Filing.objects.filter(committee=self)
         total = Summary.objects.filter(filing__in=qs).aggregate(
             tot=Sum('total_contribs'))['tot']
         return total
 
-    total_contributions = property(_total_contributions)
-
-    def _total_expenditures(self):
+    @property
+    def total_expenditures(self):
         qs = Filing.objects.filter(committee=self)
         total = Summary.objects.filter(filing__in=qs).aggregate(
             tot=Sum('total_expenditures'))['tot']
         return total
-
-    total_expenditures = property(_total_expenditures)
 
     def links(self):
         d = {}
