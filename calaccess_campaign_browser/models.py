@@ -153,7 +153,7 @@ class Cycle(models.Model):
         ordering = ("-name",)
 
     def __unicode__(self):
-        return '%s' % self.name
+        return self.name
 
 
 class Filing(models.Model):
@@ -344,19 +344,15 @@ class Expenditure(models.Model):
 
     dupe = models.BooleanField(default=False)
 
+    @property
     def raw(self):
-        try:
-            from calaccess_raw.models import ExpnCd
-            obj = ExpnCd.objects.get(
-                amend_id=self.amend_id,
-                filing_id=self.filing_id,
-                tran_id=self.tran_id,
-                bakref_tid=self.bakref_tid
-            )
-        except:
-            print 'Raw data not available. Install and run calaccess_raw app.'
-            obj = None
-        return obj
+        from calaccess_raw.models import ExpnCd
+        return ExpnCd.objects.get(
+            amend_id=self.amend_id,
+            filing_id=self.filing_id,
+            tran_id=self.tran_id,
+            bakref_tid=self.bakref_tid
+        )
 
     def get_absolute_url(self):
         return reverse('expenditure_detail', args=[str(self.pk)])
@@ -422,20 +418,15 @@ class Contribution(models.Model):
     individual_id = models.IntegerField(null=True)
     dupe = models.BooleanField(default=False)
 
+    @property
     def raw(self):
-        try:
-            from calaccess_raw.models import RcptCd
-            obj = RcptCd.objects.get(
-                amend_id=self.amend_id,
-                filing_id=self.filing_id,
-                tran_id=self.tran_id,
-                bakref_tid=self.bakref_tid
-            )
-
-        except:
-            print 'Raw data not available. Install and run calaccess app.'
-            obj = None
-        return obj
+        from calaccess_raw.models import RcptCd
+        return RcptCd.objects.get(
+            amend_id=self.amend_id,
+            filing_id=self.filing_id,
+            tran_id=self.tran_id,
+            bakref_tid=self.bakref_tid
+        )
 
     def get_absolute_url(self):
         return reverse('contribution_detail', args=[str(self.pk)])
@@ -472,8 +463,7 @@ class Stats(models.Model):
     amount = models.DecimalField(max_digits=16, decimal_places=2)
 
     def __unicode__(self):
-        name_str = '%s-%s' % (self.filer_type, self.stat_type)
-        return name_str
+        return '%s-%s' % (self.filer_type, self.stat_type)
 
 
 class FlatFile(models.Model):
