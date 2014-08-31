@@ -1,10 +1,9 @@
-# Create your views here.
 import re
 import csv
 import json
 from django.db.models import Q
 from django.views import generic
-from django.shortcuts import render
+from django.shortcuts import render, redirect
 from django.utils.encoding import smart_text
 from django.http import HttpResponse
 from bakery.views import BuildableListView
@@ -163,7 +162,13 @@ class FilerListView(generic.ListView):
 
 class FilerDetailView(generic.DetailView):
     model = Filer
-    template = 'templates/filer/detail.html'
+    template_name = 'filer/detail.html'
+
+    def render_to_response(self, context):
+        if context['object'].committee_set.count() == 1:
+            return redirect(
+                context['object'].committee_set.all()[0].get_absolute_url()
+            )
 
 
 class CommitteeDetailView(generic.DetailView):

@@ -1,7 +1,6 @@
 from django.conf.urls import patterns, include, url
 from tastypie.api import Api
 from django.views.generic.base import RedirectView
-
 from calaccess_campaign_browser.api import FilerResource
 from calaccess_campaign_browser import views
 
@@ -31,7 +30,7 @@ urlpatterns = patterns(
     ),
     url(
         r'^filer/(?P<pk>\d+)/$',
-        views.FilerDetailView.as_view(template_name='filer/detail.html'),
+        views.FilerDetailView.as_view(),
         name='filer_detail'
     ),
     url(

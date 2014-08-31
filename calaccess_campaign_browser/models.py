@@ -75,7 +75,7 @@ class Committee(models.Model):
     name = models.CharField(max_length=255, null=True)
     CMTE_TYPE_OPTIONS = (
         ('cand', 'Candidate Committee'),
-        ('pac', 'Non-Candidate Committee'),
+        ('pac', 'PAC'),
         ('linked-pac', 'Non-Candidate Committee, linked to other committees'),
     )
     committee_type = models.CharField(
