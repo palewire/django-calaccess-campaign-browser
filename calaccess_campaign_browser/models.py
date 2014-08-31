@@ -1,8 +1,8 @@
 from django.db import models
-from django.core.urlresolvers import reverse
-from django.utils.text import slugify
 from django.db.models import Sum
 from hurry.filesize import size
+from django.utils.text import slugify
+from django.core.urlresolvers import reverse
 
 
 class Filer(models.Model):
@@ -15,7 +15,20 @@ class Filer(models.Model):
     """
     # straight out of the filer table
     filer_id = models.IntegerField(db_index=True)
-    status = models.CharField(max_length=255, null=True)
+    STATUS_CHOICES = (
+        ('A', 'A'),
+        ('ACTIVE', 'Active'),
+        ('INACTIVE', 'Inactive'),
+        ('R', 'R'),
+        ('S', 'S'),
+        ('TERMINATED', 'Terminated'),
+        ('W', 'W'),
+    )
+    status = models.CharField(
+        max_length=255,
+        null=True,
+        choices=STATUS_CHOICES
+    )
     FILER_TYPE_OPTIONS = (
         ('pac', 'PAC'),
         ('cand', 'Candidate'),
@@ -39,8 +52,9 @@ class Filer(models.Model):
     def __unicode__(self):
         return self.short_name
 
+    @models.permalink
     def get_absolute_url(self):
-        return reverse('filer_detail', args=[str(self.pk)])
+        return ('filer_detail', [str(self.pk)])
 
     @property
     def short_name(self, character_limit=75):

@@ -9,12 +9,16 @@ v1_api.register(FilerResource())
 
 urlpatterns = patterns(
     '',
-    url(r'^$', RedirectView.as_view(url='/explore/1/')),
-    url(r'^explore$', RedirectView.as_view(url='/explore/1/')),
+    url(r'^$', RedirectView.as_view(url='/filers/1/')),
     url(
-        r'^explore/(?P<page>[\d+]+)/$',
+        r'^filers/$',
+        RedirectView.as_view(url='/filers/1/'),
+        name="filer_list"
+    ),
+    url(
+        r'^filers/(?P<page>[\d+]+)/$',
         views.FilerListView.as_view(),
-        name='filer_list'
+        name='filer_page'
     ),
     url(
         r'^filer/(?P<pk>\d+)/$',

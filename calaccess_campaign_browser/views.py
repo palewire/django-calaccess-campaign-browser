@@ -3,10 +3,10 @@ import csv
 import json
 from django.db.models import Q
 from django.views import generic
-from django.shortcuts import render, redirect
-from django.utils.encoding import smart_text
 from django.http import HttpResponse
 from bakery.views import BuildableListView
+from django.utils.encoding import smart_text
+from django.shortcuts import render, redirect
 from calaccess_campaign_browser.models import (
     Filer,
     Committee,
@@ -70,10 +70,6 @@ class CSVResponseMixin(DataPrepMixin):
         [writer.writerow(i) for i in data]
         return response
 
-#
-# Views
-#
-
 
 class CommitteeDataView(JSONResponseMixin, CSVResponseMixin, generic.ListView):
     """
@@ -108,6 +104,9 @@ class CommitteeDataView(JSONResponseMixin, CSVResponseMixin, generic.ListView):
             context, **kwargs
         )
 
+#
+# Views
+#
 
 class IndexView(BuildableListView):
     model = FlatFile
@@ -132,6 +131,13 @@ class IndexView(BuildableListView):
         return files
 
 
+class FilerListView(generic.ListView):
+    model = Filer
+    template_name = "filer_list"
+    allow_empty = False
+    paginate_by = 100
+
+
 class ContributionDetailView(generic.DetailView):
     model = Contribution
     template_name = 'contribution/detail.html'
@@ -145,19 +151,6 @@ class ExpenditureDetailView(generic.DetailView):
 class FilingDetailView(generic.DetailView):
     model = Filing
     template_name='filing/detail.html'
-
-
-class FilerListView(generic.ListView):
-    model = Filer
-    template_name = 'filer/list.html'
-    context_object_name = 'filers'
-    allow_empty = False
-    paginate_by = 100
-
-    def get_context_data(self, **kwargs):
-        context = super(FilerListView, self).get_context_data(**kwargs)
-        context['base_url'] = '/explore/'
-        return context
 
 
 class FilerDetailView(generic.DetailView):
