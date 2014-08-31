@@ -175,7 +175,7 @@ class Command(BaseCommand):
         """
         c.execute(sql)
 
-    def load_form_f450(self):
+    def load_form_F450(self):
         print "-- Form F450"
         c = connection.cursor()
         sql = """
