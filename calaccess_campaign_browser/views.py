@@ -144,12 +144,12 @@ class ExpenditureDetailView(generic.DetailView):
 
 class FilingDetailView(generic.DetailView):
     model = Filing
-    template = 'templates/filing/detail.html'
+    template_name='filing/detail.html'
 
 
 class FilerListView(generic.ListView):
     model = Filer
-    template = 'templates/filer/list.html'
+    template_name = 'filer/list.html'
     context_object_name = 'filers'
     allow_empty = False
     paginate_by = 100
@@ -173,6 +173,7 @@ class FilerDetailView(generic.DetailView):
 
 class CommitteeDetailView(generic.DetailView):
     model = Committee
+    template_name='committee/detail.html'
 
     def get_context_data(self, **kwargs):
         context = super(CommitteeDetailView, self).get_context_data(**kwargs)
@@ -191,6 +192,7 @@ class CommitteeDetailView(generic.DetailView):
 
 class CommitteeContributionView(CommitteeDataView):
     model = Contribution
+    template_name = 'committee/contribution_list.html'
     context_object_name = 'committee_contributions'
 
     def get_queryset(self):
@@ -204,6 +206,7 @@ class CommitteeContributionView(CommitteeDataView):
 
 class CommitteeExpenditureView(CommitteeDataView):
     model = Expenditure
+    template_name='committee/expenditure_list.html'
     context_object_name = 'committee_expenditures'
 
     def get_queryset(self):
@@ -217,6 +220,7 @@ class CommitteeExpenditureView(CommitteeDataView):
 
 class CommitteeFilingView(CommitteeDataView):
     model = Filing
+    template_name='committee/filing_list.html'
     context_object_name = 'committee_filings'
 
     def get_queryset(self):

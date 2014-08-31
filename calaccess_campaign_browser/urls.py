@@ -8,24 +8,12 @@ v1_api = Api(api_name='v1')
 v1_api.register(FilerResource())
 
 urlpatterns = patterns(
-    'calaccess_campaign_browser.views',
-    url(
-        r'^$',
-        RedirectView.as_view(
-            url='/explore/1/',
-            permanent=True,
-        ),
-    ),
-    url(
-        r'^explore$',
-        RedirectView.as_view(
-            url='/explore/1/',
-            permanent=True,
-        ),
-    ),
+    '',
+    url(r'^$', RedirectView.as_view(url='/explore/1/')),
+    url(r'^explore$', RedirectView.as_view(url='/explore/1/')),
     url(
         r'^explore/(?P<page>[\d+]+)/$',
-        views.FilerListView.as_view(template_name='filer/list.html'),
+        views.FilerListView.as_view(),
         name='filer_list'
     ),
     url(
@@ -35,39 +23,27 @@ urlpatterns = patterns(
     ),
     url(
         r'^committee/(?P<pk>\d+)/contributions/(?P<page>[\d+]+)/$',
-        views.CommitteeContributionView.as_view(
-            template_name='committee/contribution_list.html'
-        ),
+        views.CommitteeContributionView.as_view(),
         name='committee_contribution_list',
     ),
     url(
         r'^committee/(?P<pk>\d+)/expenditures/(?P<page>[\d+]+)/$',
-        views.CommitteeExpenditureView.as_view(
-            template_name='committee/expenditure_list.html'
-        ),
+        views.CommitteeExpenditureView.as_view(),
         name='committee_expenditure_list',
     ),
     url(
         r'^committee/(?P<pk>\d+)/filings/(?P<page>[\d+]+)/$',
-        views.CommitteeFilingView.as_view(
-            template_name='committee/filing_list.html'
-        ),
+        views.CommitteeFilingView.as_view(),
         name='committee_filing_list',
     ),
     url(
         r'^committee/(?P<pk>\d+)/$',
-        (
-            views.
-            CommitteeDetailView
-            .as_view(
-                template_name='committee/detail.html'
-            )
-        ),
+        views.CommitteeDetailView.as_view(),
         name='committee_detail'
     ),
     url(
         r'^filing/(?P<pk>\d+)/$',
-        views.FilingDetailView.as_view(template_name='filing/detail.html'),
+        views.FilingDetailView.as_view(),
         name='filing_detail'
     ),
     url(
