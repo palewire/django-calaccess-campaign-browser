@@ -13,7 +13,7 @@ class Command(BaseCommand):
         self.load_form_F450()
 
     def load_form_F460(self):
-        print "-- Loading summary totals for Form F460"
+        print "-- Form F460"
         c = connection.cursor()
         sql = """
         INSERT INTO calaccess_campaign_browser_summary (
@@ -176,7 +176,7 @@ class Command(BaseCommand):
         c.execute(sql)
 
     def load_form_f450(self):
-        print "-- Loading summary totals for Form F450"
+        print "-- Form F450"
         c = connection.cursor()
         sql = """
         INSERT INTO calaccess_campaign_browser_summary (
