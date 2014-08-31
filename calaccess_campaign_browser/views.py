@@ -140,17 +140,14 @@ class FilerListView(generic.ListView):
 
 class ContributionDetailView(generic.DetailView):
     model = Contribution
-    template_name = 'contribution/detail.html'
 
 
 class ExpenditureDetailView(generic.DetailView):
     model = Expenditure
-    template_name = 'expenditure/detail.html'
 
 
 class FilingDetailView(generic.DetailView):
     model = Filing
-    template_name='filing/detail.html'
 
 
 class FilerDetailView(generic.DetailView):
@@ -184,7 +181,8 @@ class CommitteeDetailView(generic.DetailView):
 
 class CommitteeContributionView(CommitteeDataView):
     model = Contribution
-    template_name = 'committee/contribution_list.html'
+    template_name = 'calaccess_campaign_browser/committee_\
+contribution_list.html'
     context_object_name = 'committee_contributions'
 
     def get_queryset(self):
@@ -198,7 +196,8 @@ class CommitteeContributionView(CommitteeDataView):
 
 class CommitteeExpenditureView(CommitteeDataView):
     model = Expenditure
-    template_name='committee/expenditure_list.html'
+    template_name = 'calaccess_campaign_browser/committee_\
+expenditure_list.html'
     context_object_name = 'committee_expenditures'
 
     def get_queryset(self):
@@ -212,7 +211,7 @@ class CommitteeExpenditureView(CommitteeDataView):
 
 class CommitteeFilingView(CommitteeDataView):
     model = Filing
-    template_name='committee/filing_list.html'
+    template_name='calaccess_campaign_browser/committee_filing_list.html'
     context_object_name = 'committee_filings'
 
     def get_queryset(self):
@@ -279,4 +278,5 @@ def search(request):
         'query_string': query_string,
         'results': results
     }
-    return render(request, 'search/results.html', context)
+    template = 'calaccess_campaign_browser/search_results.html'
+    return render(request, template, context)

@@ -1,11 +1,9 @@
-{% extends 'base.html' %}
+{% extends 'calaccess_campaign_browser/base.html' %}
 {% load humanize %}
 
-{% block title %}{{ filing.filing_id_raw }} - Filing - {{ committee.name }} - Committee - {{ block.super }}{% endblock %}
+{% block title %}{{ filing.filing_id_raw }} - Filing - {{ filing.committee.name }} - {{ block.super }}{% endblock %}
 
 {% block content %}
-<div class="container">
-
   <div class="row">
     <div class="col-12-lg">
         <h2>Filing No. {{ filing.filing_id_raw }} <small>{{ filing.form_id }}</small></h2>
@@ -59,5 +57,4 @@
 
     </div>
   </div>
-</div>
 {% endblock %}

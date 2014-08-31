@@ -1,6 +1,5 @@
-{% extends 'base.html' %}
+{% extends 'calaccess_campaign_browser/base.html' %}
 {% load humanize %}
-
 
 {% block content %}
 <div class="container">
@@ -8,7 +7,9 @@
     <div class="row" style="margin-bottom:40px">
         <form class="form-inline" role="form" method="GET" action="/search/">
             <div class="form-group col-md-8">
-                <input type="text" class="form-control" style="width:100%" id="q" name="q" {% if query_string %}value="{{ query_string }}"{% else %}placeholder="Search contributions"{% endif %}>
+                <input type="text" class="form-control" style="width:100%"
+                    id="q" name="q"
+                    {% if query_string %}value="{{ query_string }}"{% else %}placeholder="Search contributions"{% endif %}>
             </div>
             <button type="submit" class="btn btn-default">Submit</button>
         </form>

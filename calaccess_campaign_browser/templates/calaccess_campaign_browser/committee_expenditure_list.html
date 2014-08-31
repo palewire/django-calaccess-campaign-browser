@@ -1,4 +1,4 @@
-{% extends 'base.html' %}
+{% extends 'calaccess_campaign_browser/base.html' %}
 {% load humanize %}
 
 {% block title %}Expenditures - {{ committee.name }} - Committee - {{ block.super }}{% endblock %}
@@ -13,7 +13,7 @@
             prev: '&laquo;',
             next: '&rsaquo;',
             onPageClick: function (event, page) {
-                window.location.href = "{{ base_url }}" + page + '/';
+                window.location.href = "/committee/" + {{ committee.id }} + "/expenditures/" + page + '/';
             }
         });
     </script>
@@ -21,9 +21,7 @@
 
 {% block content %}
 
-<div class="container">
-
-{% include "committee_nav.html" %}
+{% include "calaccess_campaign_browser/committee_nav.html" %}
 
 <div class="row">
     <div class="col-12-lg">
@@ -43,7 +41,7 @@
     </div>
 </div>
 
-{% include "paginator.html" %}
+{% include "calaccess_campaign_browser/paginator.html" %}
 
 <div class="row">
     <div class="col-12-lg">
@@ -74,7 +72,5 @@
     </div>
   </div>
 
-{% include "paginator.html" %}
-
-</div>
+{% include "calaccess_campaign_browser/paginator.html" %}
 {% endblock %}

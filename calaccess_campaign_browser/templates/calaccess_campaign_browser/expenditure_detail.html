@@ -1,19 +1,18 @@
-{% extends 'base.html' %}
+{% extends 'calaccess_campaign_browser/base.html' %}
 {% load humanize %}
 
 {% block title %}
 {% endblock %}
 
 {% block content %}
-<div class="container">
-
-    {% include "breadcrumb_filing.html" %}
+  <div class="row">
+    <div class="col-12-lg">
+    {% include "calaccess_campaign_browser/breadcrumb_filing.html" %}
 
     <h1>${{ object.amount }} <small><a href="{{ object.committee.get_absolute_url }}">{{ object.committee }}</a></small></h1>
 
-    <p>{{ object.description }}</p>
-    <p><strong>Election cycle:</strong> {{ object.cycle }}</p>
-    <p><strong>Date received: </strong> {{ object.rcpt_date }}</p>
+    <p><strong>Election cycle:  </strong> {{ object.cycle }}</p>
+    <p><strong>Expenditure date:</strong> {{ object.expn_date }}</p>
     <p><strong>Filing: </strong> {{ object.filing }}</p>
 
     <h3>Basics</h3>
@@ -25,19 +24,17 @@
                 <th>Zip</th>
                 <th>First Name</th>
                 <th>Last Name</th>
-                <th>Employer</th>
-                <th>Occupation</th>
+                <th>Description</th>
             </tr>
         </thead>
         <tbody>
             <tr>
-                <td>{{ object.ctrib_city }}</td>
-                <td>{{ object.ctrib_st }}</td>
-                <td>{{ object.ctrib_zip4 }}</td>
-                <td>{{ object.ctrib_namf }}</td>
-                <td>{{ object.ctrib_naml }}{% if object.ctrib_nams %}, {{ object.ctrib_nams }}{% endif %}</td>
-                <td>{{ object.ctrib_emp }}</td>
-                <td>{{ object.ctrib_occ }}</td>
+                <td>{{ object.payee_city }}</td>
+                <td>{{ object.payee_st }}</td>
+                <td>{{ object.payee_zip4 }}</td>
+                <td>{{ object.payee_namf }}</td>
+                <td>{{ object.payee_naml }}{% if object.ctrib_nams %}, {{ object.ctrib_nams }}{% endif %}</td>
+                <td>{{ object.expn_dscr }}</td>
             </tr>
         </tbody>
     </table>
@@ -55,7 +52,6 @@
                 <th>Memo Ref Number</th>
                 <th>Organization ID</th>
                 <th>Transaction ID</th>
-                <th>Transaction Type</th>
             </tr>
         </thead>
         <tbody>
@@ -69,10 +65,32 @@
                 <td>{{ object.memo_refno }}</td>
                 <td>{{ object.org_id }}</td>
                 <td>{{ object.tran_id }}</td>
-                <td>{{ object.tran_type }}</td>
             </tr>
         </tbody>
     </table>
 
+    <table class="table table-responsive">
+        <thead>
+            <tr>
+                <th>entity_cd</th>
+                <th>expn_chkno</th>
+                <th>expn_code</th>
+                <th>expn_code_display</th>
+                <th>g_from_e_f</th>
+
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td>{{ object.entity_cd }}</td>
+                <td>{{ object.expn_chkno }}</td>
+                <td>{{ object.expn_code }}</td>
+                <td>{{ object.expn_code_display }}</td>
+                <td>{{ object.g_from_e_f }}</td>
+            </tr>
+        </tbody>
+    </table>
+
+    </div>
 </div>
 {% endblock %}
