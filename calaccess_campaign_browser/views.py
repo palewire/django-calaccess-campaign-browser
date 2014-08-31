@@ -20,7 +20,6 @@ from calaccess_campaign_browser.models import (
 # Mixins
 #
 
-
 class DataPrepMixin(object):
     """
     Provides a method for preping a context object
@@ -132,7 +131,7 @@ class IndexView(BuildableListView):
 
 
 class FilerListView(generic.ListView):
-    model = Filer
+    queryset = Filer.objects.exclude(name="")
     template_name = "filer_list"
     allow_empty = False
     paginate_by = 100
