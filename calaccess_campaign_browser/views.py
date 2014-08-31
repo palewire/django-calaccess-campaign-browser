@@ -155,18 +155,17 @@ class FilingDetailView(generic.DetailView):
 
 class FilerDetailView(generic.DetailView):
     model = Filer
-    template_name = 'filer/detail.html'
 
     def render_to_response(self, context):
         if context['object'].committee_set.count() == 1:
             return redirect(
                 context['object'].committee_set.all()[0].get_absolute_url()
             )
+        return super(FilerDetailView, self).render_to_response(context)
 
 
 class CommitteeDetailView(generic.DetailView):
     model = Committee
-    template_name='committee/detail.html'
 
     def get_context_data(self, **kwargs):
         context = super(CommitteeDetailView, self).get_context_data(**kwargs)

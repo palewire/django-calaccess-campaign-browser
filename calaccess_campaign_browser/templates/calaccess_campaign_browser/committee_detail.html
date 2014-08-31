@@ -1,13 +1,10 @@
-{% extends 'base.html' %}
+{% extends 'calaccess_campaign_browser/base.html' %}
 {% load humanize %}
 
 {% block title %}{{ committee.name }} - Committee - {{ block.super }}{% endblock %}
 
 {% block content %}
-
-<div class="container">
-
-{% include "committee_nav.html" %}
+{% include "calaccess_campaign_browser/committee_nav.html" %}
 
 <div class="row">
     <div class="col-12-lg">
@@ -188,6 +185,5 @@
   </div>
 </div>
 
-</div>
 </div>
 {% endblock %}
