@@ -44,7 +44,7 @@ class Command(BaseCommand):
           end_date,
           dupe
         )
-        SELECT 
+        SELECT
           cycle.id as cycle_id,
           c.id as committee_id,
           ff.FILING_ID as filing_id_raw,

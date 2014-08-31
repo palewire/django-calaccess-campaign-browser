@@ -12,7 +12,8 @@ docs:
 	cd docs && make livehtml
 
 load:
-	python example/manage.py build_campaign_finance
+	clear
+	python example/manage.py loadcalaccesscampaignsummaries
 
 runserver:
 	python example/manage.py runserver

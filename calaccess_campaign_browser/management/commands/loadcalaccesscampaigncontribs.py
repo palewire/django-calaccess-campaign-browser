@@ -109,8 +109,14 @@ class Command(BaseCommand):
                 r.intr_zip4,
                 r.intr_namf,
                 r.tran_id,
-                CASE WHEN r.ctrib_namf <> '' THEN r.ctrib_emp ELSE r.ctrib_naml END as raw_org_nam,
-                CASE WHEN r.ctrib_namf <> '' THEN true ELSE false END as person_flag
+                CASE
+                    WHEN r.ctrib_namf <> '' THEN r.ctrib_emp
+                    ELSE r.ctrib_naml
+                END as raw_org_nam,
+                CASE
+                    WHEN r.ctrib_namf <> '' THEN true
+                    ELSE false
+                END as person_flag
             FROM calaccess_campaign_browser_filing as f
             INNER JOIN RCPT_CD as r
             ON f.filing_id_raw = r.filing_id

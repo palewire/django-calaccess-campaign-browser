@@ -194,57 +194,67 @@ class Summary(models.Model):
         choices=FORM_TYPE_CHOICES,
         db_index=True,
     )
+    dupe = models.BooleanField(default=False, db_index=True)
     itemized_monetary_contribs = models.DecimalField(
         max_digits=16,
         decimal_places=2,
         null=True,
+        default=None,
     )
     unitemized_expenditures = models.DecimalField(
         max_digits=16,
         decimal_places=2,
         null=True,
+        default=None,
     )
     total_expenditures = models.DecimalField(
         max_digits=16,
         decimal_places=2,
         null=True,
+        default=None,
     )
     total_monetary_contribs = models.DecimalField(
         max_digits=16,
         decimal_places=2,
         null=True,
+        default=None,
     )
     unitemized_monetary_contribs = models.DecimalField(
         max_digits=16,
         decimal_places=2,
         null=True,
+        default=None,
     )
     non_monetary_contribs = models.DecimalField(
         max_digits=16,
         decimal_places=2,
         null=True,
+        default=None,
     )
     itemized_expenditures = models.DecimalField(
         max_digits=16,
         decimal_places=2,
         null=True,
+        default=None,
     )
     total_contribs = models.DecimalField(
         max_digits=16,
         decimal_places=2,
         null=True,
+        default=None,
     )
     outstanding_debts = models.DecimalField(
         max_digits=16,
         decimal_places=2,
         null=True,
+        default=None,
     )
     ending_cash_balance = models.DecimalField(
         max_digits=16,
         decimal_places=2,
         null=True,
+        default=None,
     )
-    dupe = models.BooleanField(default=False, db_index=True)
 
     def __unicode__(self):
         return '{0} {1} ({2} - {3})'.format(

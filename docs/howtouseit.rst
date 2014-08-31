@@ -68,7 +68,7 @@ calaccess data dump.
 
 .. code-block:: bash
 
-   $ python manage.py build_campaign_finance
+   $ python manage.py buildcalaccesscampaignbrowser
 
 In your project ``urls.py`` file, add this app's URLs:
 

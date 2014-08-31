@@ -78,7 +78,7 @@ Then you can build the campaign finance models
 
 .. code-block:: bash
 
-    $ python example/manage.py build_campaign_finance
+    $ python example/manage.py buildcalaccesscampaignbrowser
 
 And fire up the Django test server to use the browser
 

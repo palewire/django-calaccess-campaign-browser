@@ -1,8 +1,8 @@
 Management commands
 ===================
 
-build_campaign_finance
-------------------
+buildcalaccesscampaignbrowser
+-----------------------------
 
 .. code-block:: bash
 
@@ -26,8 +26,9 @@ build_campaign_finance
       -h, --help            show this help message and exit
 
 
-export_campaign_finance
----------------------
+exportcalaccesscampaignbrowser
+-----------------------------
+
 .. code-block:: bash
 
     Usage: manage.py export_campaign_finance [options]

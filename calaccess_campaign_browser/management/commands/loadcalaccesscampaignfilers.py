@@ -37,12 +37,14 @@ class Command(BaseCommand):
         -- Marking these as candidate record in our target data table
          'cand' as filer_type,
         -- Combining and cleaning up the name data from the source
-         REPLACE(TRIM(CONCAT(`NAMT`, " ", `NAMF`, " ", `NAML`, " ", `NAMS`)), '  ', ' ') as name
+         REPLACE(TRIM(
+            CONCAT(`NAMT`, " ", `NAMF`, " ", `NAML`, " ", `NAMS`)
+         ), '  ', ' ') as name
         FROM FILERNAME_CD
         INNER JOIN (
             -- Joining against a subquery that returns the last record
             -- in the source table because there are duplicates and we
-            -- do not know of any logical way to better infer the most 
+            -- do not know of any logical way to better infer the most
             -- recent or complete record.
             SELECT FILER_ID, MAX(`id`) as `id`
             FROM FILERNAME_CD
@@ -62,7 +64,8 @@ class Command(BaseCommand):
         their campaigns and then load those committees into a consolidated
         table.
         """
-        print "- Loading committees linked to candidate filers into Committee model"
+        print "- Loading committees linked to candidate filers into \
+Committee model"
         c = connection.cursor()
         sql = """
         INSERT INTO %s (
@@ -72,15 +75,15 @@ class Command(BaseCommand):
             committee_type
         )
         SELECT
-            candidates2committees.`candidate_filer_pk` as filer_id,
+            cand2cmte.`candidate_filer_pk` as filer_id,
             distinct_filers.`filer_id` as filer_id_raw,
             distinct_filers.`name` as name,
             'cand' as committee_type
         FROM (
             -- Two queries that join together via a UNION to return
             -- the corresponding committee filer ids that are linked
-            -- to the candidate filer records from either direction (ie. A or B)
-            SELECT 
+            -- to the candidate filer records from either direction (ie A or B)
+            SELECT
                 f.`id` as candidate_filer_pk,
                 f.`FILER_ID` as candidate_filer_id,
                 committee_filer_id_a.`FILER_ID_A` as committee_filer_id
@@ -109,16 +112,18 @@ class Command(BaseCommand):
             ) as committee_filer_id_a
             ON f.`FILER_ID` = committee_filer_id_a.`FILER_ID_A`
             AND f.`FILER_ID` <> committee_filer_id_a.`FILER_ID_B`
-        ) as candidates2committees
+        ) as cand2cmte
         INNER JOIN (
             SELECT
              FILERNAME_CD.`FILER_ID` as filer_id,
-             REPLACE(TRIM(CONCAT(`NAMT`, " ", `NAMF`, " ", `NAML`, " ", `NAMS`)), '  ', ' ') as name
+             REPLACE(TRIM(
+                CONCAT(`NAMT`, " ", `NAMF`, " ", `NAML`, " ", `NAMS`)
+             ), '  ', ' ') as name
             FROM FILERNAME_CD
             INNER JOIN (
                 -- Joining against a subquery that returns the last record
                 -- in the source table because there are duplicates and we
-                -- do not know of any logical way to better infer the most 
+                -- do not know of any logical way to better infer the most
                 -- recent or complete record.
                 SELECT FILER_ID, MAX(`id`) as `id`
                 FROM FILERNAME_CD
@@ -126,14 +131,15 @@ class Command(BaseCommand):
             ) as max
             ON FILERNAME_CD.`id` = max.`id`
         ) as distinct_filers
-        ON candidates2committees.`committee_filer_id` = distinct_filers.`filer_id`;
+        ON cand2cmte.`committee_filer_id` = distinct_filers.`filer_id`;
         """ % (
             Committee._meta.db_table,
         )
         c.execute(sql)
 
     def load_pac_filers(self):
-        print "- Finding recipient committees not associated with candidates and loading into Filer model as PACs"
+        print "- Finding recipient committees not associated with candidates \
+and loading into Filer model as PACs"
         c = connection.cursor()
         sql = """
         INSERT INTO %s (
@@ -152,13 +158,16 @@ class Command(BaseCommand):
         -- Marking these as PAC record in our target data table
          'pac' as filer_type,
         -- Combining and cleaning up the name data from the source
-         REPLACE(TRIM(CONCAT(`NAMT`, " ", `NAMF`, " ", `NAML`, " ", `NAMS`)), '  ', ' ') as name
+         REPLACE(TRIM(
+            CONCAT(`NAMT`, " ", `NAMF`, " ", `NAML`, " ", `NAMS`)
+         ), '  ', ' ') as name
         FROM FILERNAME_CD
         INNER JOIN (
             SELECT max_filers.`id`
             FROM (
                 -- Query out all the filings with filer IDs that
-                --  A) That aren't already in our committee table as a candidate committee
+                --  A) That aren't already in our committee table
+                --     as a candidate committee
                 --  B) That filed form F460 or F450
                 SELECT DISTINCT filings.`FILER_ID`
                 FROM FILER_FILINGS_CD filings

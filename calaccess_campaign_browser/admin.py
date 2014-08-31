@@ -10,6 +10,7 @@ from calaccess_campaign_browser.models import (
     Filing,
 )
 
+
 class BaseAdmin(admin.ModelAdmin):
     save_on_top = True
 

@@ -82,14 +82,34 @@ class Command(BaseCommand):
                         REPLACE(CONCAT(
                             e.bal_name,
                             " ",
-                            REPLACE(TRIM(CONCAT(e.`cand_namt`, " ", e.`cand_namf`, " ", e.`cand_naml`, " ", e.`cand_nams`)), '  ', ' '),
+                            REPLACE(TRIM(
+                                CONCAT(
+                                    e.`cand_namt`,
+                                    " ",
+                                    e.`cand_namf`,
+                                    " ",
+                                    e.`cand_naml`,
+                                    " ",
+                                    e.`cand_nams`
+                                )
+                            ), '  ', ' '),
                             " ",
                             e.juris_dscr,
                             " ",
                             e.offic_dscr
                         ), '  ', ' ')
                     ELSE
-                        REPLACE(TRIM(CONCAT(e.`payee_namt`, " ", e.`payee_namf`, " ", e.`payee_naml`, " ", e.`payee_nams`)), '  ', ' ')
+                        REPLACE(TRIM(
+                            CONCAT(
+                                e.`payee_namt`,
+                                " ",
+                                e.`payee_namf`,
+                                " ",
+                                e.`payee_naml`,
+                                " ",
+                                e.`payee_nams`
+                            )
+                        ), '  ', ' ')
                 END
             ) as `name`,
             CASE

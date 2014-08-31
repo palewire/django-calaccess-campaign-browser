@@ -39,24 +39,55 @@ class Command(BaseCommand):
             f.cycle_id,
             f.form_id as form_type,
             f.dupe,
-            COALESCE(itemized_monetary_contribs.amount_a, 0) as itemized_monetary_contribs,
-            COALESCE(unitemized_monetary_contribs.amount_a, 0) as unitemized_monetary_contribs,
-            COALESCE(total_monetary_contribs.amount_a, 0) as total_monetary_contribs,
-            COALESCE(non_monetary_contribs.amount_a, 0) as non_monetary_contribs,
-            COALESCE(total_contribs.amount_a, 0) as total_contribs,
-            COALESCE(itemized_expenditures.amount_a, 0) as itemized_expenditure,
-            COALESCE(unitemized_expenditures.amount_a, 0) as unitemized_expenditure,
-            COALESCE(total_expenditures.amount_a, 0) as total_expenditures,
-            COALESCE(ending_cash_balance.amount_a, 0) as ending_cash_balance,
-            COALESCE(outstanding_debts.amount_a, 0) as outstanding_debts
-
-        FROM calaccess_campaign_browser_filing as f
+            COALESCE(
+                itemized_monetary_contribs.amount_a,
+                0.00
+            ) as itemized_monetary_contribs,
+            COALESCE(
+                unitemized_monetary_contribs.amount_a,
+                0.00
+            ) as unitemized_monetary_contribs,
+            COALESCE(
+                total_monetary_contribs.amount_a,
+                0.00
+            ) as total_monetary_contribs,
+            COALESCE(
+                non_monetary_contribs.amount_a,
+                0.00
+            ) as non_monetary_contribs,
+            COALESCE(total_contribs.amount_a, 0.00) as total_contribs,
+            COALESCE(
+                itemized_expenditures.amount_a,
+                0.00
+            ) as itemized_expenditures,
+            COALESCE(
+                unitemized_expenditures.amount_a,
+                0.00
+            ) as unitemized_expenditures,
+            COALESCE(total_expenditures.amount_a, 0.00) as total_expenditures,
+            COALESCE(
+                ending_cash_balance.amount_a,
+                0.00
+            ) as ending_cash_balance,
+            COALESCE(outstanding_debts.amount_a, 0.00) as outstanding_debts
+        FROM (
+            SELECT
+                id,
+                committee_id,
+                cycle_id,
+                form_id,
+                dupe,
+                filing_id_raw,
+                amend_id
+            FROM calaccess_campaign_browser_filing
+            WHERE form_id = 'F460'
+        ) as f
 
         LEFT OUTER JOIN (
             SELECT filing_id, amend_id, amount_a
             FROM SMRY_CD
             WHERE form_type = 'A'
-            AND line_item = 1
+            AND line_item = '1'
         ) as itemized_monetary_contribs
         ON f.filing_id_raw = itemized_monetary_contribs.filing_id
         AND f.amend_id = itemized_monetary_contribs.amend_id
@@ -65,7 +96,7 @@ class Command(BaseCommand):
             SELECT filing_id, amend_id, amount_a
             FROM SMRY_CD
             WHERE form_type = 'A'
-            AND line_item = 2
+            AND line_item = '2'
         ) as unitemized_monetary_contribs
         ON f.filing_id_raw = unitemized_monetary_contribs.filing_id
         AND f.amend_id = unitemized_monetary_contribs.amend_id
@@ -74,7 +105,7 @@ class Command(BaseCommand):
             SELECT filing_id, amend_id, amount_a
             FROM SMRY_CD
             WHERE form_type = 'A'
-            AND line_item = 3
+            AND line_item = '3'
         ) as total_monetary_contribs
         ON f.filing_id_raw = total_monetary_contribs.filing_id
         AND f.amend_id = total_monetary_contribs.amend_id
@@ -83,7 +114,7 @@ class Command(BaseCommand):
             SELECT filing_id, amend_id, amount_a
             FROM SMRY_CD
             WHERE form_type = 'F460'
-            AND line_item = 4
+            AND line_item = '4'
         ) as non_monetary_contribs
         ON f.filing_id_raw = non_monetary_contribs.filing_id
         AND f.amend_id = non_monetary_contribs.amend_id
@@ -92,7 +123,7 @@ class Command(BaseCommand):
             SELECT filing_id, amend_id, amount_a
             FROM SMRY_CD
             WHERE form_type = 'F460'
-            AND line_item = 5
+            AND line_item = '5'
         ) as total_contribs
         ON f.filing_id_raw = total_contribs.filing_id
         AND f.amend_id = total_contribs.amend_id
@@ -101,7 +132,7 @@ class Command(BaseCommand):
             SELECT filing_id, amend_id, amount_a
             FROM SMRY_CD
             WHERE form_type = 'E'
-            AND line_item = 1
+            AND line_item = '1'
         ) as itemized_expenditures
         ON f.filing_id_raw = itemized_expenditures.filing_id
         AND f.amend_id = itemized_expenditures.amend_id
@@ -110,7 +141,7 @@ class Command(BaseCommand):
             SELECT filing_id, amend_id, amount_a
             FROM SMRY_CD
             WHERE form_type = 'E'
-            AND line_item = 2
+            AND line_item = '2'
         ) as unitemized_expenditures
         ON f.filing_id_raw = unitemized_expenditures.filing_id
         AND f.amend_id = unitemized_expenditures.amend_id
@@ -119,7 +150,7 @@ class Command(BaseCommand):
             SELECT filing_id, amend_id, amount_a
             FROM SMRY_CD
             WHERE form_type = 'E'
-            AND line_item = 4
+            AND line_item = '4'
         ) as total_expenditures
         ON f.filing_id_raw = total_expenditures.filing_id
         AND f.amend_id = total_expenditures.amend_id
@@ -128,7 +159,7 @@ class Command(BaseCommand):
             SELECT filing_id, amend_id, amount_a
             FROM SMRY_CD
             WHERE form_type = 'F460'
-            AND line_item = 16
+            AND line_item = '16'
         ) as ending_cash_balance
         ON f.filing_id_raw = ending_cash_balance.filing_id
         AND f.amend_id = ending_cash_balance.amend_id
@@ -137,12 +168,10 @@ class Command(BaseCommand):
             SELECT filing_id, amend_id, amount_a
             FROM SMRY_CD
             WHERE form_type = 'F460'
-            AND line_item = 19
+            AND line_item = '19'
         ) as outstanding_debts
         ON f.filing_id_raw = outstanding_debts.filing_id
         AND f.amend_id = outstanding_debts.amend_id
-
-        WHERE f.form_id = 'F460'
         """
         c.execute(sql)
 
@@ -175,22 +204,44 @@ class Command(BaseCommand):
             f.dupe,
             null as itemized_monetary_contribs,
             null as unitemized_monetary_contribs,
-            COALESCE(total_monetary_contribs.amount_a, 0) as total_monetary_contribs,
-            COALESCE(non_monetary_contribs.amount_a, 0) as non_monetary_contribs,
-            COALESCE(total_contribs.amount_a, 0) as total_contribs,
-            COALESCE(itemized_expenditures.amount_a, 0) as itemized_expenditure,
-            COALESCE(unitemized_expenditures.amount_a, 0) as unitemized_expenditure,
-            COALESCE(total_expenditures.amount_a, 0) as total_expenditures,
+            COALESCE(
+                total_monetary_contribs.amount_a,
+                0.00
+            ) as total_monetary_contribs,
+            COALESCE(
+                non_monetary_contribs.amount_a,
+                0.00
+            ) as non_monetary_contribs,
+            COALESCE(total_contribs.amount_a, 0.00) as total_contribs,
+            COALESCE(
+                itemized_expenditures.amount_a,
+                0.00
+            ) as itemized_expenditures,
+            COALESCE(
+                unitemized_expenditures.amount_a,
+                0.00
+            ) as unitemized_expenditures,
+            COALESCE(total_expenditures.amount_a, 0.00) as total_expenditures,
             null as ending_cash_balance,
             null as outstanding_debts
-
-        FROM calaccess_campaign_browser_filing as f
+        FROM (
+            SELECT
+                id,
+                committee_id,
+                cycle_id,
+                form_id,
+                dupe,
+                filing_id_raw,
+                amend_id
+            FROM calaccess_campaign_browser_filing
+            WHERE form_id = 'F450'
+        ) as f
 
         LEFT OUTER JOIN (
             SELECT filing_id, amend_id, amount_a
             FROM SMRY_CD
             WHERE form_type = 'F450'
-            AND line_item = 7
+            AND line_item = '7'
         ) as total_monetary_contribs
         ON f.filing_id_raw = total_monetary_contribs.filing_id
         AND f.amend_id = total_monetary_contribs.amend_id
@@ -199,7 +250,7 @@ class Command(BaseCommand):
             SELECT filing_id, amend_id, amount_a
             FROM SMRY_CD
             WHERE form_type = 'F450'
-            AND line_item = 8
+            AND line_item = '8'
         ) as non_monetary_contribs
         ON f.filing_id_raw = non_monetary_contribs.filing_id
         AND f.amend_id = non_monetary_contribs.amend_id
@@ -208,7 +259,7 @@ class Command(BaseCommand):
             SELECT filing_id, amend_id, amount_a
             FROM SMRY_CD
             WHERE form_type = 'F450'
-            AND line_item = 10
+            AND line_item = '10'
         ) as total_contribs
         ON f.filing_id_raw = total_contribs.filing_id
         AND f.amend_id = total_contribs.amend_id
@@ -217,7 +268,7 @@ class Command(BaseCommand):
             SELECT filing_id, amend_id, amount_a
             FROM SMRY_CD
             WHERE form_type = 'F450'
-            AND line_item = 1
+            AND line_item = '1'
         ) as itemized_expenditures
         ON f.filing_id_raw = itemized_expenditures.filing_id
         AND f.amend_id = itemized_expenditures.amend_id
@@ -226,7 +277,7 @@ class Command(BaseCommand):
             SELECT filing_id, amend_id, amount_a
             FROM SMRY_CD
             WHERE form_type = 'F450'
-            AND line_item = 2
+            AND line_item = '2'
         ) as unitemized_expenditures
         ON f.filing_id_raw = unitemized_expenditures.filing_id
         AND f.amend_id = unitemized_expenditures.amend_id
@@ -235,11 +286,9 @@ class Command(BaseCommand):
             SELECT filing_id, amend_id, amount_a
             FROM SMRY_CD
             WHERE form_type = 'E'
-            AND line_item = 6
+            AND line_item = '6'
         ) as total_expenditures
         ON f.filing_id_raw = total_expenditures.filing_id
         AND f.amend_id = total_expenditures.amend_id
-
-        WHERE f.form_id = 'F450'
         """
         c.execute(sql)
