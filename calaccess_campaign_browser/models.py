@@ -184,6 +184,8 @@ class Filing(models.Model):
     form_id = models.CharField(max_length=7, db_index=True)
     start_date = models.DateField(null=True)
     end_date = models.DateField(null=True)
+    date_received = models.DateField(null=True)
+    date_filed = models.DateField(null=True)
     dupe = models.BooleanField(
         default=False,
         db_index=True,

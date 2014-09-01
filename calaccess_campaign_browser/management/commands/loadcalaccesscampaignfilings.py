@@ -42,6 +42,8 @@ class Command(BaseCommand):
           amend_id,
           start_date,
           end_date,
+          date_received,
+          date_filed,
           dupe
         )
         SELECT
@@ -52,6 +54,8 @@ class Command(BaseCommand):
           ff.filing_sequence as amend_id,
           ff.rpt_start as start_date,
           ff.rpt_end as end_date,
+          ff.rpt_date as date_received,
+          ff.filing_date as date_filed,
           false
         FROM FILER_FILINGS_CD as ff
         INNER JOIN calaccess_campaign_browser_committee as c
