@@ -7,6 +7,7 @@ from django.views import generic
 from django.http import HttpResponse
 from bakery.views import BuildableListView
 from django.utils.encoding import smart_text
+from django.core.urlresolvers import reverse
 from django.shortcuts import render, redirect
 from calaccess_campaign_browser.models import (
     Filer,
@@ -158,6 +159,7 @@ class FilerListView(generic.ListView):
         context = super(FilerListView, self).get_context_data(**kwargs)
         if ('q' in self.request.GET) and self.request.GET['q'].strip():
             context['query_string'] = self.request.GET['q']
+        context['base_url'] = reverse("filer_list")
         return context
 
 
