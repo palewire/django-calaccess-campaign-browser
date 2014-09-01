@@ -8,7 +8,6 @@
     <div class="col-12-lg">
         <h2>Filing No. {{ filing.filing_id_raw }} <small>{{ filing.form_id }}</small></h2>
           <ol class="breadcrumb">
-            <li><a href="/browser">Home</a></li>
             <li><a href="{{ filing.committee.filer.get_absolute_url }}">Filer</a></li>
             <li><a href="{{ filing.committee.get_absolute_url }}">{{ filing.committee.name }} ({{ filing.committee.filer_id_raw }})</a></li>
             <li class="active">{{ filing.filing_id_raw }}</li>

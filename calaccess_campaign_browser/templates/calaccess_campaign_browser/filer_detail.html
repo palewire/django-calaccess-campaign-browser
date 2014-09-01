@@ -7,8 +7,8 @@
     <div class="col-12-lg">
         <h2>{{ filer.name }}</h2>
         <ol class="breadcrumb">
-          <li><a href="/explore/1/">Home</a></li>
-          <li class="active">Filer's committees</li>
+          <li><a href="{% url 'filer_list' %}">Filers</a></li>
+          <li class="active">Committees</li>
         </ol>
     </div>
   </div>
@@ -27,7 +27,9 @@
           {% for committee in filer.committee_set.all %}
             <tr>
               <td>
-                <a href="{{ committee.get_absolute_url }}">{{ committee.name }}</a>
+                <a href="{{ committee.get_absolute_url }}">
+                    {{ committee.short_name }}
+                </a>
               </td>
               <td>{{ committee.filer_id_raw }}</td>
               <td>{{ committee.get_committee_type_display }}</td>

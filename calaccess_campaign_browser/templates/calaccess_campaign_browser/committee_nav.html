@@ -2,20 +2,19 @@
     <div class="col-12-lg">
 
 <h2>{{ committee.name }}</h2>
+
     <nav id="navbar-example" class="navbar navbar-default navbar-static" role="navigation">
-      <div class="container-fluid">
-        <div class="navbar-header" style="margin-left:-25px;">
+        <div class="navbar-header">
           <button class="navbar-toggle" type="button" data-toggle="collapse" data-target=".bs-example-js-navbar-collapse">
             <span class="sr-only">Toggle navigation</span>
             <span class="icon-bar"></span>
             <span class="icon-bar"></span>
             <span class="icon-bar"></span>
           </button>
-          <!-- <span class="navbar-brand"><a href="{% url 'committee_detail' committee.pk %}">{{ committee.name|truncatechars:25 }}</a></span> -->
         <ol class="breadcrumb">
-          <li><a href="{% url 'filer_list' %}">Home</a></li>
-          <li><a href="{{ committee.filer.get_absolute_url }}">Filer's committees</a></li>
-         <li class="active"><a href="{{ committee.get_absolute_url }}">Committee overview</a></li>
+          <li><a href="{% url 'filer_list' %}">Filers</a></li>
+          <li><a href="{{ committee.filer.get_absolute_url }}">Committees</a></li>
+          <li class="active"><a href="{{ committee.get_absolute_url }}">Overview</a></li>
         </ol>
         </div>
         <div class="collapse navbar-collapse bs-example-js-navbar-collapse">
@@ -50,7 +49,6 @@
           </ul>
 
         </div><!-- /.nav-collapse -->
-      </div><!-- /.container-fluid -->
     </nav>
 
 </div>

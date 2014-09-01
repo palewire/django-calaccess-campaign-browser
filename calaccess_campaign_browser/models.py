@@ -57,7 +57,7 @@ class Filer(models.Model):
         return ('filer_detail', [str(self.pk)])
 
     @property
-    def short_name(self, character_limit=60):
+    def short_name(self, character_limit=75):
         if len(self.name) > character_limit:
             return self.name[:character_limit] + "..."
         return self.name
@@ -88,7 +88,7 @@ class Committee(models.Model):
     filer_id_raw = models.IntegerField(db_index=True)
     name = models.CharField(max_length=255, null=True)
     CMTE_TYPE_OPTIONS = (
-        ('cand', 'Candidate Committee'),
+        ('cand', 'Candidate'),
         ('pac', 'PAC'),
         ('linked-pac', 'Non-Candidate Committee, linked to other committees'),
     )
@@ -106,6 +106,12 @@ class Committee(models.Model):
 
     def get_absolute_url(self):
         return reverse('committee_detail', args=[str(self.pk)])
+
+    @property
+    def short_name(self, character_limit=75):
+        if len(self.name) > character_limit:
+            return self.name[:character_limit] + "..."
+        return self.name
 
     @property
     def total_contributions(self):
