@@ -21,13 +21,18 @@ class Command(BaseCommand):
         c = connection.cursor()
         sql = """
             INSERT INTO %s (`name`)
-            SELECT `session_id`
-            FROM FILER_FILINGS_CD
-            GROUP BY 1
-            ORDER BY 1 DESC;
-        """ % (
-            Cycle._meta.db_table,
-        )
+            SELECT DISTINCT
+                CASE
+                    WHEN `session_id` % 2 = 0 THEN `session_id`
+                    ELSE `session_id` + 1
+                END as cycle
+            FROM (
+                SELECT `session_id`
+                FROM FILER_FILINGS_CD
+                GROUP BY 1
+                ORDER BY 1 DESC
+            ) as sessions
+        """ % (Cycle._meta.db_table)
         c.execute(sql)
 
     def load_filings(self):
@@ -57,15 +62,21 @@ class Command(BaseCommand):
           ff.rpt_date as date_received,
           ff.filing_date as date_filed,
           false
-        FROM FILER_FILINGS_CD as ff
+        FROM (
+            SELECT
+                *,
+                CASE
+                    WHEN `session_id` % 2 = 0 THEN `session_id`
+                    ELSE `session_id` + 1
+                END as cycle
+            FROM FILER_FILINGS_CD
+        ) as ff
         INNER JOIN calaccess_campaign_browser_committee as c
         ON ff.`filer_id` = c.`filer_id_raw`
         INNER JOIN calaccess_campaign_browser_cycle as cycle
-        ON ff.session_id = cycle.name
+        ON ff.cycle = cycle.name
         WHERE `FORM_ID` IN ('F450', 'F460')
-        """ % (
-            Filing._meta.db_table,
-        )
+        """ % (Filing._meta.db_table)
         c.execute(sql)
 
     def mark_duplicates(self):
