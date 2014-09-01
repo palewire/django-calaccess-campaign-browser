@@ -20,10 +20,10 @@ class Command(BaseCommand):
         print "- Loading cycles"
         c = connection.cursor()
         sql = """
-            INSERT INTO %s (`name`)
+            INSERT INTO %(cycle_table)s (`name`)
             SELECT DISTINCT
                 CASE
-                    WHEN `session_id` % 2 = 0 THEN `session_id`
+                    WHEN `session_id` %% 2 = 0 THEN `session_id`
                     ELSE `session_id` + 1
                 END as cycle
             FROM (
@@ -32,14 +32,15 @@ class Command(BaseCommand):
                 GROUP BY 1
                 ORDER BY 1 DESC
             ) as sessions
-        """ % (Cycle._meta.db_table)
+        """
+        sql = sql % dict(cycle_table=Cycle._meta.db_table)
         c.execute(sql)
 
     def load_filings(self):
         print "- Loading filings"
         c = connection.cursor()
         sql = """
-        INSERT INTO %s (
+        INSERT INTO %(filing_table)s (
           cycle_id,
           committee_id,
           filing_id_raw,
@@ -66,7 +67,7 @@ class Command(BaseCommand):
             SELECT
                 *,
                 CASE
-                    WHEN `session_id` % 2 = 0 THEN `session_id`
+                    WHEN `session_id` %% 2 = 0 THEN `session_id`
                     ELSE `session_id` + 1
                 END as cycle
             FROM FILER_FILINGS_CD
@@ -76,7 +77,8 @@ class Command(BaseCommand):
         INNER JOIN calaccess_campaign_browser_cycle as cycle
         ON ff.cycle = cycle.name
         WHERE `FORM_ID` IN ('F450', 'F460')
-        """ % (Filing._meta.db_table)
+        """
+        sql = sql % dict(filing_table=Filing._meta.db_table)
         c.execute(sql)
 
     def mark_duplicates(self):

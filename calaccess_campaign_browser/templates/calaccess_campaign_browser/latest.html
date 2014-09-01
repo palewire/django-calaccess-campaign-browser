@@ -9,30 +9,38 @@
     </div>
   </div>
 
+  {% include "calaccess_campaign_browser/paginator.html" %}
+
   <div class="row">
     <div class="col-12-lg">
         <table class="table table-bordered table-hover">
           <thead>
             <tr>
-              <th>Name</th>
-              <th>Type</th>
-              <th>Status</th>
-              <th>Effective date</th>
+              <th>Filing no.</th>
+              <th>Filed</th>
+              <th>Committee</th>
+              <th>Form</th>
+              <th>Duplicate</th>
             </tr>
           </thead>
           <tbody>
-          {% for filer in object_list %}
+          {% for object in object_list %}
             <tr>
               <td>
-                <a href="{{ filer.get_absolute_url }}">{{ filer }}</a>
+                <a href="{{ object.get_absolute_url }}">{{ object.filing_id_raw }}</a>
               </td>
-              <td>{{ filer.get_filer_type_display }}</td>
-              <td>{{ filer.get_status_display }}</td>
-              <td>{{ filer.effective_date }}</td>
+              <td>{{ object.date_filed }}</td>
+              <td>
+                <a href="{{ object.committee.get_absolute_url }}">{{ object.committee.short_name }}</a>
+              </td>
+              <td>{{ object.form_id }}</td>
+              <td>{{ object.dupe }}</td>
             </tr>
           {% endfor %}
           </tbody>
         </table>
     </div>
   </div>
+
+  {% include "calaccess_campaign_browser/paginator.html" %}
 {% endblock %}

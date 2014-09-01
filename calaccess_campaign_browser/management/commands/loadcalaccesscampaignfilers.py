@@ -7,8 +7,8 @@ class Command(BaseCommand):
 
     def handle(self, *args, **options):
         c = connection.cursor()
-        c.execute('DELETE FROM %s' % Filer._meta.db_table)
         c.execute('DELETE FROM %s' % Committee._meta.db_table)
+        c.execute('DELETE FROM %s' % Filer._meta.db_table)
         self.load_candidate_filers()
         self.load_candidate_committees()
         self.load_pac_filers()
