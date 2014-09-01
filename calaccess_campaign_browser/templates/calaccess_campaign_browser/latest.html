@@ -1,0 +1,38 @@
+{% extends 'calaccess_campaign_browser/base.html' %}
+
+{% block title %}Latest - {{ block.super }}{% endblock %}
+
+{% block content %}
+  <div class="row">
+    <div class="col-12-lg">
+        <h1>Latest</h1>
+    </div>
+  </div>
+
+  <div class="row">
+    <div class="col-12-lg">
+        <table class="table table-bordered table-hover">
+          <thead>
+            <tr>
+              <th>Name</th>
+              <th>Type</th>
+              <th>Status</th>
+              <th>Effective date</th>
+            </tr>
+          </thead>
+          <tbody>
+          {% for filer in object_list %}
+            <tr>
+              <td>
+                <a href="{{ filer.get_absolute_url }}">{{ filer }}</a>
+              </td>
+              <td>{{ filer.get_filer_type_display }}</td>
+              <td>{{ filer.get_status_display }}</td>
+              <td>{{ filer.effective_date }}</td>
+            </tr>
+          {% endfor %}
+          </tbody>
+        </table>
+    </div>
+  </div>
+{% endblock %}

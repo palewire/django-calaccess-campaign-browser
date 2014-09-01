@@ -3,13 +3,24 @@
 {% block title %}Filers - {{ block.super }}{% endblock %}
 
 {% block content %}
-  <div class="row">
-    <div class="col-12-lg">
-        <h1>Filers</h1>
-    </div>
-  </div>
+<div class="row">
+<div class="col-12-lg">
+    <h1>Filers</h1>
+</div>
+</div>
 
-  {% include "calaccess_campaign_browser/paginator.html" %}
+<div class="row" style="margin-bottom:10px">
+    <form class="form-inline" role="form" method="GET" action="{% url 'filer_page' 1 %}">
+        <div class="form-group col-12-lg">
+            <input type="text" class="form-control" style="width:100%"
+                id="q" name="q"
+                {% if query_string %}value="{{ query_string }}"{% else %}placeholder="Search"{% endif %}>
+        </div>
+        <button type="submit" class="btn btn-default">GO</button>
+    </form>
+</div>
+
+{% include "calaccess_campaign_browser/paginator.html" %}
 
   <div class="row">
     <div class="col-12-lg">

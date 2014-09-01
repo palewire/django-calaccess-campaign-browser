@@ -11,6 +11,11 @@ urlpatterns = patterns(
     '',
     url(r'^$', RedirectView.as_view(url='/filers/1/')),
     url(
+        r'^latest/$',
+        views.LatestView.as_view(),
+        name='latest_list'
+    ),
+    url(
         r'^filers/$',
         RedirectView.as_view(url='/filers/1/'),
         name="filer_list"

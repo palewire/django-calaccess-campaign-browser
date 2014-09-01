@@ -130,11 +130,33 @@ class IndexView(BuildableListView):
         return files
 
 
+class LatestView(generic.TemplateView):
+    template_name = 'calaccess_campaign_browser/latest.html'
+
+    def get_context_data(self, **kwargs):
+        context = {}
+        return context
+
+
 class FilerListView(generic.ListView):
-    queryset = Filer.objects.exclude(name="")
     template_name = "filer_list"
-    allow_empty = False
+    allow_empty = True
     paginate_by = 100
+
+    def get_queryset(self):
+        qs = Filer.objects.exclude(name="")
+        if ('q' in self.request.GET) and self.request.GET['q'].strip():
+            query = get_query(self.request.GET['q'], [
+                'name', 'filer_id', 'xref_filer_id'
+            ])
+            qs = qs.filter(query)
+        return qs
+
+    def get_context_data(self, **kwargs):
+        context = super(FilerListView, self).get_context_data(**kwargs)
+        if ('q' in self.request.GET) and self.request.GET['q'].strip():
+            context['query_string'] = self.request.GET['q']
+        return context
 
 
 class ContributionDetailView(generic.DetailView):
