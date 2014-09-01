@@ -123,7 +123,7 @@ class SummaryAdmin(BaseAdmin):
         "committee",
         "filing",
         "form_type",
-        "total_contribs",
+        "total_contributions",
         "total_expenditures",
         "dupe"
     )

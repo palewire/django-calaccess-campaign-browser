@@ -70,7 +70,7 @@ class Filer(models.Model):
     def total_contributions(self):
         qs = Filing.objects.filter(committee__filer=self)
         total = Summary.objects.filter(filing__in=qs).aggregate(
-            tot=Sum('total_contribs'))['tot']
+            tot=Sum('total_contributions'))['tot']
         return total
 
 
@@ -117,7 +117,7 @@ class Committee(models.Model):
     def total_contributions(self):
         qs = Filing.objects.filter(committee=self)
         total = Summary.objects.filter(filing__in=qs).aggregate(
-            tot=Sum('total_contribs'))['tot']
+            tot=Sum('total_contributions'))['tot']
         return total
 
     @property
@@ -215,7 +215,7 @@ class Summary(models.Model):
         db_index=True,
     )
     dupe = models.BooleanField(default=False, db_index=True)
-    itemized_monetary_contribs = models.DecimalField(
+    itemized_monetary_contributions = models.DecimalField(
         max_digits=16,
         decimal_places=2,
         null=True,
@@ -233,19 +233,19 @@ class Summary(models.Model):
         null=True,
         default=None,
     )
-    total_monetary_contribs = models.DecimalField(
+    total_monetary_contributions = models.DecimalField(
         max_digits=16,
         decimal_places=2,
         null=True,
         default=None,
     )
-    unitemized_monetary_contribs = models.DecimalField(
+    unitemized_monetary_contributions = models.DecimalField(
         max_digits=16,
         decimal_places=2,
         null=True,
         default=None,
     )
-    non_monetary_contribs = models.DecimalField(
+    non_monetary_contributions = models.DecimalField(
         max_digits=16,
         decimal_places=2,
         null=True,
@@ -257,7 +257,7 @@ class Summary(models.Model):
         null=True,
         default=None,
     )
-    total_contribs = models.DecimalField(
+    total_contributions = models.DecimalField(
         max_digits=16,
         decimal_places=2,
         null=True,
@@ -476,9 +476,9 @@ class Stats(models.Model):
         ('pac', 'Political Action Committee'),
     )
     STAT_TYPE_CHOICES = (
-        ('itemized_monetary_contribs', 'Itemized Monetary Contributions'),
-        ('unitemized_monetary_contribs', 'Unitemized Monetary Contributions'),
-        ('total_contribs', 'Total Contributions'),
+        ('itemized_monetary_contributions', 'Itemized Monetary Contributions'),
+        ('unitemized_monetary_contributions', 'Unitemized Monetary Contributions'),
+        ('total_contributions', 'Total Contributions'),
         ('total_expenditures', 'Total Expenditures'),
         ('outstanding_debts', 'Outstanding Debt'),
 

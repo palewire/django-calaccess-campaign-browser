@@ -22,11 +22,11 @@ class Command(BaseCommand):
             cycle_id,
             form_type,
             dupe,
-            itemized_monetary_contribs,
-            unitemized_monetary_contribs,
-            total_monetary_contribs,
-            non_monetary_contribs,
-            total_contribs,
+            itemized_monetary_contributions,
+            unitemized_monetary_contributions,
+            total_monetary_contributions,
+            non_monetary_contributions,
+            total_contributions,
             itemized_expenditures,
             unitemized_expenditures,
             total_expenditures,
@@ -40,22 +40,25 @@ class Command(BaseCommand):
             f.form_id as form_type,
             f.dupe,
             COALESCE(
-                itemized_monetary_contribs.amount_a,
+                itemized_monetary_contributions.amount_a,
                 0.00
-            ) as itemized_monetary_contribs,
+            ) as itemized_monetary_contributions,
             COALESCE(
-                unitemized_monetary_contribs.amount_a,
+                unitemized_monetary_contributions.amount_a,
                 0.00
-            ) as unitemized_monetary_contribs,
+            ) as unitemized_monetary_contributions,
             COALESCE(
-                total_monetary_contribs.amount_a,
+                total_monetary_contributions.amount_a,
                 0.00
-            ) as total_monetary_contribs,
+            ) as total_monetary_contributions,
             COALESCE(
-                non_monetary_contribs.amount_a,
+                non_monetary_contributions.amount_a,
                 0.00
-            ) as non_monetary_contribs,
-            COALESCE(total_contribs.amount_a, 0.00) as total_contribs,
+            ) as non_monetary_contributions,
+            COALESCE(
+                total_contributions.amount_a,
+                0.00
+            ) as total_contributions,
             COALESCE(
                 itemized_expenditures.amount_a,
                 0.00
@@ -88,45 +91,45 @@ class Command(BaseCommand):
             FROM SMRY_CD
             WHERE form_type = 'A'
             AND line_item = '1'
-        ) as itemized_monetary_contribs
-        ON f.filing_id_raw = itemized_monetary_contribs.filing_id
-        AND f.amend_id = itemized_monetary_contribs.amend_id
+        ) as itemized_monetary_contributions
+        ON f.filing_id_raw = itemized_monetary_contributions.filing_id
+        AND f.amend_id = itemized_monetary_contributions.amend_id
 
         LEFT OUTER JOIN (
             SELECT filing_id, amend_id, amount_a
             FROM SMRY_CD
             WHERE form_type = 'A'
             AND line_item = '2'
-        ) as unitemized_monetary_contribs
-        ON f.filing_id_raw = unitemized_monetary_contribs.filing_id
-        AND f.amend_id = unitemized_monetary_contribs.amend_id
+        ) as unitemized_monetary_contributions
+        ON f.filing_id_raw = unitemized_monetary_contributions.filing_id
+        AND f.amend_id = unitemized_monetary_contributions.amend_id
 
         LEFT OUTER JOIN (
             SELECT filing_id, amend_id, amount_a
             FROM SMRY_CD
             WHERE form_type = 'A'
             AND line_item = '3'
-        ) as total_monetary_contribs
-        ON f.filing_id_raw = total_monetary_contribs.filing_id
-        AND f.amend_id = total_monetary_contribs.amend_id
+        ) as total_monetary_contributions
+        ON f.filing_id_raw = total_monetary_contributions.filing_id
+        AND f.amend_id = total_monetary_contributions.amend_id
 
         LEFT OUTER JOIN (
             SELECT filing_id, amend_id, amount_a
             FROM SMRY_CD
             WHERE form_type = 'F460'
             AND line_item = '4'
-        ) as non_monetary_contribs
-        ON f.filing_id_raw = non_monetary_contribs.filing_id
-        AND f.amend_id = non_monetary_contribs.amend_id
+        ) as non_monetary_contributions
+        ON f.filing_id_raw = non_monetary_contributions.filing_id
+        AND f.amend_id = non_monetary_contributions.amend_id
 
         LEFT OUTER JOIN (
             SELECT filing_id, amend_id, amount_a
             FROM SMRY_CD
             WHERE form_type = 'F460'
             AND line_item = '5'
-        ) as total_contribs
-        ON f.filing_id_raw = total_contribs.filing_id
-        AND f.amend_id = total_contribs.amend_id
+        ) as total_contributions
+        ON f.filing_id_raw = total_contributions.filing_id
+        AND f.amend_id = total_contributions.amend_id
 
         LEFT OUTER JOIN (
             SELECT filing_id, amend_id, amount_a
@@ -185,11 +188,11 @@ class Command(BaseCommand):
             cycle_id,
             form_type,
             dupe,
-            itemized_monetary_contribs,
-            unitemized_monetary_contribs,
-            total_monetary_contribs,
-            non_monetary_contribs,
-            total_contribs,
+            itemized_monetary_contributions,
+            unitemized_monetary_contributions,
+            total_monetary_contributions,
+            non_monetary_contributions,
+            total_contributions,
             itemized_expenditures,
             unitemized_expenditures,
             total_expenditures,
@@ -202,17 +205,20 @@ class Command(BaseCommand):
             f.cycle_id,
             f.form_id as form_type,
             f.dupe,
-            null as itemized_monetary_contribs,
-            null as unitemized_monetary_contribs,
+            null as itemized_monetary_contributions,
+            null as unitemized_monetary_contributions,
             COALESCE(
-                total_monetary_contribs.amount_a,
+                total_monetary_contributions.amount_a,
                 0.00
-            ) as total_monetary_contribs,
+            ) as total_monetary_contributions,
             COALESCE(
-                non_monetary_contribs.amount_a,
+                non_monetary_contributions.amount_a,
                 0.00
-            ) as non_monetary_contribs,
-            COALESCE(total_contribs.amount_a, 0.00) as total_contribs,
+            ) as non_monetary_contributions,
+            COALESCE(
+                total_contributions.amount_a,
+                0.00
+            ) as total_contributions,
             COALESCE(
                 itemized_expenditures.amount_a,
                 0.00
@@ -242,27 +248,27 @@ class Command(BaseCommand):
             FROM SMRY_CD
             WHERE form_type = 'F450'
             AND line_item = '7'
-        ) as total_monetary_contribs
-        ON f.filing_id_raw = total_monetary_contribs.filing_id
-        AND f.amend_id = total_monetary_contribs.amend_id
+        ) as total_monetary_contributions
+        ON f.filing_id_raw = total_monetary_contributions.filing_id
+        AND f.amend_id = total_monetary_contributions.amend_id
 
         LEFT OUTER JOIN (
             SELECT filing_id, amend_id, amount_a
             FROM SMRY_CD
             WHERE form_type = 'F450'
             AND line_item = '8'
-        ) as non_monetary_contribs
-        ON f.filing_id_raw = non_monetary_contribs.filing_id
-        AND f.amend_id = non_monetary_contribs.amend_id
+        ) as non_monetary_contributions
+        ON f.filing_id_raw = non_monetary_contributions.filing_id
+        AND f.amend_id = non_monetary_contributions.amend_id
 
         LEFT OUTER JOIN (
             SELECT filing_id, amend_id, amount_a
             FROM SMRY_CD
             WHERE form_type = 'F450'
             AND line_item = '10'
-        ) as total_contribs
-        ON f.filing_id_raw = total_contribs.filing_id
-        AND f.amend_id = total_contribs.amend_id
+        ) as total_contributions
+        ON f.filing_id_raw = total_contributions.filing_id
+        AND f.amend_id = total_contributions.amend_id
 
         LEFT OUTER JOIN (
             SELECT filing_id, amend_id, amount_a

@@ -70,11 +70,11 @@
             <td>{{ filing.cycle.name }}</td>
             {% if filing.summary_set.all %}
               {% for summary in filing.summary_set.all %}
-                <td>${{ summary.itemized_monetary_contribs | intcomma }}</td>
-                <td>${{ summary.unitemized_monetary_contribs | intcomma }}</td>
-                <td>${{ summary.total_monetary_contribs | intcomma }}</td>
-                <td>${{ summary.non_monetary_contribs | intcomma }}</td>
-                <td class="success">${{ summary.total_contribs | intcomma }}</td>
+                <td>${{ summary.itemized_monetary_contributions | intcomma }}</td>
+                <td>${{ summary.unitemized_monetary_contributions | intcomma }}</td>
+                <td>${{ summary.total_monetary_contributions | intcomma }}</td>
+                <td>${{ summary.non_monetary_contributions | intcomma }}</td>
+                <td class="success">${{ summary.total_contributions | intcomma }}</td>
                 <td>${{ summary.itemized_expenditures | intcomma }}</td>
                 <td>${{ summary.unitemized_expenditures | intcomma }}</td>
                 <td class="danger">${{ summary.total_expenditures | intcomma }}</td>
