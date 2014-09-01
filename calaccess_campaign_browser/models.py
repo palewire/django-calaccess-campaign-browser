@@ -57,7 +57,7 @@ class Filer(models.Model):
         return ('filer_detail', [str(self.pk)])
 
     @property
-    def short_name(self, character_limit=75):
+    def short_name(self, character_limit=60):
         if len(self.name) > character_limit:
             return self.name[:character_limit] + "..."
         return self.name

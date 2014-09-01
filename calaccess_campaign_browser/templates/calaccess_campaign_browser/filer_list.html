@@ -31,17 +31,23 @@
               <th>Type</th>
               <th>Status</th>
               <th>Effective date</th>
+              <th>Committees</th>
             </tr>
           </thead>
           <tbody>
           {% for filer in object_list %}
             <tr>
               <td>
+                {% if filer.committee_set.count %}
                 <a href="{{ filer.get_absolute_url }}">{{ filer }}</a>
+                {% else %}
+                {{ filer }}
+                {% endif %}
               </td>
               <td>{{ filer.get_filer_type_display }}</td>
               <td>{{ filer.get_status_display }}</td>
               <td>{{ filer.effective_date }}</td>
+              <td>{{ filer.committee_set.count }}</td>
             </tr>
           {% endfor %}
           </tbody>
