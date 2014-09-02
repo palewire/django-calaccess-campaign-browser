@@ -24,6 +24,7 @@ NEXT_YEAR = datetime.date.today() + datetime.timedelta(days=365)
 # Mixins
 #
 
+
 class DataPrepMixin(object):
     """
     Provides a method for preping a context object
@@ -110,6 +111,7 @@ class CommitteeDataView(JSONResponseMixin, CSVResponseMixin, generic.ListView):
 #
 # Views
 #
+
 
 class IndexView(BuildableListView):
     model = FlatFile
@@ -236,7 +238,7 @@ expenditure_list.html'
 
 class CommitteeFilingView(CommitteeDataView):
     model = Filing
-    template_name='calaccess_campaign_browser/committee_filing_list.html'
+    template_name = 'calaccess_campaign_browser/committee_filing_list.html'
     context_object_name = 'committee_filings'
 
     def get_queryset(self):

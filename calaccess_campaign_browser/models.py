@@ -479,7 +479,10 @@ class Stats(models.Model):
     )
     STAT_TYPE_CHOICES = (
         ('itemized_monetary_contributions', 'Itemized Monetary Contributions'),
-        ('unitemized_monetary_contributions', 'Unitemized Monetary Contributions'),
+        (
+            'unitemized_monetary_contributions',
+            'Unitemized Monetary Contributions'
+        ),
         ('total_contributions', 'Total Contributions'),
         ('total_expenditures', 'Total Expenditures'),
         ('outstanding_debts', 'Outstanding Debt'),
