@@ -8,8 +8,6 @@ buildcalaccesscampaignbrowser
 
     Usage: manage.py build_campaign_finance [options]
 
-    Break out the recipient committee campaign finance data from the CAL-ACCESS dump
-
     Options:
       -v VERBOSITY, --verbosity=VERBOSITY
                             Verbosity level; 0=minimal output, 1=normal output,
