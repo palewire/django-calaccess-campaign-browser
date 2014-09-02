@@ -1,0 +1,4 @@
+include LICENSE
+include README.md
+recursive-include calaccess_campaign_browser/static *
+recursive-include calaccess_campaign_browser/templates *
