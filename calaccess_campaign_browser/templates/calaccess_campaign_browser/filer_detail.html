@@ -1,11 +1,11 @@
 {% extends 'calaccess_campaign_browser/base.html' %}
 
-{% block title %}{{ filer.name }} - Filers - {{ block.super }}{% endblock %}
+{% block title %}{{ filer }} - Filers - {{ block.super }}{% endblock %}
 
 {% block content %}
   <div class="row">
     <div class="col-12-lg">
-        <h2>{{ filer.name }}</h2>
+        <h2>{{ filer }}</h2>
         <ol class="breadcrumb">
           <li><a href="{% url 'filer_list' %}">Filers</a></li>
           <li class="active">Committees</li>
