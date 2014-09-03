@@ -208,6 +208,9 @@ class Filing(models.Model):
         except Summary.DoesNotExist:
             return None
 
+    def is_amendment(self):
+        return self.amend_id > 0
+
 
 class Summary(models.Model):
     cycle = models.ForeignKey(Cycle)

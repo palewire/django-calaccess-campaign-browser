@@ -24,6 +24,7 @@
               <th>Period</th>
               <th>Contributions</th>
               <th>Expenditures</th>
+              <th>Amendment</th>
               <th>Duplicate</th>
             </tr>
           </thead>
@@ -44,6 +45,13 @@
               </td>
               <td>
                     ${{ object.summary.total_expenditures|intcomma }}
+              </td>
+              <td>
+                {% if object.is_amendment %}
+                    <i class="fa fa-check-square-o"></i>
+                {% else %}
+                    <i class="fa fa-square-o"></i>
+                {% endif %}
               </td>
               <td>
                 {% if object.dupe %}
