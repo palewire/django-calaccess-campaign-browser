@@ -101,6 +101,7 @@
   </div>
 </div>
 
+{% if contribution_set_short %}
 <div class="row">
 <div class="col-12-lg">
     <h3>
@@ -143,7 +144,10 @@
       {% endif %}
 </div>
 </div>
+{% endif %}
 
+
+{% if expenditure_set_short %}
 <div class="row">
 <div class="col-12-lg">
   <h3>
@@ -190,4 +194,6 @@
     {% endif %}
 </div>
 </div>
+{% endif %}
+
 {% endblock %}
