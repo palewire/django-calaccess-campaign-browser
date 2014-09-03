@@ -21,9 +21,10 @@
               <th>Filed</th>
               <th>Committee</th>
               <th>Form</th>
-              <th>Duplicate</th>
+              <th>Period</th>
               <th>Contributions</th>
               <th>Expenditures</th>
+              <th>Duplicate</th>
             </tr>
           </thead>
           <tbody>
@@ -32,23 +33,24 @@
               <td>
                 <a href="{{ object.get_absolute_url }}">{{ object.filing_id_raw }}</a>
               </td>
-              <td>{{ object.date_filed }}</td>
+              <td>{{ object.date_filed|date:"N j" }}</td>
               <td>
                 <a href="{{ object.committee.get_absolute_url }}">{{ object.committee.short_name }}</a>
               </td>
               <td>{{ object.form_id }}</td>
+              <td>{{ object.start_date|date:"N j" }} - {{ object.end_date|date:"N j, Y" }}</td>
+              <td>
+                    ${{ object.summary.total_contributions|intcomma }}
+              </td>
+              <td>
+                    ${{ object.summary.total_expenditures|intcomma }}
+              </td>
               <td>
                 {% if object.dupe %}
                     <i class="fa fa-check-square-o"></i>
                 {% else %}
                     <i class="fa fa-square-o"></i>
                 {% endif %}
-              </td>
-              <td>
-                    ${{ object.summary.total_contributions|intcomma }}
-              </td>
-              <td>
-                    ${{ object.summary.total_expenditures|intcomma }}
               </td>
             </tr>
           {% endfor %}
