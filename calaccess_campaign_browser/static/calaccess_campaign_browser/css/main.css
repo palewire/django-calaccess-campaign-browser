@@ -6,6 +6,12 @@ height: 45px;
 table {
     font-size:13px;
 }
+table td.right {
+    text-align:right;
+}
+table td.center {
+    text-align:center;
+}
 header {
     padding: 5px 0 0 0 !important;
 }

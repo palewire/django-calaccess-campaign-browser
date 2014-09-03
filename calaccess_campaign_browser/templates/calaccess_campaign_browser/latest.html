@@ -22,10 +22,10 @@
               <th>Committee</th>
               <th>Form</th>
               <th>Period</th>
-              <th>Contributions</th>
-              <th>Expenditures</th>
-              <th>Amendment</th>
-              <th>Duplicate</th>
+              <th class="right">Contributions</th>
+              <th class="right">Expenditures</th>
+              <th class="center">Amendment</th>
+              <th class="center">Duplicate</th>
             </tr>
           </thead>
           <tbody>
@@ -40,20 +40,20 @@
               </td>
               <td>{{ object.form_id }}</td>
               <td>{{ object.start_date|date:"N j" }} - {{ object.end_date|date:"N j, Y" }}</td>
-              <td>
-                    ${{ object.summary.total_contributions|intcomma }}
+              <td class="right">
+                    {{ object.summary.total_contributions|intcomma }}
               </td>
-              <td>
-                    ${{ object.summary.total_expenditures|intcomma }}
+              <td class="right">
+                    {{ object.summary.total_expenditures|intcomma }}
               </td>
-              <td>
+              <td class="center">
                 {% if object.is_amendment %}
                     <i class="fa fa-check-square-o"></i>
                 {% else %}
                     <i class="fa fa-square-o"></i>
                 {% endif %}
               </td>
-              <td>
+              <td class="center">
                 {% if object.dupe %}
                     <i class="fa fa-check-square-o"></i>
                 {% else %}
