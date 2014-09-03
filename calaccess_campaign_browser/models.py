@@ -108,7 +108,7 @@ class Committee(models.Model):
         return reverse('committee_detail', args=[str(self.pk)])
 
     @property
-    def short_name(self, character_limit=75):
+    def short_name(self, character_limit=50):
         if len(self.name) > character_limit:
             return self.name[:character_limit] + "..."
         return self.name
@@ -202,6 +202,12 @@ class Filing(models.Model):
     def get_absolute_url(self):
         return reverse('filing_detail', args=[str(self.pk)])
 
+    def summary(self):
+        try:
+            return Summary.objects.get(filing=self)
+        except Summary.DoesNotExist:
+            return None
+
 
 class Summary(models.Model):
     cycle = models.ForeignKey(Cycle)
@@ -288,7 +294,6 @@ class Summary(models.Model):
 
 
 class Expenditure(models.Model):
-
     '''
     This is a condensed version of the Raw CAL-ACCESS EXPN_CD table
     It leaves out a lot of the supporting information for the expense

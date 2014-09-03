@@ -1,4 +1,5 @@
 {% extends 'calaccess_campaign_browser/base.html' %}
+{% load humanize %}
 
 {% block title %}Latest - {{ block.super }}{% endblock %}
 
@@ -16,11 +17,13 @@
         <table class="table table-bordered table-hover">
           <thead>
             <tr>
-              <th>Filing no.</th>
+              <th>Filing</th>
               <th>Filed</th>
               <th>Committee</th>
               <th>Form</th>
               <th>Duplicate</th>
+              <th>Contributions</th>
+              <th>Expenditures</th>
             </tr>
           </thead>
           <tbody>
@@ -40,6 +43,12 @@
                 {% else %}
                     <i class="fa fa-square-o"></i>
                 {% endif %}
+              </td>
+              <td>
+                    ${{ object.summary.total_contributions|intcomma }}
+              </td>
+              <td>
+                    ${{ object.summary.total_expenditures|intcomma }}
               </td>
             </tr>
           {% endfor %}
