@@ -2,10 +2,11 @@ from django.db import models
 from django.db.models import Sum
 from hurry.filesize import size
 from django.utils.text import slugify
+from .utils.models import AllCapsNameMixin
 from django.core.urlresolvers import reverse
 
 
-class Filer(models.Model):
+class Filer(AllCapsNameMixin):
     """
     An entity that files campaign finance disclosure documents.
 
@@ -49,18 +50,9 @@ class Filer(models.Model):
     class Meta:
         ordering = ("name",)
 
-    def __unicode__(self):
-        return self.short_name
-
     @models.permalink
     def get_absolute_url(self):
         return ('filer_detail', [str(self.pk)])
-
-    @property
-    def short_name(self, character_limit=75):
-        if len(self.name) > character_limit:
-            return self.name[:character_limit] + "..."
-        return self.name
 
     @property
     def slug(self):
@@ -74,7 +66,7 @@ class Filer(models.Model):
         return total
 
 
-class Committee(models.Model):
+class Committee(AllCapsNameMixin):
     """
     If a Candidate controls the committee, the filer is associated with the
     Candidate Filer record, not the committee Filer record
@@ -101,17 +93,8 @@ class Committee(models.Model):
     class Meta:
         ordering = ("name",)
 
-    def __unicode__(self):
-        return self.name
-
     def get_absolute_url(self):
         return reverse('committee_detail', args=[str(self.pk)])
-
-    @property
-    def short_name(self, character_limit=50):
-        if len(self.name) > character_limit:
-            return self.name[:character_limit] + "..."
-        return self.name
 
     @property
     def total_contributions(self):
