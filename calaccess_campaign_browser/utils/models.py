@@ -38,7 +38,10 @@ class AllCapsNameMixin(models.Model):
                 else:
                     s.append(p)
             n = " ".join(s)
-        force_uppercase = ['Usaf', 'Pac', 'Ca', 'Ad', 'Rcc', 'Cdp', 'Aclu']
+        force_uppercase = [
+            'Usaf', 'Pac', 'Ca', 'Ad', 'Rcc', 'Cdp', 'Aclu',
+            'Cbpa-Pac'
+        ]
         for fl in force_lowercase:
             s = []
             for p in n.split(" "):
@@ -48,4 +51,5 @@ class AllCapsNameMixin(models.Model):
                     s.append(p)
             n = " ".join(s)
         n = n.replace("Re-Elect", "Re-elect")
+        n = n.replace("Political Action Committee", "PAC")
         return n
