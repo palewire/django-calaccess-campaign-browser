@@ -47,4 +47,5 @@ class AllCapsNameMixin(models.Model):
                 else:
                     s.append(p)
             n = " ".join(s)
+        n = n.replace("Re-Elect", "Re-elect")
         return n
