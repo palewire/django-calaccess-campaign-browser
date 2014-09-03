@@ -1,4 +1,5 @@
 {% extends 'calaccess_campaign_browser/base.html' %}
+{% load humanize %}
 
 {% block title %}{{ filer }} - Filers - {{ block.super }}{% endblock %}
 
@@ -21,6 +22,8 @@
               <th>Committee name</th>
               <th>Filer ID</th>
               <th>Type</th>
+              <th class="right">Contributions</th>
+              <th class="right">Expenditures</th>
             </tr>
           </thead>
           <tbody>
@@ -33,6 +36,12 @@
               </td>
               <td>{{ committee.filer_id_raw }}</td>
               <td>{{ committee.get_committee_type_display }}</td>
+              <td class="right">
+                    {{ committee.total_contributions|floatformat|intcomma }}
+              </td>
+              <td class="right">
+                    {{ committee.total_expenditures|floatformat|intcomma }}
+              </td>
             </tr>
           {% endfor %}
           </tbody>
