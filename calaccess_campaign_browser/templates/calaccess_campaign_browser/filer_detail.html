@@ -37,10 +37,10 @@
               <td>{{ committee.filer_id_raw }}</td>
               <td>{{ committee.get_committee_type_display }}</td>
               <td class="right">
-                    {{ committee.total_contributions|floatformat|intcomma }}
+                    {{ committee.total_contributions|floatformat:0|intcomma }}
               </td>
               <td class="right">
-                    {{ committee.total_expenditures|floatformat|intcomma }}
+                    {{ committee.total_expenditures|floatformat:0|intcomma }}
               </td>
             </tr>
           {% endfor %}

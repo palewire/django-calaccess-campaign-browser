@@ -41,10 +41,10 @@
               <td>{{ object.form_id }}</td>
               <td>{{ object.start_date|date:"N j" }} - {{ object.end_date|date:"N j, Y" }}</td>
               <td class="right">
-                    {{ object.summary.total_contributions|intcomma }}
+                    {{ object.summary.total_contributions|floatformat:0|intcomma }}
               </td>
               <td class="right">
-                    {{ object.summary.total_expenditures|intcomma }}
+                    {{ object.summary.total_expenditures|floatformat:0|intcomma }}
               </td>
               <td class="center">
                 {% if object.is_amendment %}
