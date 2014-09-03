@@ -40,7 +40,7 @@ class AllCapsNameMixin(models.Model):
             n = " ".join(s)
         force_uppercase = [
             'Usaf', 'Pac', 'Ca', 'Ad', 'Rcc', 'Cdp', 'Aclu',
-            'Cbpa-Pac'
+            'Cbpa-Pac', 'Aka',
         ]
         for fl in force_lowercase:
             s = []
