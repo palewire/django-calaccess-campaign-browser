@@ -13,7 +13,7 @@ class AllCapsNameMixin(models.Model):
         return self.clean_name
 
     @property
-    def short_name(self, character_limit=75):
+    def short_name(self, character_limit=60):
         if len(self.clean_name) > character_limit:
             return self.clean_name[:character_limit] + "..."
         return self.clean_name
