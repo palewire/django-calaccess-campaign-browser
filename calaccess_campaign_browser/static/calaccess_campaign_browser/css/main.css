@@ -6,10 +6,10 @@ height: 45px;
 table {
     font-size:13px;
 }
-table td.right {
+td.right, th.right {
     text-align:right;
 }
-table td.center {
+td.center, th.center{
     text-align:center;
 }
 header {

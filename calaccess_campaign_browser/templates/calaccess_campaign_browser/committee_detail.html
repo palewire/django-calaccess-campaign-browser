@@ -49,14 +49,14 @@
                 <th>No.</th>
                 <th>Form</th>
                 <th>Cycle</th>
-                <th>Itemized</th>
-                <th>Unitemized</th>
-                <th>Total</th>
-                <th>Total</th>
-                <th class="success">Total</th>
-                <th>Itemized</th>
-                <th>Unitemized</th>
-                <th class="danger">Total</th>
+                <th class="right">Itemized</th>
+                <th class="right">Unitemized</th>
+                <th class="right">Total</th>
+                <th class="right">Total</th>
+                <th class="success right">Total</th>
+                <th class="right">Itemized</th>
+                <th class="right">Unitemized</th>
+                <th class="danger right">Total</th>
                 <th></th>
             </tr>
         </thead>
@@ -70,26 +70,26 @@
             <td>{{ filing.cycle.name }}</td>
             {% if filing.summary_set.all %}
               {% for summary in filing.summary_set.all %}
-                <td>${{ summary.itemized_monetary_contributions | intcomma }}</td>
-                <td>${{ summary.unitemized_monetary_contributions | intcomma }}</td>
-                <td>${{ summary.total_monetary_contributions | intcomma }}</td>
-                <td>${{ summary.non_monetary_contributions | intcomma }}</td>
-                <td class="success">${{ summary.total_contributions | intcomma }}</td>
-                <td>${{ summary.itemized_expenditures | intcomma }}</td>
-                <td>${{ summary.unitemized_expenditures | intcomma }}</td>
-                <td class="danger">${{ summary.total_expenditures | intcomma }}</td>
-                <td>${{ summary.outstanding_debts | intcomma }}</td>
+                <td class="right">${{ summary.itemized_monetary_contributions | intcomma }}</td>
+                <td class="right">${{ summary.unitemized_monetary_contributions | intcomma }}</td>
+                <td class="right">${{ summary.total_monetary_contributions | intcomma }}</td>
+                <td class="right">${{ summary.non_monetary_contributions | intcomma }}</td>
+                <td class="success right">${{ summary.total_contributions | intcomma }}</td>
+                <td class="right">${{ summary.itemized_expenditures | intcomma }}</td>
+                <td class="right">${{ summary.unitemized_expenditures | intcomma }}</td>
+                <td class="danger right">${{ summary.total_expenditures | intcomma }}</td>
+                <td class="right">${{ summary.outstanding_debts | intcomma }}</td>
               {% endfor %}
             {% else %}
-              <td>N/A</td>
-              <td>N/A</td>
-              <td>N/A</td>
-              <td>N/A</td>
-              <td>N/A</td>
-              <td>N/A</td>
-              <td>N/A</td>
-              <td>N/A</td>
-              <td>N/A</td>
+              <td class="right">N/A</td>
+              <td class="right">N/A</td>
+              <td class="right">N/A</td>
+              <td class="right">N/A</td>
+              <td class="right">N/A</td>
+              <td class="right">N/A</td>
+              <td class="right">N/A</td>
+              <td class="right">N/A</td>
+              <td class="right">N/A</td>
             {% endif %}
           </tr>
         {% endfor %}
@@ -120,11 +120,10 @@
         <table class="table table-bordered table-hover"> <!-- table table-bordered table-hover -->
           <thead>
             <tr>
-                <th>cycle</th>
-                <th>filing</th>
-                <th>raw_org_name</th>
-                <th class="success">amount</th>
-                <!-- <th>person_flag</th> -->
+                <th>Cycle</th>
+                <th>Filing</th>
+                <th>Name</th>
+                <th class="success right">Amount</th>
             </tr>
           </thead>
           <tbody>
@@ -133,8 +132,7 @@
                     <td>{{ contribution.cycle }}</td>
                     <td><a href="{{ contribution.filing.get_absolute_url }}">{{ contribution.filing.pk }}</a></td>
                     <td>{{ contribution.raw_org_name }}</td>
-                    <td class="success">${{ contribution.amount | intcomma }}</td>
-                    <!-- <td>{{ contribution.person_flag }}</td> -->
+                    <td class="success right">${{ contribution.amount | intcomma }}</td>
                 </tr>
               {% endfor %}
           </tbody>
@@ -165,13 +163,12 @@
       <table class="table table-bordered table-hover"> <!-- table table-bordered table-hover -->
         <thead>
           <tr>
-              <th>date</th>
-              <th>exp code</th>
-              <th>cycle</th>
-              <th>filing</th>
-              <th>name</th>
-              <th class="danger">amount</th>
-              <!-- <th>person_flag</th> -->
+              <th>Date</th>
+              <th>Code</th>
+              <th>Cycle</th>
+              <th>Filing</th>
+              <th>Name</th>
+              <th class="danger right">Amount</th>
           </tr>
         </thead>
         <tbody>
@@ -182,8 +179,7 @@
                   <td>{{ expenditure.cycle }}</td>
                   <td><a href="{{ expenditure.filing.get_absolute_url }}">{{ expenditure.filing.pk }}</a></td>
                   <td>{{ expenditure.name }}</td>
-                  <td class="danger">${{ expenditure.amount  | intcomma}}</td>
-                  <!-- <td>{{ expenditure.person_flag }}</td> -->
+                  <td class="danger right">${{ expenditure.amount  | intcomma}}</td>
               </tr>
             {% endfor %}
         </tbody>
