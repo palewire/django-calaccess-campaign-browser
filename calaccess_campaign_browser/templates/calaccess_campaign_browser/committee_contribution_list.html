@@ -43,30 +43,28 @@
 
   <div class="row">
     <div class="col-12-lg">
-          <div class="table-responsive">
-            <table class="table table-bordered table-hover"> <!-- table table-bordered table-hover -->
-              <thead>
-                <tr>
-                    <th>cycle</th>
-                    <th>filing</th>
-                    <th>raw_org_name</th>
-                    <th class="success">amount</th>
-                    <!-- <th>person_flag</th> -->
-                </tr>
-              </thead>
-              <tbody>
-                  {% for contribution in committee_contributions %}
-                    <tr>
-                        <td>{{ contribution.cycle }}</td>
-                        <td><a href="{{ contribution.filing.get_absolute_url }}">{{ contribution.filing.pk }}</a></td>
-                        <td>{{ contribution.raw_org_name }}</td>
-                        <td class="success"><a href="{{ contribution.get_absolute_url }}">${{ contribution.amount | intcomma }}</a></td>
-                        <!-- <td>{{ contribution.person_flag }}</td> -->
-                    </tr>
-                  {% endfor %}
-              </tbody>
-            </table>
-          </div>
+    <table class="table table-bordered table-hover">
+      <thead>
+        <tr>
+            <th>Date</th>
+            <th>Name</th>
+            <th class="success right">Amount</th>
+        </tr>
+      </thead>
+      <tbody>
+          {% for contribution in committee_contributions %}
+            <tr>
+                <td>{{ contribution.rcpt_date }}</td>
+                <td>{{ contribution.raw_org_name }}</td>
+                <td class="success right">
+                    <a href="{{ contribution.get_absolute_url }}">
+                        ${{ contribution.amount | intcomma }}
+                    </a>
+                </td>
+            </tr>
+          {% endfor %}
+      </tbody>
+    </table>
     </div>
   </div>
   {% include "calaccess_campaign_browser/paginator.html" %}
