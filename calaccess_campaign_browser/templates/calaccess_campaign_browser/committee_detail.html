@@ -9,9 +9,9 @@
 <div class="row">
     <div class="col-12-lg">
         <h3>Totals</h3>
-        <p class="totals">Contributions: ${{committee.total_contributions  | intcomma}}
+        <p class="totals">Contributions: ${{committee.total_contributions|floatformat:0|intcomma}}
         <br>
-        Expenditures: ${{committee.total_expenditures | intcomma}}</p>
+        Expenditures: ${{committee.total_expenditures|floatformat:0|intcomma}}</p>
     </div>
 </div>
 
@@ -29,7 +29,7 @@
               </ul>
           </div>
     </h3>
-    <p>Latest filings (limit of 25)</p>
+    <p>{% if filing_set|length > 25 %}(Most recent 25){% endif %}</p>
   </div>
 </div>
 
@@ -38,26 +38,16 @@
       <table class="table table-bordered table-hover">
         <thead>
             <tr>
-                <th colspan=3>Filing</th>
-                <th colspan="3">Monetary contributions</th>
-                <th>Non-monetary contributions</th>
-                <th>All contributions</th>
-                <th colspan="3">Expenditures</th>
-                <th>Debts</th>
-            </tr>
-            <tr>
                 <th>No.</th>
+                <th>Filed</th>
                 <th>Form</th>
                 <th>Cycle</th>
-                <th class="right">Itemized</th>
-                <th class="right">Unitemized</th>
-                <th class="right">Total</th>
-                <th class="right">Total</th>
-                <th class="success right">Total</th>
-                <th class="right">Itemized</th>
-                <th class="right">Unitemized</th>
-                <th class="danger right">Total</th>
-                <th></th>
+                <th>Period</th>
+                <th class="right">Contributions</th>
+                <th class="right">Expenditures</th>
+                <th class="right">Debts</th>
+                <th class="center">Amendment</th>
+                <th class="center">Duplicate</th>
             </tr>
         </thead>
         <tbody>
@@ -66,31 +56,29 @@
             <td>
               <a href="{{ filing.get_absolute_url }}">{{ filing.filing_id_raw }}</a>
             </td>
+            <td>{{ filing.date_filed|date:"N j, Y" }}</td>
             <td>{{ filing.form_id }}</td>
             <td>{{ filing.cycle.name }}</td>
-            {% if filing.summary_set.all %}
+            <td>{{ filing.start_date|date:"N j" }} - {{ filing.end_date|date:"N j, Y" }}</td>
               {% for summary in filing.summary_set.all %}
-                <td class="right">${{ summary.itemized_monetary_contributions | intcomma }}</td>
-                <td class="right">${{ summary.unitemized_monetary_contributions | intcomma }}</td>
-                <td class="right">${{ summary.total_monetary_contributions | intcomma }}</td>
-                <td class="right">${{ summary.non_monetary_contributions | intcomma }}</td>
-                <td class="success right">${{ summary.total_contributions | intcomma }}</td>
-                <td class="right">${{ summary.itemized_expenditures | intcomma }}</td>
-                <td class="right">${{ summary.unitemized_expenditures | intcomma }}</td>
-                <td class="danger right">${{ summary.total_expenditures | intcomma }}</td>
-                <td class="right">${{ summary.outstanding_debts | intcomma }}</td>
+                <td class="right">{{ summary.total_contributions|floatformat:0|intcomma }}</td>
+                <td class="right">{{ summary.total_expenditures|floatformat:0|intcomma }}</td>
+                <td class="right">{{ summary.outstanding_debts|floatformat:0|intcomma }}</td>
               {% endfor %}
-            {% else %}
-              <td class="right">N/A</td>
-              <td class="right">N/A</td>
-              <td class="right">N/A</td>
-              <td class="right">N/A</td>
-              <td class="right">N/A</td>
-              <td class="right">N/A</td>
-              <td class="right">N/A</td>
-              <td class="right">N/A</td>
-              <td class="right">N/A</td>
-            {% endif %}
+            <td class="center">
+                {% if filing.is_amendment %}
+                    <i class="fa fa-check-square-o"></i>
+                {% else %}
+                    <i class="fa fa-square-o"></i>
+                {% endif %}
+            </td>
+            <td class="center">
+                {% if filing.dupe %}
+                    <i class="fa fa-check-square-o"></i>
+                {% else %}
+                    <i class="fa fa-square-o"></i>
+                {% endif %}
+            </td>
           </tr>
         {% endfor %}
         </tbody>

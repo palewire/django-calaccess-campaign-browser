@@ -195,7 +195,7 @@ class CommitteeDetailView(generic.DetailView):
         context = super(CommitteeDetailView, self).get_context_data(**kwargs)
         context['committee'] = self.object
         context['filing_set'] = Filing.objects.filter(
-            committee=self.object).order_by('-end_date')
+            committee=self.object).order_by('-date_filed')
         context['filing_set_short'] = context['filing_set'][:25]
         context['contribution_set'] = Contribution.objects.filter(
             committee=self.object).order_by('-amount')
@@ -247,7 +247,7 @@ class CommitteeFilingView(CommitteeDataView):
         """
         committee = Committee.objects.get(pk=self.kwargs['pk'])
         self.committee = committee
-        return committee.filing_set.all().order_by('-cycle')
+        return committee.filing_set.all().order_by('-date_filed')
 
 
 findterms = re.compile(r'"([^"]+)"|(\S+)').findall
