@@ -1,9 +1,0 @@
-<header>
-  <h1>{{ committee.name }}</h1>
-  <ol class="breadcrumb">
-    <li><a href="{% url 'filer_list' %}">Home</a></li>
-    <li><a href="{{ committee.filer.get_absolute_url }}">Filer</a></li>
-    <li><a href="{{ object.committee.get_absolute_url }}">{{ object.committee }}</a></li>
-    <li class="active">{{ object.filing }}</li>
-  </ol>
-</header>

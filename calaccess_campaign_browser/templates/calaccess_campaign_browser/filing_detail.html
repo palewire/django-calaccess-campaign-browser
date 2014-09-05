@@ -8,7 +8,6 @@
     <div class="col-12-lg">
         <h2>Filing No. {{ filing.filing_id_raw }} <small>{{ filing.form_id }}</small></h2>
           <ol class="breadcrumb">
-            <li><a href="/browser">Home</a></li>
             <li><a href="{{ filing.committee.filer.get_absolute_url }}">Filer</a></li>
             <li><a href="{{ filing.committee.get_absolute_url }}">{{ filing.committee.name }} ({{ filing.committee.filer_id_raw }})</a></li>
             <li class="active">{{ filing.filing_id_raw }}</li>
@@ -25,14 +24,14 @@
             <th>End Date</th>
             <th>Cycle</th>
             <th>itemized expn</th>
-            <th>itemized mon. contribs</th>
-            <th>non mon. contribs</th>
+            <th>itemized mon. contributions</th>
+            <th>non mon. contributions</th>
             <th>outstanding debts</th>
-            <th>total contribs</th>
+            <th>total contributions</th>
             <th>total expn</th>
-            <th>total mon. contribs</th>
+            <th>total mon. contributions</th>
             <th>unitemized expn</th>
-            <th>unitemized mon. contribs</th>
+            <th>unitemized mon. contributions</th>
           </tr>
         </thead>
         <tbody>
@@ -42,14 +41,14 @@
             <td>{{ filing.cycle.name }}</td>
           {% for summary in filing.summary_set.all %}
             <td>{{ summary.itemized_expenditures | intcomma }}</td>
-            <td>{{ summary.itemized_monetary_contribs | intcomma }}</td>
-            <td>{{ summary.non_monetary_contribs | intcomma }}</td>
+            <td>{{ summary.itemized_monetary_contributions | intcomma }}</td>
+            <td>{{ summary.non_monetary_contributions | intcomma }}</td>
             <td>{{ summary.outstanding_debts | intcomma }}</td>
-            <td>{{ summary.total_contribs | intcomma }}</td>
+            <td>{{ summary.total_contributions | intcomma }}</td>
             <td>{{ summary.total_expenditures | intcomma }}</td>
-            <td>{{ summary.total_monetary_contribs | intcomma }}</td>
+            <td>{{ summary.total_monetary_contributions | intcomma }}</td>
             <td>{{ summary.unitemized_expenditures | intcomma }}</td>
-            <td>{{ summary.unitemized_monetary_contribs | intcomma }}</td>
+            <td>{{ summary.unitemized_monetary_contributions | intcomma }}</td>
           {% endfor %}
           </tr>
         </tbody>

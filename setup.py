@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
-from setuptools import setup
+from setuptools import setup, find_packages
 from distutils.core import Command
 
 
@@ -27,22 +27,19 @@ class TestCommand(Command):
         from django.core.management import call_command
         call_command('test', 'calaccess_campaign_browser')
 
+
 setup(
     name='django-calaccess-campaign-browser',
-    version='0.0.2',
-    packages=[
-        'calaccess_campaign_browser',
-        'calaccess_campaign_browser.management',
-        'calaccess_campaign_browser.management.commands',
-        'calaccess_campaign_browser.utils',
-    ],
-    include_package_data=True,
+    version='0.1.0',
     license='MIT',
     description='A Django app to refine and investigate campaign finance data \
 drawn from the California Secretary of State’s CAL-ACCESS database',
     url='https://github.com/california-civic-data-coalition',
     author='California Civic Data Coalition',
     author_email='awilliams@cironline.org',
+    packages=find_packages(),
+    include_package_data=True,
+    zip_safe=False,  # because we're including static files
     install_requires=(
         'django-calaccess-raw-data>=0.0.2',
         'django>=1.6',
@@ -51,5 +48,5 @@ drawn from the California Secretary of State’s CAL-ACCESS database',
         'MySQL-python==1.2.5',
         'hurry.filesize==0.9',
     ),
-    cmdclass={'test': TestCommand}
+    cmdclass={'test': TestCommand,}
 )

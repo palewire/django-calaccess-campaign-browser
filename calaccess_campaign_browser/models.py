@@ -2,10 +2,11 @@ from django.db import models
 from django.db.models import Sum
 from hurry.filesize import size
 from django.utils.text import slugify
+from .utils.models import AllCapsNameMixin
 from django.core.urlresolvers import reverse
 
 
-class Filer(models.Model):
+class Filer(AllCapsNameMixin):
     """
     An entity that files campaign finance disclosure documents.
 
@@ -49,18 +50,9 @@ class Filer(models.Model):
     class Meta:
         ordering = ("name",)
 
-    def __unicode__(self):
-        return self.short_name
-
     @models.permalink
     def get_absolute_url(self):
         return ('filer_detail', [str(self.pk)])
-
-    @property
-    def short_name(self, character_limit=60):
-        if len(self.name) > character_limit:
-            return self.name[:character_limit] + "..."
-        return self.name
 
     @property
     def slug(self):
@@ -70,11 +62,11 @@ class Filer(models.Model):
     def total_contributions(self):
         qs = Filing.objects.filter(committee__filer=self)
         total = Summary.objects.filter(filing__in=qs).aggregate(
-            tot=Sum('total_contribs'))['tot']
+            tot=Sum('total_contributions'))['tot']
         return total
 
 
-class Committee(models.Model):
+class Committee(AllCapsNameMixin):
     """
     If a Candidate controls the committee, the filer is associated with the
     Candidate Filer record, not the committee Filer record
@@ -88,7 +80,7 @@ class Committee(models.Model):
     filer_id_raw = models.IntegerField(db_index=True)
     name = models.CharField(max_length=255, null=True)
     CMTE_TYPE_OPTIONS = (
-        ('cand', 'Candidate Committee'),
+        ('cand', 'Candidate'),
         ('pac', 'PAC'),
         ('linked-pac', 'Non-Candidate Committee, linked to other committees'),
     )
@@ -101,9 +93,6 @@ class Committee(models.Model):
     class Meta:
         ordering = ("name",)
 
-    def __unicode__(self):
-        return self.name
-
     def get_absolute_url(self):
         return reverse('committee_detail', args=[str(self.pk)])
 
@@ -111,7 +100,7 @@ class Committee(models.Model):
     def total_contributions(self):
         qs = Filing.objects.filter(committee=self)
         total = Summary.objects.filter(filing__in=qs).aggregate(
-            tot=Sum('total_contribs'))['tot']
+            tot=Sum('total_contributions'))['tot']
         return total
 
     @property
@@ -178,6 +167,8 @@ class Filing(models.Model):
     form_id = models.CharField(max_length=7, db_index=True)
     start_date = models.DateField(null=True)
     end_date = models.DateField(null=True)
+    date_received = models.DateField(null=True)
+    date_filed = models.DateField(null=True)
     dupe = models.BooleanField(
         default=False,
         db_index=True,
@@ -194,6 +185,15 @@ class Filing(models.Model):
     def get_absolute_url(self):
         return reverse('filing_detail', args=[str(self.pk)])
 
+    def summary(self):
+        try:
+            return Summary.objects.get(filing=self)
+        except Summary.DoesNotExist:
+            return None
+
+    def is_amendment(self):
+        return self.amend_id > 0
+
 
 class Summary(models.Model):
     cycle = models.ForeignKey(Cycle)
@@ -209,7 +209,7 @@ class Summary(models.Model):
         db_index=True,
     )
     dupe = models.BooleanField(default=False, db_index=True)
-    itemized_monetary_contribs = models.DecimalField(
+    itemized_monetary_contributions = models.DecimalField(
         max_digits=16,
         decimal_places=2,
         null=True,
@@ -227,19 +227,19 @@ class Summary(models.Model):
         null=True,
         default=None,
     )
-    total_monetary_contribs = models.DecimalField(
+    total_monetary_contributions = models.DecimalField(
         max_digits=16,
         decimal_places=2,
         null=True,
         default=None,
     )
-    unitemized_monetary_contribs = models.DecimalField(
+    unitemized_monetary_contributions = models.DecimalField(
         max_digits=16,
         decimal_places=2,
         null=True,
         default=None,
     )
-    non_monetary_contribs = models.DecimalField(
+    non_monetary_contributions = models.DecimalField(
         max_digits=16,
         decimal_places=2,
         null=True,
@@ -251,7 +251,7 @@ class Summary(models.Model):
         null=True,
         default=None,
     )
-    total_contribs = models.DecimalField(
+    total_contributions = models.DecimalField(
         max_digits=16,
         decimal_places=2,
         null=True,
@@ -280,7 +280,6 @@ class Summary(models.Model):
 
 
 class Expenditure(models.Model):
-
     '''
     This is a condensed version of the Raw CAL-ACCESS EXPN_CD table
     It leaves out a lot of the supporting information for the expense
@@ -389,51 +388,54 @@ class Contribution(models.Model):
 
     # Raw data fields
     amount = models.DecimalField(
-        decimal_places=2, max_digits=14, db_column='AMOUNT')
-    bakref_tid = models.CharField(max_length=20L, blank=True)
-    cmte_id = models.CharField(max_length=9L, blank=True)
-    ctrib_adr1 = models.CharField(max_length=55L, blank=True)
-    ctrib_adr2 = models.CharField(max_length=55L, blank=True)
-    ctrib_city = models.CharField(max_length=30L, blank=True)
-    ctrib_dscr = models.CharField(max_length=90L, blank=True)
-    ctrib_emp = models.CharField(max_length=200L, blank=True)
-    ctrib_namf = models.CharField(max_length=255L, blank=True)
-    ctrib_naml = models.CharField(max_length=200L, )
-    ctrib_nams = models.CharField(max_length=10L, blank=True)
-    ctrib_namt = models.CharField(max_length=10L, blank=True)
-    ctrib_occ = models.CharField(max_length=60L, blank=True)
-    ctrib_self = models.CharField(max_length=1L, blank=True)
-    ctrib_st = models.CharField(max_length=2L, blank=True)
-    ctrib_zip4 = models.CharField(max_length=10L, blank=True)
+        decimal_places=2,
+        max_digits=14,
+        db_column='AMOUNT'
+    )
+    bakref_tid = models.CharField(max_length=20, blank=True)
+    cmte_id = models.CharField(max_length=9, blank=True)
+    ctrib_adr1 = models.CharField(max_length=55, blank=True)
+    ctrib_adr2 = models.CharField(max_length=55, blank=True)
+    ctrib_city = models.CharField(max_length=30, blank=True)
+    ctrib_dscr = models.CharField(max_length=90, blank=True)
+    ctrib_emp = models.CharField(max_length=200, blank=True)
+    ctrib_namf = models.CharField(max_length=255, blank=True)
+    ctrib_naml = models.CharField(max_length=200, )
+    ctrib_nams = models.CharField(max_length=10, blank=True)
+    ctrib_namt = models.CharField(max_length=10, blank=True)
+    ctrib_occ = models.CharField(max_length=60, blank=True)
+    ctrib_self = models.CharField(max_length=1, blank=True)
+    ctrib_st = models.CharField(max_length=2, blank=True)
+    ctrib_zip4 = models.CharField(max_length=10, blank=True)
     cum_oth = models.DecimalField(
         decimal_places=2, null=True, max_digits=14, blank=True)
     cum_ytd = models.DecimalField(
         decimal_places=2, null=True, max_digits=14, blank=True)
     date_thru = models.DateField(null=True, blank=True)
-    entity_cd = models.CharField(max_length=3L)
-    form_type = models.CharField(max_length=9L)
-    intr_adr1 = models.CharField(max_length=55L, blank=True)
-    intr_adr2 = models.CharField(max_length=55L, blank=True)
-    intr_city = models.CharField(max_length=30L, blank=True)
-    intr_cmteid = models.CharField(max_length=9L, blank=True)
-    intr_emp = models.CharField(max_length=200L, blank=True)
-    intr_namf = models.CharField(max_length=255L, blank=True)
-    intr_naml = models.CharField(max_length=200L, blank=True)
-    intr_nams = models.CharField(max_length=10L, blank=True)
-    intr_namt = models.CharField(max_length=10L, blank=True)
-    intr_occ = models.CharField(max_length=60L, blank=True)
-    intr_self = models.CharField(max_length=1L, blank=True)
-    intr_st = models.CharField(max_length=2L, blank=True)
-    intr_zip4 = models.CharField(max_length=10L, blank=True)
+    entity_cd = models.CharField(max_length=3)
+    form_type = models.CharField(max_length=9)
+    intr_adr1 = models.CharField(max_length=55, blank=True)
+    intr_adr2 = models.CharField(max_length=55, blank=True)
+    intr_city = models.CharField(max_length=30, blank=True)
+    intr_cmteid = models.CharField(max_length=9, blank=True)
+    intr_emp = models.CharField(max_length=200, blank=True)
+    intr_namf = models.CharField(max_length=255, blank=True)
+    intr_naml = models.CharField(max_length=200, blank=True)
+    intr_nams = models.CharField(max_length=10, blank=True)
+    intr_namt = models.CharField(max_length=10, blank=True)
+    intr_occ = models.CharField(max_length=60, blank=True)
+    intr_self = models.CharField(max_length=1, blank=True)
+    intr_st = models.CharField(max_length=2, blank=True)
+    intr_zip4 = models.CharField(max_length=10, blank=True)
     line_item = models.IntegerField()
-    memo_code = models.CharField(max_length=1L, blank=True)
-    memo_refno = models.CharField(max_length=20L, blank=True)
+    memo_code = models.CharField(max_length=1, blank=True)
+    memo_refno = models.CharField(max_length=20, blank=True)
     rcpt_date = models.DateField(null=True)
-    rec_type = models.CharField(max_length=4L)
-    tran_id = models.CharField(max_length=20L)
-    tran_type = models.CharField(max_length=1L, blank=True)
-    xref_match = models.CharField(max_length=1L, blank=True)
-    xref_schnm = models.CharField(max_length=2L, blank=True)
+    rec_type = models.CharField(max_length=4)
+    tran_id = models.CharField(max_length=20)
+    tran_type = models.CharField(max_length=1, blank=True)
+    xref_match = models.CharField(max_length=1, blank=True)
+    xref_schnm = models.CharField(max_length=2, blank=True)
 
     # Derived fields
     raw_org_name = models.CharField(max_length=255)
@@ -470,9 +472,12 @@ class Stats(models.Model):
         ('pac', 'Political Action Committee'),
     )
     STAT_TYPE_CHOICES = (
-        ('itemized_monetary_contribs', 'Itemized Monetary Contributions'),
-        ('unitemized_monetary_contribs', 'Unitemized Monetary Contributions'),
-        ('total_contribs', 'Total Contributions'),
+        ('itemized_monetary_contributions', 'Itemized Monetary Contributions'),
+        (
+            'unitemized_monetary_contributions',
+            'Unitemized Monetary Contributions'
+        ),
+        ('total_contributions', 'Total Contributions'),
         ('total_expenditures', 'Total Expenditures'),
         ('outstanding_debts', 'Outstanding Debt'),
 

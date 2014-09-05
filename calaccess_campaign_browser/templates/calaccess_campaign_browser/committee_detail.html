@@ -1,7 +1,7 @@
 {% extends 'calaccess_campaign_browser/base.html' %}
 {% load humanize %}
 
-{% block title %}{{ committee.name }} - Committee - {{ block.super }}{% endblock %}
+{% block title %}{{ committee }} - Committee - {{ block.super }}{% endblock %}
 
 {% block content %}
 {% include "calaccess_campaign_browser/committee_nav.html" %}
@@ -9,16 +9,16 @@
 <div class="row">
     <div class="col-12-lg">
         <h3>Totals</h3>
-        <p class="totals">Contributions: ${{committee.total_contributions  | intcomma}}
+        <p class="totals">Contributions: ${{committee.total_contributions|floatformat:0|intcomma}}
         <br>
-        Expenditures: ${{committee.total_expenditures | intcomma}}</p>
+        Expenditures: ${{committee.total_expenditures|floatformat:0|intcomma}}</p>
     </div>
 </div>
 
 <div class="row">
   <div class="col-12-lg">
     <h3>
-          <a href="{% url 'committee_filing_list' committee.pk 1 %}">Filings </a>
+          <a href="{% url 'committee_filing_list' committee.pk 1 %}">Filings</a>
           <div class="btn-group">
               <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown">
                 Download data <span class="caret"></span>
@@ -29,24 +29,26 @@
               </ul>
           </div>
     </h3>
-  <p>Latest filings (limit of 25)</p>
-    <div class="table-responsive">
-      <table id="datatable" class="table table-bordered table-hover"> <!-- table table-bordered table-hover -->
+    <p>{% if filing_set|length > 25 %}(Most recent 25){% endif %}</p>
+  </div>
+</div>
+
+<div class="row">
+  <div class="col-12-lg">
+      <table class="table table-bordered table-hover">
         <thead>
-          <tr>
-            <th>Filing No.</th>
-            <th>Form</th>
-            <th>Cycle</th>
-            <th>itemized mon. contribs</th>
-            <th>unitemized mon. contribs</th>
-            <th>total mon. contribs</th>
-            <th>non mon. contribs</th>
-            <th class="success">total contribs</th>
-            <th>itemized expn</th>
-            <th>unitemized expn</th>
-            <th class="danger">total expn</th>
-            <th>outstanding debts</th>
-          </tr>
+            <tr>
+                <th>No.</th>
+                <th>Filed</th>
+                <th>Form</th>
+                <th>Cycle</th>
+                <th>Period</th>
+                <th class="right">Contributions</th>
+                <th class="right">Expenditures</th>
+                <th class="right">Debts</th>
+                <th class="center">Amendment</th>
+                <th class="center">Duplicate</th>
+            </tr>
         </thead>
         <tbody>
         {% for filing in filing_set_short %}
@@ -54,136 +56,132 @@
             <td>
               <a href="{{ filing.get_absolute_url }}">{{ filing.filing_id_raw }}</a>
             </td>
+            <td>{{ filing.date_filed|date:"N j, Y" }}</td>
             <td>{{ filing.form_id }}</td>
             <td>{{ filing.cycle.name }}</td>
-            {% if filing.summary_set.all %}
+            <td>{{ filing.start_date|date:"N j" }} - {{ filing.end_date|date:"N j, Y" }}</td>
               {% for summary in filing.summary_set.all %}
-                <td>${{ summary.itemized_monetary_contribs | intcomma }}</td>
-                <td>${{ summary.unitemized_monetary_contribs | intcomma }}</td>
-                <td>${{ summary.total_monetary_contribs | intcomma }}</td>
-                <td>${{ summary.non_monetary_contribs | intcomma }}</td>
-                <td class="success">${{ summary.total_contribs | intcomma }}</td>
-                <td>${{ summary.itemized_expenditures | intcomma }}</td>
-                <td>${{ summary.unitemized_expenditures | intcomma }}</td>
-                <td class="danger">${{ summary.total_expenditures | intcomma }}</td>
-                <td>${{ summary.outstanding_debts | intcomma }}</td>
+                <td class="right">{{ summary.total_contributions|floatformat:0|intcomma }}</td>
+                <td class="right">{{ summary.total_expenditures|floatformat:0|intcomma }}</td>
+                <td class="right">{{ summary.outstanding_debts|floatformat:0|intcomma }}</td>
               {% endfor %}
-            {% else %}
-              <td>N/A</td>
-              <td>N/A</td>
-              <td>N/A</td>
-              <td>N/A</td>
-              <td>N/A</td>
-              <td>N/A</td>
-              <td>N/A</td>
-              <td>N/A</td>
-              <td>N/A</td>
-            {% endif %}
+            <td class="center">
+                {% if filing.is_amendment %}
+                    <i class="fa fa-check-square-o"></i>
+                {% else %}
+                    <i class="fa fa-square-o"></i>
+                {% endif %}
+            </td>
+            <td class="center">
+                {% if filing.dupe %}
+                    <i class="fa fa-check-square-o"></i>
+                {% else %}
+                    <i class="fa fa-square-o"></i>
+                {% endif %}
+            </td>
           </tr>
         {% endfor %}
         </tbody>
       </table>
-    </div>
     {% if filing_set|length > 25 %}
         <p class="view-more"><a href="{% url 'committee_filing_list' committee.pk 1 %}">View more... </a></p>
     {% endif %}
-
   </div>
 </div>
 
-  <div class="row">
-    <div class="col-12-lg">
-        <h3>
-              <a href="{% url 'committee_contribution_list' committee.pk 1 %}">Contributions </a>
-              <div class="btn-group">
-                  <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown">
-                    Download data <span class="caret"></span>
-                  </button>
-                  <ul class="dropdown-menu" role="menu">
-                    <li><a href="{% url 'committee_contribution_list' committee.pk 1 %}?format=csv">Download CSV</a></li>
-                    <li><a href="{% url 'committee_contribution_list' committee.pk 1 %}?format=json">Download JSON</a></li>
-                  </ul>
-              </div>
-        </h3>
-        <p>Top 25 contributions by amount</p>
-          <div class="table-responsive">
-            <table class="table table-bordered table-hover"> <!-- table table-bordered table-hover -->
-              <thead>
-                <tr>
-                    <th>cycle</th>
-                    <th>filing</th>
-                    <th>raw_org_name</th>
-                    <th class="success">amount</th>
-                    <!-- <th>person_flag</th> -->
-                </tr>
-              </thead>
-              <tbody>
-                  {% for contribution in contribution_set_short %}
-                    <tr>
-                        <td>{{ contribution.cycle }}</td>
-                        <td><a href="{{ contribution.filing.get_absolute_url }}">{{ contribution.filing.pk }}</a></td>
-                        <td>{{ contribution.raw_org_name }}</td>
-                        <td class="success">${{ contribution.amount | intcomma }}</td>
-                        <!-- <td>{{ contribution.person_flag }}</td> -->
-                    </tr>
-                  {% endfor %}
-              </tbody>
-            </table>
-          </div>
-          {% if contribution_set|length > 25 %}
-            <p class="view-more"><a href="{% url 'committee_contribution_list' committee.pk 1 %}">View more... </a></p>
-          {% endif %}
-    </div>
-  </div>
-
+{% if contribution_set_short %}
 <div class="row">
-  <div class="col-12-lg">
-      <h3>
-            <a href="{% url 'committee_expenditure_list' committee.pk 1 %}">Expenditures </a>
-            <div class="btn-group">
-                <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown">
-                  Download data <span class="caret"></span>
-                </button>
-                <ul class="dropdown-menu" role="menu">
-                  <li><a href="{% url 'committee_expenditure_list' committee.pk 1 %}?format=csv">Download CSV</a></li>
-                  <li><a href="{% url 'committee_expenditure_list' committee.pk 1 %}?format=json">Download JSON</a></li>
-                </ul>
-            </div>
-      </h3>
-      <p>Top 25 expenditures by amount</p>
-        <div class="table-responsive">
-          <table class="table table-bordered table-hover"> <!-- table table-bordered table-hover -->
-            <thead>
-              <tr>
-                  <th>date</th>
-                  <th>exp code</th>
-                  <th>cycle</th>
-                  <th>filing</th>
-                  <th>name</th>
-                  <th class="danger">amount</th>
-                  <!-- <th>person_flag</th> -->
-              </tr>
-            </thead>
-            <tbody>
-                {% for expenditure in expenditure_set_short %}
-                  <tr>
-                      <td>{{expenditure.expn_date}}</td>
-                      <td>{{expenditure.expn_code}}</td>
-                      <td>{{ expenditure.cycle }}</td>
-                      <td><a href="{{ expenditure.filing.get_absolute_url }}">{{ expenditure.filing.pk }}</a></td>
-                      <td>{{ expenditure.name }}</td>
-                      <td class="danger">${{ expenditure.amount  | intcomma}}</td>
-                      <!-- <td>{{ expenditure.person_flag }}</td> -->
-                  </tr>
-                {% endfor %}
-            </tbody>
-          </table>
-        </div>
-        {% if expenditure_set|length > 25 %}
-            <p class="view-more"><a href="{% url 'committee_expenditure_list' committee.pk 1 %}">View more... </a></p>
-        {% endif %}
-  </div>
+<div class="col-12-lg">
+    <h3>
+          <a href="{% url 'committee_contribution_list' committee.pk 1 %}">Contributions </a>
+          <div class="btn-group">
+              <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown">
+                Download data <span class="caret"></span>
+              </button>
+              <ul class="dropdown-menu" role="menu">
+                <li><a href="{% url 'committee_contribution_list' committee.pk 1 %}?format=csv">Download CSV</a></li>
+                <li><a href="{% url 'committee_contribution_list' committee.pk 1 %}?format=json">Download JSON</a></li>
+              </ul>
+          </div>
+    </h3>
+    <p>Top 25 contributions by amount</p>
+    <table class="table table-bordered table-hover">
+      <thead>
+        <tr>
+            <th>Date</th>
+            <th>Name</th>
+            <th class="success right">Amount</th>
+        </tr>
+      </thead>
+      <tbody>
+          {% for contribution in contribution_set_short %}
+            <tr>
+                <td>{{ contribution.rcpt_date }}</td>
+                <td>{{ contribution.raw_org_name }}</td>
+                <td class="success right">
+                    <a href="{{ contribution.get_absolute_url }}">
+                        ${{ contribution.amount | intcomma }}
+                    </a>
+                </td>
+            </tr>
+          {% endfor %}
+      </tbody>
+    </table>
+      {% if contribution_set|length > 25 %}
+        <p class="view-more"><a href="{% url 'committee_contribution_list' committee.pk 1 %}">View more... </a></p>
+      {% endif %}
 </div>
+</div>
+{% endif %}
 
+
+{% if expenditure_set_short %}
+<div class="row">
+<div class="col-12-lg">
+  <h3>
+        <a href="{% url 'committee_expenditure_list' committee.pk 1 %}">Expenditures </a>
+        <div class="btn-group">
+            <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown">
+              Download data <span class="caret"></span>
+            </button>
+            <ul class="dropdown-menu" role="menu">
+              <li><a href="{% url 'committee_expenditure_list' committee.pk 1 %}?format=csv">Download CSV</a></li>
+              <li><a href="{% url 'committee_expenditure_list' committee.pk 1 %}?format=json">Download JSON</a></li>
+            </ul>
+        </div>
+  </h3>
+  <p>Top 25 expenditures by amount</p>
+    <div class="table-responsive">
+      <table class="table table-bordered table-hover"> <!-- table table-bordered table-hover -->
+        <thead>
+          <tr>
+              <th>Date</th>
+              <th>Code</th>
+              <th>Cycle</th>
+              <th>Filing</th>
+              <th>Name</th>
+              <th class="danger right">Amount</th>
+          </tr>
+        </thead>
+        <tbody>
+            {% for expenditure in expenditure_set_short %}
+              <tr>
+                  <td>{{expenditure.expn_date}}</td>
+                  <td>{{expenditure.expn_code}}</td>
+                  <td>{{ expenditure.cycle }}</td>
+                  <td><a href="{{ expenditure.filing.get_absolute_url }}">{{ expenditure.filing.pk }}</a></td>
+                  <td>{{ expenditure.name }}</td>
+                  <td class="danger right">${{ expenditure.amount  | intcomma}}</td>
+              </tr>
+            {% endfor %}
+        </tbody>
+      </table>
+    </div>
+    {% if expenditure_set|length > 25 %}
+        <p class="view-more"><a href="{% url 'committee_expenditure_list' committee.pk 1 %}">View more... </a></p>
+    {% endif %}
 </div>
+</div>
+{% endif %}
+
 {% endblock %}

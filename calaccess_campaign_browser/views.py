@@ -1,11 +1,13 @@
 import re
 import csv
 import json
+import datetime
 from django.db.models import Q
 from django.views import generic
 from django.http import HttpResponse
 from bakery.views import BuildableListView
 from django.utils.encoding import smart_text
+from django.core.urlresolvers import reverse
 from django.shortcuts import render, redirect
 from calaccess_campaign_browser.models import (
     Filer,
@@ -16,9 +18,12 @@ from calaccess_campaign_browser.models import (
     FlatFile
 )
 
+NEXT_YEAR = datetime.date.today() + datetime.timedelta(days=365)
+
 #
 # Mixins
 #
+
 
 class DataPrepMixin(object):
     """
@@ -107,6 +112,7 @@ class CommitteeDataView(JSONResponseMixin, CSVResponseMixin, generic.ListView):
 # Views
 #
 
+
 class IndexView(BuildableListView):
     model = FlatFile
     template_name = 'home/index.html'
@@ -130,12 +136,11 @@ class IndexView(BuildableListView):
         return files
 
 
-class LatestView(generic.TemplateView):
+class LatestView(generic.ListView):
     template_name = 'calaccess_campaign_browser/latest.html'
-
-    def get_context_data(self, **kwargs):
-        context = {}
-        return context
+    queryset = Filing.objects.exclude(
+        date_filed__gt=NEXT_YEAR
+    ).order_by("-date_filed")[:500]
 
 
 class FilerListView(generic.ListView):
@@ -156,6 +161,7 @@ class FilerListView(generic.ListView):
         context = super(FilerListView, self).get_context_data(**kwargs)
         if ('q' in self.request.GET) and self.request.GET['q'].strip():
             context['query_string'] = self.request.GET['q']
+        context['base_url'] = reverse("filer_list")
         return context
 
 
@@ -189,7 +195,7 @@ class CommitteeDetailView(generic.DetailView):
         context = super(CommitteeDetailView, self).get_context_data(**kwargs)
         context['committee'] = self.object
         context['filing_set'] = Filing.objects.filter(
-            committee=self.object).order_by('-end_date')
+            committee=self.object).order_by('-date_filed')
         context['filing_set_short'] = context['filing_set'][:25]
         context['contribution_set'] = Contribution.objects.filter(
             committee=self.object).order_by('-amount')
@@ -212,7 +218,7 @@ contribution_list.html'
         """
         committee = Committee.objects.get(pk=self.kwargs['pk'])
         self.committee = committee
-        return committee.contribution_set.all().order_by('-cycle')
+        return committee.contribution_set.all().order_by('-rcpt_date')
 
 
 class CommitteeExpenditureView(CommitteeDataView):
@@ -232,7 +238,7 @@ expenditure_list.html'
 
 class CommitteeFilingView(CommitteeDataView):
     model = Filing
-    template_name='calaccess_campaign_browser/committee_filing_list.html'
+    template_name = 'calaccess_campaign_browser/committee_filing_list.html'
     context_object_name = 'committee_filings'
 
     def get_queryset(self):
@@ -241,7 +247,7 @@ class CommitteeFilingView(CommitteeDataView):
         """
         committee = Committee.objects.get(pk=self.kwargs['pk'])
         self.committee = committee
-        return committee.filing_set.all().order_by('-cycle')
+        return committee.filing_set.all().order_by('-date_filed')
 
 
 findterms = re.compile(r'"([^"]+)"|(\S+)').findall

@@ -9,5 +9,5 @@ class Command(BaseCommand):
         call_command("loadcalaccesscampaignfilers")
         call_command("loadcalaccesscampaignfilings")
         call_command("loadcalaccesscampaignsummaries")
-        call_command("loadcalaccesscampaigncontribs")
-        call_command("loadcalaccesscampaignexpends")
+        call_command("loadcalaccesscampaigncontributions")
+        call_command("loadcalaccesscampaignexpenditures")

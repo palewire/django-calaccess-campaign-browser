@@ -20,21 +20,27 @@ class Command(BaseCommand):
         print "- Loading cycles"
         c = connection.cursor()
         sql = """
-            INSERT INTO %s (`name`)
-            SELECT `session_id`
-            FROM FILER_FILINGS_CD
-            GROUP BY 1
-            ORDER BY 1 DESC;
-        """ % (
-            Cycle._meta.db_table,
-        )
+            INSERT INTO %(cycle_table)s (`name`)
+            SELECT DISTINCT
+                CASE
+                    WHEN `session_id` %% 2 = 0 THEN `session_id`
+                    ELSE `session_id` + 1
+                END as cycle
+            FROM (
+                SELECT `session_id`
+                FROM FILER_FILINGS_CD
+                GROUP BY 1
+                ORDER BY 1 DESC
+            ) as sessions
+        """
+        sql = sql % dict(cycle_table=Cycle._meta.db_table)
         c.execute(sql)
 
     def load_filings(self):
         print "- Loading filings"
         c = connection.cursor()
         sql = """
-        INSERT INTO %s (
+        INSERT INTO %(filing_table)s (
           cycle_id,
           committee_id,
           filing_id_raw,
@@ -42,6 +48,8 @@ class Command(BaseCommand):
           amend_id,
           start_date,
           end_date,
+          date_received,
+          date_filed,
           dupe
         )
         SELECT
@@ -52,16 +60,25 @@ class Command(BaseCommand):
           ff.filing_sequence as amend_id,
           ff.rpt_start as start_date,
           ff.rpt_end as end_date,
+          ff.rpt_date as date_received,
+          ff.filing_date as date_filed,
           false
-        FROM FILER_FILINGS_CD as ff
+        FROM (
+            SELECT
+                *,
+                CASE
+                    WHEN `session_id` %% 2 = 0 THEN `session_id`
+                    ELSE `session_id` + 1
+                END as cycle
+            FROM FILER_FILINGS_CD
+        ) as ff
         INNER JOIN calaccess_campaign_browser_committee as c
         ON ff.`filer_id` = c.`filer_id_raw`
         INNER JOIN calaccess_campaign_browser_cycle as cycle
-        ON ff.session_id = cycle.name
+        ON ff.cycle = cycle.name
         WHERE `FORM_ID` IN ('F450', 'F460')
-        """ % (
-            Filing._meta.db_table,
-        )
+        """
+        sql = sql % dict(filing_table=Filing._meta.db_table)
         c.execute(sql)
 
     def mark_duplicates(self):

@@ -202,14 +202,20 @@ class Command(BaseCommand):
             ('form_type', 'form_type'),
             ('id', 'id'),
             ('itemized_expenditures', 'itemized_expenditures'),
-            ('itemized_monetary_contribs', 'itemized_monetary_contribs'),
-            ('non_monetary_contribs', 'non_monetary_contribs'),
+            (
+                'itemized_monetary_contributions',
+                'itemized_monetary_contributions'
+            ),
+            ('non_monetary_contributions', 'non_monetary_contributions'),
             ('outstanding_debts', 'outstanding_debts'),
-            ('total_contribs', 'total_contribs'),
+            ('total_contributions', 'total_contributions'),
             ('total_expenditures', 'total_expenditures'),
-            ('total_monetary_contribs', 'total_monetary_contribs'),
+            ('total_monetary_contributions', 'total_monetary_contributions'),
             ('unitemized_expenditures', 'unitemized_expenditures'),
-            ('unitemized_monetary_contribs', 'unitemized_monetary_contribs'),
+            (
+                'unitemized_monetary_contributions',
+                'unitemized_monetary_contributions'
+            ),
         ])
         csv_writer = csvkit.unicsv.UnicodeCSVDictWriter(
             outfile, fieldnames=header_translation.keys(), delimiter='|')

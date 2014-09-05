@@ -39,7 +39,7 @@
             <tr>
               <td>
                 {% if filer.committee_set.count %}
-                <a href="{{ filer.get_absolute_url }}">{{ filer }}</a>
+                <a href="{{ filer.get_absolute_url }}">{{ filer.short_name }}</a>
                 {% else %}
                 {{ filer }}
                 {% endif %}
