@@ -86,3 +86,13 @@ And fire up the Django test server to use the browser
 
     $ python example/manage.py collectstatic
     $ python example/manage.py runserver
+
+Reset the universe
+------------------
+Since this app is in active development, tables will change and they will change *often*. Until migration history is added (Shooting for version 1.0), use the *rip and reload* approach.
+
+If you get a template error, ala "(1054, "Unknown column 'calaccess_campaign_browser_filing.date_received' in 'field list'")", you can either add the column yourself or just blow and reload:
+
+.. code-block:: bash
+    $ python example/manage.py sqlclear calaccess_campaign_browser | mysql -u someuser your_calaccess_db -p
+
