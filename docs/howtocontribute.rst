@@ -72,7 +72,7 @@ You might start by loading the data dump from the web.
 
 .. code-block:: bash
 
-    $ python example/manage.py downloadcalaccess
+    $ python example/manage.py downloadcalaccessrawdata
 
 Then you can build the campaign finance models
 
