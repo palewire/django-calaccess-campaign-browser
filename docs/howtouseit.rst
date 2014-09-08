@@ -61,7 +61,7 @@ Secretary of State.
 
 .. code-block:: bash
 
-    $ python manage.py downloadcalaccess
+    $ python manage.py downloadcalaccessrawdata
 
 Run the management command that extracts and refines campaign finance data from from the raw
 calaccess data dump.
