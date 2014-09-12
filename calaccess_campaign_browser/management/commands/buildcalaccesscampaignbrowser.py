@@ -6,6 +6,7 @@ class Command(BaseCommand):
     help = 'Load data from the raw source files into consolidated tables'
 
     def handle(self, *args, **options):
+        call_command("flushcalaccesscampaignbrowser")
         call_command("loadcalaccesscampaignfilers")
         call_command("loadcalaccesscampaignfilings")
         call_command("loadcalaccesscampaignsummaries")

@@ -8,7 +8,6 @@ class Command(BaseCommand):
     def handle(self, *args, **options):
         print "- Loading expenditures"
         c = connection.cursor()
-        c.execute('DELETE FROM %s' % Expenditure._meta.db_table)
         sql = """
         INSERT INTO calaccess_campaign_browser_expenditure (
             cycle_id,

@@ -18,14 +18,8 @@ class Command(BaseCommand):
             'csv',
             'smry_cd_transformed.csv'
         )
-        #self.transform_csv()
-        self.flush_db()
+        self.transform_csv()
         self.load_csv()
-
-    def flush_db(self):
-        print "- Flushing summary model"
-        c = connection.cursor()
-        c.execute('DELETE FROM %s' % Summary._meta.db_table)
 
     def load_csv(self):
         print "- Loading transformed CSV into the database"

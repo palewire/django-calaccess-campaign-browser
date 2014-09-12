@@ -380,7 +380,7 @@ class Expenditure(models.Model):
     # Derived fields
     name = models.CharField(max_length=255)
     raw_org_name = models.CharField(max_length=255)
-    person_flag = models.BooleanField()
+    person_flag = models.BooleanField(default=False)
     org_id = models.IntegerField(null=True)
     individual_id = models.IntegerField(null=True)
 
@@ -458,7 +458,7 @@ class Contribution(models.Model):
 
     # Derived fields
     raw_org_name = models.CharField(max_length=255)
-    person_flag = models.BooleanField()
+    person_flag = models.BooleanField(default=False)
     org_id = models.IntegerField(null=True)
     individual_id = models.IntegerField(null=True)
     dupe = models.BooleanField(default=False)

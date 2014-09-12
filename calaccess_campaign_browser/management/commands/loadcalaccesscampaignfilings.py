@@ -9,9 +9,6 @@ class Command(BaseCommand):
         """
         Loads raw filings into consolidated tables
         """
-        c = connection.cursor()
-        c.execute('DELETE FROM %s' % Filing._meta.db_table)
-        c.execute('DELETE FROM %s' % Cycle._meta.db_table)
         self.load_cycles()
         self.load_filings()
         self.mark_duplicates()

@@ -67,7 +67,7 @@ class CSVResponseMixin(DataPrepMixin):
         to make the payload.
         """
         data, fields = self.prep_context_for_serialization(context)
-        response = HttpResponse(mimetype='text/csv')
+        response = HttpResponse(content_type='text/csv')
         response['Content-Disposition'] = 'attachment; filename=download.csv'
         writer = csv.DictWriter(response, fieldnames=fields)
         writer.writeheader()

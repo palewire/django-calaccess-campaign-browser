@@ -8,7 +8,6 @@ class Command(BaseCommand):
     def handle(self, *args, **options):
         print "- Loading contributions"
         c = connection.cursor()
-        c.execute('DELETE FROM %s' % Contribution._meta.db_table)
         sql = """
             INSERT INTO calaccess_campaign_browser_contribution (
                 cycle_id,

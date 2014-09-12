@@ -1,14 +1,11 @@
 from django.db import connection
 from django.core.management.base import BaseCommand
-from calaccess_campaign_browser.models import Filer, Committee
+from calaccess_campaign_browser import models
 
 
 class Command(BaseCommand):
 
     def handle(self, *args, **options):
-        c = connection.cursor()
-        c.execute('DELETE FROM %s' % Committee._meta.db_table)
-        c.execute('DELETE FROM %s' % Filer._meta.db_table)
         self.load_candidate_filers()
         self.load_candidate_committees()
         self.load_pac_filers()
@@ -54,7 +51,7 @@ class Command(BaseCommand):
         ) as max
         ON FILERNAME_CD.`id` = max.`id`
         """ % (
-            Filer._meta.db_table,
+            models.Filer._meta.db_table,
         )
         c.execute(sql)
 
@@ -133,7 +130,7 @@ Committee model"
         ) as distinct_filers
         ON cand2cmte.`committee_filer_id` = distinct_filers.`filer_id`;
         """ % (
-            Committee._meta.db_table,
+            models.Committee._meta.db_table,
         )
         c.execute(sql)
 
@@ -188,7 +185,7 @@ and loading into Filer model as PACs"
         ) as ids
         ON FILERNAME_CD.`id` = ids.`id`;
         """ % (
-            Filer._meta.db_table,
+            models.Filer._meta.db_table,
         )
         c.execute(sql)
 
@@ -213,6 +210,6 @@ and loading into Filer model as PACs"
             FROM calaccess_campaign_browser_filer
             WHERE filer_type = 'pac'
         """ % (
-            Committee._meta.db_table,
+            models.Committee._meta.db_table,
         )
         c.execute(sql)
