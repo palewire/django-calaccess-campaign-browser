@@ -39,17 +39,15 @@
             <td>{{ filing.start_date }}</td>
             <td>{{ filing.end_date }}</td>
             <td>{{ filing.cycle.name }}</td>
-          {% for summary in filing.summary_set.all %}
-            <td>{{ summary.itemized_expenditures | intcomma }}</td>
-            <td>{{ summary.itemized_monetary_contributions | intcomma }}</td>
-            <td>{{ summary.non_monetary_contributions | intcomma }}</td>
-            <td>{{ summary.outstanding_debts | intcomma }}</td>
-            <td>{{ summary.total_contributions | intcomma }}</td>
-            <td>{{ summary.total_expenditures | intcomma }}</td>
-            <td>{{ summary.total_monetary_contributions | intcomma }}</td>
-            <td>{{ summary.unitemized_expenditures | intcomma }}</td>
-            <td>{{ summary.unitemized_monetary_contributions | intcomma }}</td>
-          {% endfor %}
+            <td>{{ filing.summary.itemized_expenditures | intcomma }}</td>
+            <td>{{ filing.summary.itemized_monetary_contributions | intcomma }}</td>
+            <td>{{ filing.summary.non_monetary_contributions | intcomma }}</td>
+            <td>{{ filing.summary.outstanding_debts | intcomma }}</td>
+            <td>{{ filing.summary.total_contributions | intcomma }}</td>
+            <td>{{ filing.summary.total_expenditures | intcomma }}</td>
+            <td>{{ filing.summary.total_monetary_contributions | intcomma }}</td>
+            <td>{{ filing.summary.unitemized_expenditures | intcomma }}</td>
+            <td>{{ filing.summary.unitemized_monetary_contributions | intcomma }}</td>
           </tr>
         </tbody>
       </table>

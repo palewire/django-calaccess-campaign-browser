@@ -119,17 +119,16 @@ class ExpenditureAdmin(BaseAdmin):
 
 class SummaryAdmin(BaseAdmin):
     list_display = (
-        "id",
+        "filing_id_raw",
+        "amend_id",
         "committee",
         "filing",
-        "form_type",
         "total_contributions",
         "total_expenditures",
-        "dupe"
     )
-    list_filter = (
-        "dupe",
-        "form_type"
+    search_fields = (
+        "filing_id_raw",
+        "amend_id",
     )
 
 

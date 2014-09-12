@@ -60,10 +60,9 @@ class Filer(AllCapsNameMixin):
 
     @property
     def total_contributions(self):
-        qs = Filing.objects.filter(committee__filer=self)
-        total = Summary.objects.filter(filing__in=qs).aggregate(
-            tot=Sum('total_contributions'))['tot']
-        return total
+        l = [f.summary for f in Filing.objects.filter(committee__filer=self)
+                if f.summary]
+        return sum([s.total_contributions for s in l if s.total_contributions])
 
 
 class Committee(AllCapsNameMixin):
@@ -98,17 +97,18 @@ class Committee(AllCapsNameMixin):
 
     @property
     def total_contributions(self):
-        qs = Filing.objects.filter(committee=self)
-        total = Summary.objects.filter(filing__in=qs).aggregate(
-            tot=Sum('total_contributions'))['tot']
-        return total
+        l = [f.summary for f in Filing.objects.filter(committee=self)
+                if f.summary]
+        return sum([s.total_contributions for s in l if s.total_contributions])
 
     @property
     def total_expenditures(self):
-        qs = Filing.objects.filter(committee=self)
-        total = Summary.objects.filter(filing__in=qs).aggregate(
-            tot=Sum('total_expenditures'))['tot']
-        return total
+        l = [
+            f.summary for
+                f in Filing.objects.filter(committee=self)
+                if f.summary
+        ]
+        return sum([s.total_expenditures for s in l if s.total_expenditures])
 
     def links(self):
         from calaccess_raw.models import FilerLinksCd, FilernameCd, LookupCode
@@ -156,7 +156,7 @@ class Cycle(models.Model):
         ordering = ("-name",)
 
     def __unicode__(self):
-        return self.name
+        return unicode(self.name)
 
 
 class Filing(models.Model):
@@ -164,7 +164,15 @@ class Filing(models.Model):
     committee = models.ForeignKey(Committee)
     filing_id_raw = models.IntegerField(db_index=True)
     amend_id = models.IntegerField(db_index=True)
-    form_id = models.CharField(max_length=7, db_index=True)
+    FORM_ID_CHOICES = (
+        ('F460', 'Recipient Committee Campaign Statement'),
+        ('F450', 'Recipient Committee Campaign Statement -- Short Form'),
+    )
+    form_id = models.CharField(
+        max_length=7,
+        db_index=True,
+        choices=FORM_ID_CHOICES
+    )
     start_date = models.DateField(null=True)
     end_date = models.DateField(null=True)
     date_received = models.DateField(null=True)
@@ -176,18 +184,18 @@ class Filing(models.Model):
     )
 
     def __unicode__(self):
-        return '%s (%s-%s)' % (
-            self.filing_id_raw,
-            self.start_date,
-            self.end_date
-        )
+        return unicode(self.filing_id_raw)
 
     def get_absolute_url(self):
         return reverse('filing_detail', args=[str(self.pk)])
 
+    @property
     def summary(self):
         try:
-            return Summary.objects.get(filing=self)
+            return Summary.objects.get(
+                filing_id_raw=self.filing_id_raw,
+                amend_id=self.amend_id
+            )
         except Summary.DoesNotExist:
             return None
 
@@ -196,20 +204,39 @@ class Filing(models.Model):
 
 
 class Summary(models.Model):
-    cycle = models.ForeignKey(Cycle)
-    committee = models.ForeignKey(Committee)
-    filing = models.ForeignKey(Filing)
-    FORM_TYPE_CHOICES = (
-        ('F460', 'Recipient Committee Campaign Statement'),
-        ('F450', 'Recipient Committee Campaign Statement -- Short Form'),
-    )
-    form_type = models.CharField(
-        max_length=10,
-        choices=FORM_TYPE_CHOICES,
-        db_index=True,
-    )
-    dupe = models.BooleanField(default=False, db_index=True)
+    filing_id_raw = models.IntegerField(db_index=True)
+    amend_id = models.IntegerField(db_index=True)
     itemized_monetary_contributions = models.DecimalField(
+        max_digits=16,
+        decimal_places=2,
+        null=True,
+        default=None,
+    )
+    unitemized_monetary_contributions = models.DecimalField(
+        max_digits=16,
+        decimal_places=2,
+        null=True,
+        default=None,
+    )
+    total_monetary_contributions = models.DecimalField(
+        max_digits=16,
+        decimal_places=2,
+        null=True,
+        default=None,
+    )
+    non_monetary_contributions = models.DecimalField(
+        max_digits=16,
+        decimal_places=2,
+        null=True,
+        default=None,
+    )
+    total_contributions = models.DecimalField(
+        max_digits=16,
+        decimal_places=2,
+        null=True,
+        default=None,
+    )
+    itemized_expenditures = models.DecimalField(
         max_digits=16,
         decimal_places=2,
         null=True,
@@ -227,31 +254,7 @@ class Summary(models.Model):
         null=True,
         default=None,
     )
-    total_monetary_contributions = models.DecimalField(
-        max_digits=16,
-        decimal_places=2,
-        null=True,
-        default=None,
-    )
-    unitemized_monetary_contributions = models.DecimalField(
-        max_digits=16,
-        decimal_places=2,
-        null=True,
-        default=None,
-    )
-    non_monetary_contributions = models.DecimalField(
-        max_digits=16,
-        decimal_places=2,
-        null=True,
-        default=None,
-    )
-    itemized_expenditures = models.DecimalField(
-        max_digits=16,
-        decimal_places=2,
-        null=True,
-        default=None,
-    )
-    total_contributions = models.DecimalField(
+    ending_cash_balance = models.DecimalField(
         max_digits=16,
         decimal_places=2,
         null=True,
@@ -263,20 +266,36 @@ class Summary(models.Model):
         null=True,
         default=None,
     )
-    ending_cash_balance = models.DecimalField(
-        max_digits=16,
-        decimal_places=2,
-        null=True,
-        default=None,
-    )
+
+    class Meta:
+        verbose_name_plural = "summaries"
 
     def __unicode__(self):
-        return '{0} {1} ({2} - {3})'.format(
-            self.cycle.name,
-            self.committee.name,
-            self.filing.start_date,
-            self.filing.end_date
-        )
+        return unicode(self.filing_id_raw)
+
+    @property
+    def cycle(self):
+        try:
+            return self.filing.cycle
+        except:
+            return None
+
+    @property
+    def committee(self):
+        try:
+            return self.filing.committee
+        except:
+            return None
+
+    @property
+    def filing(self):
+        try:
+            return Filing.objects.get(
+                filing_id_raw=self.filing_id_raw,
+                amend_id=self.amend_id
+            )
+        except Filing.DoesNotExist:
+            return None
 
 
 class Expenditure(models.Model):

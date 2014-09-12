@@ -72,11 +72,9 @@
             <td>{{ filing.form_id }}</td>
             <td>{{ filing.cycle.name }}</td>
             <td>{{ filing.start_date|date:"N j" }} - {{ filing.end_date|date:"N j, Y" }}</td>
-              {% for summary in filing.summary_set.all %}
-                <td class="right">{{ summary.total_contributions|floatformat:0|intcomma }}</td>
-                <td class="right">{{ summary.total_expenditures|floatformat:0|intcomma }}</td>
-                <td class="right">{{ summary.outstanding_debts|floatformat:0|intcomma }}</td>
-              {% endfor %}
+            <td class="right">{{ filing.summary.total_contributions|floatformat:0|intcomma }}</td>
+            <td class="right">{{ filing.summary.total_expenditures|floatformat:0|intcomma }}</td>
+            <td class="right">{{ filing.summary.outstanding_debts|floatformat:0|intcomma }}</td>
             <td class="center">
                 {% if filing.is_amendment %}
                     <i class="fa fa-check-square-o"></i>
