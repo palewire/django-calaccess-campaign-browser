@@ -1,16 +1,83 @@
-from django.db import connection
+import os
+import csv
+from django.conf import settings
+from django.utils.datastructures import SortedDict
 from django.core.management.base import BaseCommand
-from calaccess_campaign_browser.models import Summary
 
 
 class Command(BaseCommand):
 
     def handle(self, *args, **options):
-        print "- Loading summary totals for filings"
-        c = connection.cursor()
-        c.execute('DELETE FROM %s' % Summary._meta.db_table)
-        self.load_form_F460()
-        self.load_form_F450()
+        print "- Transform summary totals CSV for loading into database"
+        self.csv_path = os.path.join(
+            '/home/ben/Code/ccdc/django-calaccess-parser/repo/example',
+            'data', 'csv', 'smry_cd.csv'
+        )
+        grouped = {}
+        form2field = {
+            # F460
+            'A-1': 'itemized_monetary_contributions',
+            'A-2': 'unitemized_monetary_contributions',
+            'A-3': 'total_monetary_contributions',
+            'F460-4': 'non_monetary_contributions',
+            'F460-5': 'total_contributions',
+            'E-1': 'itemized_expenditures',
+            'E-2': 'unitemized_expenditures',
+            'E-4': 'total_expenditures',
+            'F460-16': 'ending_cash_balance',
+            'F460-19': 'outstanding_debts',
+            # F450
+            'F450-7': 'total_monetary_contributions',
+            'F450-8': 'non_monetary_contributions',
+            'F450-10': 'total_contributions',
+            'F450-1': 'itemized_expenditures',
+            'F450-2': 'unitemized_expenditures',
+            'E-6': 'total_expenditures',
+        }
+        print "-- Regrouping source CSV"
+        for r in csv.DictReader(open(self.csv_path, 'rb')):
+            uid = "%s-%s" % (r['FILING_ID'], r['AMEND_ID'])
+            formkey = "%s-%s" % (r['FORM_TYPE'], r['LINE_ITEM'])
+            try:
+                field = form2field[formkey]
+            except KeyError:
+                continue
+            try:
+                grouped[uid][field] = r['AMOUNT_A']
+            except KeyError:
+                grouped[uid] = SortedDict((
+                    ("itemized_monetary_contributions", None),
+                    ("unitemized_monetary_contributions", None),
+                    ("total_monetary_contributions", None),
+                    ("non_monetary_contributions", None),
+                    ("total_contributions", None),
+                    ("itemized_expenditures", None),
+                    ("unitemized_expenditures", None),
+                    ("total_expenditures", None),
+                    ("ending_cash_balance", None),
+                    ("outstanding_debts", None)
+                ))
+                grouped[uid][field] = r['AMOUNT_A']
+        print "-- Writing regrouped data to filesystem"
+        out = csv.writer(open("summary_transformed.csv", "wb"))
+        outheaders = (
+            "filing_id",
+            "amend_id",
+            "itemized_monetary_contributions",
+            "unitemized_monetary_contributions",
+            "total_monetary_contributions",
+            "non_monetary_contributions",
+            "total_contributions",
+            "itemized_expenditures",
+            "unitemized_expenditures",
+            "total_expenditures",
+            "ending_cash_balance",
+            "outstanding_debts"
+        )
+        out.writerow(outheaders)
+        for uid, data in grouped.items():
+            outrow = uid.split("-") + data.values()
+            out.writerow(outrow)
 
     def load_form_F460(self):
         print "-- Form F460"
