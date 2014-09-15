@@ -40,7 +40,11 @@
         <tbody>
         {% for i in results %}
             <tr>
-                <td>{{ i.pk }}</td>
+                <td>
+                    <a href="{{ i.get_absolute_url }}" title="Detail for contribution {{ i.pk }}">
+                        {{ i.pk }}
+                    </a>
+                </td>
                 <td>{{ i.amount }}</td>
                 <td>{{ i.ctrib_city }}</td>
                 <td>{{ i.ctrib_st }}</td>
@@ -49,7 +53,11 @@
                 <td>{{ i.ctrib_naml }}</td>
                 <td>{{ i.ctrib_emp }}</td>
                 <td>{{ i.ctrib_occ }}</td>
-                <td>{{ i.committee }}</td>
+                <td>
+                    <a href="{{ i.committee.get_absolute_url }}" title="Detail for {{ i.committee }}">
+                        {{ i.committee }}
+                    </a>
+                </td>
             </tr>
         {% endfor %}
         </tbody>
