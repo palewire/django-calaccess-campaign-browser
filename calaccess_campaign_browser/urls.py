@@ -9,7 +9,7 @@ v1_api.register(FilerResource())
 
 urlpatterns = patterns(
     '',
-    url(r'^$', RedirectView.as_view(url='/latest/')),
+    url(r'^$', RedirectView.as_view(url='/latest/', permanent=False)),
     url(
         r'^latest/$',
         views.LatestView.as_view(),
@@ -17,7 +17,7 @@ urlpatterns = patterns(
     ),
     url(
         r'^filers/$',
-        RedirectView.as_view(url='/filers/1/'),
+        RedirectView.as_view(url='/filers/1/', permanent=False),
         name="filer_list"
     ),
     url(
