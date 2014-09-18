@@ -199,7 +199,7 @@ class CommitteeDetailView(generic.DetailView):
         filing_qs = Filing.objects.filter(
             committee=self.object,
             dupe=False
-        ).order_by('-date_filed')
+        ).select_related("cycle").order_by('-date_filed')
         context['filing_set_short'] = filing_qs[:25]
         context['filing_set_count'] = filing_qs.count()
 

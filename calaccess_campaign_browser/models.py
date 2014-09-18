@@ -100,7 +100,9 @@ class Committee(AllCapsNameMixin):
 
     @property
     def real_filings(self):
-        return Filing.objects.filter(committee=self, dupe=False)
+        return Filing.objects.filter(
+            committee=self, dupe=False
+        ).select_related("cycle")
 
     @property
     def total_contributions(self):

@@ -102,7 +102,7 @@
         <tr>
             <th>Date</th>
             <th>Name</th>
-            <th class="success right">Amount</th>
+            <th class="right">Amount</th>
         </tr>
       </thead>
       <tbody>
@@ -110,7 +110,7 @@
             <tr>
                 <td>{{ contribution.rcpt_date }}</td>
                 <td>{{ contribution.raw_org_name }}</td>
-                <td class="success right">
+                <td class="right">
                     <a href="{{ contribution.get_absolute_url }}">
                         ${{ contribution.amount | intcomma }}
                     </a>
@@ -148,22 +148,18 @@
         <thead>
           <tr>
               <th>Date</th>
-              <th>Code</th>
-              <th>Cycle</th>
-              <th>Filing</th>
               <th>Name</th>
-              <th class="danger right">Amount</th>
+              <th>Type</th>
+              <th class="right">Amount</th>
           </tr>
         </thead>
         <tbody>
             {% for expenditure in expenditure_set_short %}
               <tr>
-                  <td>{{expenditure.expn_date}}</td>
-                  <td>{{expenditure.expn_code}}</td>
-                  <td>{{ expenditure.cycle }}</td>
-                  <td><a href="{{ expenditure.filing.get_absolute_url }}">{{ expenditure.filing.pk }}</a></td>
+                  <td>{{ expenditure.expn_date }}</td>
                   <td>{{ expenditure.name }}</td>
-                  <td class="danger right">${{ expenditure.amount  | intcomma}}</td>
+                  <td>{{ expenditure.get_expn_code_display|capfirst }}</td>
+                  <td class="right">${{ expenditure.amount|intcomma }}</td>
               </tr>
             {% endfor %}
         </tbody>
