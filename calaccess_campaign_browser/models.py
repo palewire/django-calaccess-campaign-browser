@@ -99,57 +99,18 @@ class Committee(AllCapsNameMixin):
         return reverse('committee_detail', args=[str(self.pk)])
 
     @property
+    def real_filings(self):
+        return Filing.objects.filter(committee=self, dupe=False)
+
+    @property
     def total_contributions(self):
-        l = [f.summary for f in Filing.objects.filter(committee=self)
-                if f.summary]
-        return sum([s.total_contributions for s in l if s.total_contributions])
+        summaries = [f.summary for f in self.real_filings]
+        return sum([s.total_contributions for s in summaries if s])
 
     @property
     def total_expenditures(self):
-        l = [
-            f.summary for
-                f in Filing.objects.filter(committee=self)
-                if f.summary
-        ]
-        return sum([s.total_expenditures for s in l if s.total_expenditures])
-
-    def links(self):
-        from calaccess_raw.models import FilerLinksCd, FilernameCd, LookupCode
-        d = {}
-        qs_links = FilerLinksCd.objects.filter(
-            filer_id_a=self.filer_id_raw)
-        for q in qs_links:
-            qs_names = (
-                FilernameCd
-                .objects
-                .filter(filer_id=q.filer_id_b)
-                .order_by('-effect_dt')
-                .exclude(naml=''))
-
-            if qs_names > 0:
-                # committee filer name object
-                obj = qs_names[0]
-                name = (
-                    "{0} {1} {2} {3}"
-                    .format(obj.namt, obj.namf, obj.naml, obj.nams)
-                    .strip()
-                )
-
-            else:
-                name = ''
-
-            d[q.filer_id_b] = {
-                'link_type': (
-                    LookupCode
-                    .objects
-                    .get(code_id=q.link_type)
-                    .code_desc
-                ),
-                'filer_id_b': q.filer_id_b,
-                'filer_name': name,
-                'effective_date': q.effect_dt,
-            }
-        return d
+        summaries = [f.summary for f in self.real_filings]
+        return sum([s.total_expenditures for s in summaries if s])
 
 
 class Cycle(models.Model):

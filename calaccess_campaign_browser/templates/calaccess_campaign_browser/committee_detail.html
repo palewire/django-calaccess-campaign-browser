@@ -29,7 +29,7 @@
               </ul>
           </div>
     </h3>
-    <p>{% if filing_set|length > 25 %}(Most recent 25){% endif %}</p>
+    <p>{% if filing_set_count > 25 %}(Most recent 25){% endif %}</p>
   </div>
 </div>
 
@@ -47,7 +47,6 @@
                 <th class="right">Expenditures</th>
                 <th class="right">Debts</th>
                 <th class="center">Amendment</th>
-                <th class="center">Duplicate</th>
             </tr>
         </thead>
         <tbody>
@@ -60,18 +59,13 @@
             <td>{{ filing.form_id }}</td>
             <td>{{ filing.cycle.name }}</td>
             <td>{{ filing.start_date|date:"N j" }} - {{ filing.end_date|date:"N j, Y" }}</td>
-            <td class="right">{{ filing.summary.total_contributions|floatformat:0|intcomma }}</td>
-            <td class="right">{{ filing.summary.total_expenditures|floatformat:0|intcomma }}</td>
-            <td class="right">{{ filing.summary.outstanding_debts|floatformat:0|intcomma }}</td>
+            {% with filing.summary as summary %}
+            <td class="right">{{ summary.total_contributions|floatformat:0|intcomma }}</td>
+            <td class="right">{{ summary.total_expenditures|floatformat:0|intcomma }}</td>
+            <td class="right">{{ summary.outstanding_debts|floatformat:0|intcomma }}</td>
+            {% endwith %}
             <td class="center">
                 {% if filing.is_amendment %}
-                    <i class="fa fa-check-square-o"></i>
-                {% else %}
-                    <i class="fa fa-square-o"></i>
-                {% endif %}
-            </td>
-            <td class="center">
-                {% if filing.dupe %}
                     <i class="fa fa-check-square-o"></i>
                 {% else %}
                     <i class="fa fa-square-o"></i>
@@ -81,7 +75,7 @@
         {% endfor %}
         </tbody>
       </table>
-    {% if filing_set|length > 25 %}
+    {% if filing_set_count > 25 %}
         <p class="view-more"><a href="{% url 'committee_filing_list' committee.pk 1 %}">View more... </a></p>
     {% endif %}
   </div>
@@ -125,7 +119,7 @@
           {% endfor %}
       </tbody>
     </table>
-      {% if contribution_set|length > 25 %}
+      {% if contribution_set_count > 25 %}
         <p class="view-more"><a href="{% url 'committee_contribution_list' committee.pk 1 %}">View more... </a></p>
       {% endif %}
 </div>
@@ -175,7 +169,7 @@
         </tbody>
       </table>
     </div>
-    {% if expenditure_set|length > 25 %}
+    {% if expenditure_set_count > 25 %}
         <p class="view-more"><a href="{% url 'committee_expenditure_list' committee.pk 1 %}">View more... </a></p>
     {% endif %}
 </div>

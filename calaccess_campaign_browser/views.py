@@ -194,15 +194,32 @@ class CommitteeDetailView(generic.DetailView):
     def get_context_data(self, **kwargs):
         context = super(CommitteeDetailView, self).get_context_data(**kwargs)
         context['committee'] = self.object
-        context['filing_set'] = Filing.objects.filter(
-            committee=self.object).order_by('-date_filed')
-        context['filing_set_short'] = context['filing_set'][:25]
-        context['contribution_set'] = Contribution.objects.filter(
-            committee=self.object).order_by('-amount')
-        context['contribution_set_short'] = context['contribution_set'][:25]
-        context['expenditure_set'] = Expenditure.objects.filter(
-            committee=self.object).order_by('-amount')
-        context['expenditure_set_short'] = context['expenditure_set'][:25]
+
+        # Filings
+        filing_qs = Filing.objects.filter(
+            committee=self.object,
+            dupe=False
+        ).order_by('-date_filed')
+        context['filing_set_short'] = filing_qs[:25]
+        context['filing_set_count'] = filing_qs.count()
+
+        # Contributions
+        contribs_qs = Contribution.objects.filter(
+            committee=self.object,
+            dupe=False,
+        ).order_by('-amount')
+        context['contribution_set_short'] = contribs_qs[:25]
+        context['contribution_set_count'] = contribs_qs.count()
+
+        # Expenditures
+        expends_qs = Expenditure.objects.filter(
+            committee=self.object,
+            dupe=False
+        ).order_by('-amount')
+        context['expenditure_set_short'] = expends_qs[:25]
+        context['expenditure_set_count'] = expends_qs.count()
+
+        # Close out
         return context
 
 
