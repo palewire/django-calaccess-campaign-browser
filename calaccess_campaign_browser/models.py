@@ -59,10 +59,13 @@ class Filer(AllCapsNameMixin):
         return slugify(self.name)
 
     @property
+    def real_filings(self):
+        return Filing.objects.filter(committee=self, dupe=False)
+
+    @property
     def total_contributions(self):
-        l = [f.summary for f in Filing.objects.filter(committee__filer=self)
-                if f.summary]
-        return sum([s.total_contributions for s in l if s.total_contributions])
+        summaries = [f.summary for f in self.real_filings]
+        return sum([s.total_contributions for s in summaries if s])
 
 
 class Committee(AllCapsNameMixin):

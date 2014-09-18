@@ -40,12 +40,14 @@
               </td>
               <td>{{ object.form_id }}</td>
               <td>{{ object.start_date|date:"N j" }} - {{ object.end_date|date:"N j, Y" }}</td>
+              {% with object.summary as summary %}
               <td class="right">
-                    {{ object.summary.total_contributions|floatformat:0|intcomma }}
+                    {{ summary.total_contributions|floatformat:0|intcomma }}
               </td>
               <td class="right">
-                    {{ object.summary.total_expenditures|floatformat:0|intcomma }}
+                    {{ summary.total_expenditures|floatformat:0|intcomma }}
               </td>
+              {% endwith %}
               <td class="center">
                 {% if object.is_amendment %}
                     <i class="fa fa-check-square-o"></i>

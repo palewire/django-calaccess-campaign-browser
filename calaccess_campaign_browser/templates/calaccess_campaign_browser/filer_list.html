@@ -1,4 +1,5 @@
 {% extends 'calaccess_campaign_browser/base.html' %}
+{% load humanize %}
 
 {% block title %}Filers - {{ block.super }}{% endblock %}
 
@@ -32,6 +33,7 @@
               <th>Status</th>
               <th>Effective date</th>
               <th>Committees</th>
+              <th>Contributions</th>
             </tr>
           </thead>
           <tbody>
@@ -49,6 +51,7 @@
               <td>{{ filer.get_status_display }}</td>
               <td>{{ filer.effective_date }}</td>
               <td>{{ count }}</td>
+              <td>${{ filer.total_contributions|floatformat|intcomma }}</td>
             </tr>
             {% endwith %}
           {% endfor %}
