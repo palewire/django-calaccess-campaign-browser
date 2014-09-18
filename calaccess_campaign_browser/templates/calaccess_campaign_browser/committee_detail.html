@@ -8,10 +8,13 @@
 
 <div class="row">
     <div class="col-12-lg">
+        <h3>Filer ID: {{ committee.filer_id_raw }}</h3>
+        <h3><a target="_blank" href="{{ committee.get_calaccess_url }}">CAL-ACCESS URL</a></h3>
+        <h3>Type: {{ committee.get_committee_type_display }}</h3>
         <h3>Totals</h3>
-        <p class="totals">Contributions: ${{committee.total_contributions|floatformat:0|intcomma}}
+        <p class="totals">Contributions: ${{ committee.total_contributions|floatformat:0|intcomma }}
         <br>
-        Expenditures: ${{committee.total_expenditures|floatformat:0|intcomma}}</p>
+        Expenditures: ${{ committee.total_expenditures|floatformat:0|intcomma }}</p>
     </div>
 </div>
 
@@ -47,6 +50,7 @@
                 <th class="right">Expenditures</th>
                 <th class="right">Debts</th>
                 <th class="center">Amendment</th>
+                <th class="center">PDF</th>
             </tr>
         </thead>
         <tbody>
@@ -70,6 +74,11 @@
                 {% else %}
                     <i class="fa fa-square-o"></i>
                 {% endif %}
+            </td>
+            <td class="center">
+                <a target="_blank" href="{{ filing.get_calaccess_pdf_url }}">
+                    <i class="fa fa-file-pdf-o"></i>
+                </a>
             </td>
           </tr>
         {% endfor %}

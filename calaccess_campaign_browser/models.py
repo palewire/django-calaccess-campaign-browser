@@ -98,6 +98,10 @@ class Committee(AllCapsNameMixin):
     def get_absolute_url(self):
         return reverse('committee_detail', args=[str(self.pk)])
 
+    def get_calaccess_url(self):
+        url = "http://cal-access.ss.ca.gov/Campaign/Committees/Detail.aspx?id="
+        return url + str(self.filer_id_raw) 
+
     @property
     def real_filings(self):
         return Filing.objects.filter(
@@ -154,6 +158,14 @@ class Filing(models.Model):
 
     def get_absolute_url(self):
         return reverse('filing_detail', args=[str(self.pk)])
+
+    def get_calaccess_pdf_url(self):
+        url = "http://cal-access.ss.ca.gov/PDFGen/pdfgen.prg"
+        qs = "filingid=%s&amendid=%s" % (
+            self.filing_id_raw,
+            self.amend_id
+        )
+        return "%s?%s" % (url, qs)
 
     @property
     def summary(self):
