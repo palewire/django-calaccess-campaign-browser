@@ -60,7 +60,7 @@ class Filer(AllCapsNameMixin):
 
     @property
     def real_filings(self):
-        return Filing.objects.filter(committee=self, dupe=False)
+        return Filing.objects.filter(committee__filer=self, dupe=False)
 
     @property
     def total_contributions(self):

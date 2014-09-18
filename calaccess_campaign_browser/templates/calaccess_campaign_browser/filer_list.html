@@ -32,15 +32,14 @@
               <th>Type</th>
               <th>Status</th>
               <th>Effective date</th>
-              <th>Committees</th>
-              <th>Contributions</th>
+              <th class="right">Committees</th>
             </tr>
           </thead>
           <tbody>
           {% for filer in object_list %}
-            {% with filer.committee_set.count as count %}
             <tr>
               <td>
+              {% with filer.committee_set.count as count %}
                 {% if count %}
                 <a href="{{ filer.get_absolute_url }}">{{ filer.short_name }}</a>
                 {% else %}
@@ -50,10 +49,10 @@
               <td>{{ filer.get_filer_type_display }}</td>
               <td>{{ filer.get_status_display }}</td>
               <td>{{ filer.effective_date }}</td>
-              <td>{{ count }}</td>
-              <td>${{ filer.total_contributions|floatformat|intcomma }}</td>
+              <td class="right">{{ count }}</td>
+              {% endwith %}
             </tr>
-            {% endwith %}
+
           {% endfor %}
           </tbody>
         </table>
