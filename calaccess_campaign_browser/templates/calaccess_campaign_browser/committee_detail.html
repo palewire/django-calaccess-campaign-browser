@@ -8,13 +8,27 @@
 
 <div class="row">
     <div class="col-12-lg">
-        <h3>Filer ID: {{ committee.filer_id_raw }}</h3>
-        <h3><a target="_blank" href="{{ committee.get_calaccess_url }}">CAL-ACCESS URL</a></h3>
-        <h3>Type: {{ committee.get_committee_type_display }}</h3>
-        <h3>Totals</h3>
-        <p class="totals">Contributions: ${{ committee.total_contributions|floatformat:0|intcomma }}
-        <br>
-        Expenditures: ${{ committee.total_expenditures|floatformat:0|intcomma }}</p>
+        <h3>Summary</h3>
+        <table class="table table-bordered table-hover">
+            <tr>
+                <th>ID</th>
+                <th>Type</th>
+                <th class="right">Contributions</th>
+                <th class="right">Expenditures</th>
+                <th>CAL-ACCESS</th>
+            </tr>
+            <tr>
+                <td>{{ committee.filer_id_raw }}</td>
+                <td>{{ committee.get_committee_type_display }}</td>
+                <td class="right">${{ committee.total_contributions|floatformat:0|intcomma }}</td>
+                <td class="right">${{ committee.total_expenditures|floatformat:0|intcomma }}</td>
+                <td>
+                    <a target="_blank" href="{{ committee.get_calaccess_url }}">
+                        {{ committee.get_calaccess_url|truncatechars:40 }}
+                    </a>
+                </td>
+            </tr>
+        </table>
     </div>
 </div>
 
@@ -70,9 +84,9 @@
             {% endwith %}
             <td class="center">
                 {% if filing.is_amendment %}
-                    <i class="fa fa-check-square-o"></i>
+                    {{ filing.amend_id }}
                 {% else %}
-                    <i class="fa fa-square-o"></i>
+                    Original
                 {% endif %}
             </td>
             <td class="center">
