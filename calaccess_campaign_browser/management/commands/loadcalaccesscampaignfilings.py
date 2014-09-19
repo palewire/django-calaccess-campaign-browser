@@ -117,7 +117,7 @@ class Command(BaseCommand):
 
         sql = """
         INSERT INTO tmp_filing_max_dupes (filing_id_raw, max_id)
-        SELECT f.`filing_id_raw`, MAX(`id`) as max_id
+        SELECT f.`filing_id_raw`, MAX(`amend_id`) as max_id
         FROM calaccess_campaign_browser_filing as f
         WHERE dupe = true
         GROUP BY 1
@@ -127,7 +127,8 @@ class Command(BaseCommand):
         sql = """
         UPDATE calaccess_campaign_browser_filing as f
         INNER JOIN tmp_filing_max_dupes as d
-        ON f.`id` = d.`max_id`
+        ON f.`filing_id_raw` = d.`filing_id_raw`
+        AND f.`amend_id` = d.`max_id`
         SET dupe = false;
         """
         c.execute(sql)
