@@ -68,7 +68,10 @@ class Filer(AllCapsNameMixin):
     @property
     def total_contributions(self):
         summaries = [f.summary for f in self.real_filings]
-        return sum([s.total_contributions for s in summaries if s])
+        summaries = [s for s in summaries if s]
+        return sum([
+            s.total_contributions for s in summaries if s.total_contributions
+        ])
 
 
 class Committee(AllCapsNameMixin):
@@ -115,12 +118,18 @@ class Committee(AllCapsNameMixin):
     @property
     def total_contributions(self):
         summaries = [f.summary for f in self.real_filings]
-        return sum([s.total_contributions for s in summaries if s])
+        summaries = [s for s in summaries if s]
+        return sum([
+            s.total_contributions for s in summaries if s.total_contributions
+        ])
 
     @property
     def total_expenditures(self):
         summaries = [f.summary for f in self.real_filings]
-        return sum([s.total_expenditures for s in summaries if s])
+        summaries = [s for s in summaries if s]
+        return sum([
+            s.total_expenditures for s in summaries if s.total_expenditures
+        ])
 
 
 class Cycle(models.Model):

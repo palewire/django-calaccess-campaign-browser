@@ -20,8 +20,8 @@
             <tr>
                 <td>{{ committee.filer_id_raw }}</td>
                 <td>{{ committee.get_committee_type_display }}</td>
-                <td class="right">${{ committee.total_contributions|floatformat:0|intcomma }}</td>
-                <td class="right">${{ committee.total_expenditures|floatformat:0|intcomma }}</td>
+                <td class="right">${{ committee.total_contributions|default_if_none:0|floatformat:0|intcomma }}</td>
+                <td class="right">${{ committee.total_expenditures|default_if_none:0|floatformat:0|intcomma }}</td>
                 <td>
                     <a target="_blank" href="{{ committee.get_calaccess_url }}">
                         {{ committee.get_calaccess_url|truncatechars:40 }}
@@ -77,9 +77,9 @@
             <td>{{ filing.cycle.name }}</td>
             <td>{{ filing.start_date|date:"N j" }} - {{ filing.end_date|date:"N j, Y" }}</td>
             {% with filing.summary as summary %}
-            <td class="right">${{ summary.total_contributions|floatformat:0|intcomma }}</td>
-            <td class="right">${{ summary.total_expenditures|floatformat:0|intcomma }}</td>
-            <td class="right">${{ summary.outstanding_debts|floatformat:0|intcomma }}</td>
+            <td class="right">${{ summary.total_contributions|default_if_none:0|floatformat:0|intcomma }}</td>
+            <td class="right">${{ summary.total_expenditures|default_if_none:0|floatformat:0|intcomma }}</td>
+            <td class="right">${{ summary.outstanding_debts|default_if_none:0|floatformat:0|intcomma }}</td>
             {% endwith %}
             <td class="center">
                 <a target="_blank" href="{{ filing.get_calaccess_pdf_url }}">

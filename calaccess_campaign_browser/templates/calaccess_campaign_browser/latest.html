@@ -38,7 +38,7 @@
               <td>
                 <a href="{{ object.committee.get_absolute_url }}">{{ object.committee.short_name }}</a>
               </td>
-              <td>{{ object.form_id }}</td>
+              <td>{{ object.form_type }}</td>
               <td>{{ object.start_date|date:"N j" }} - {{ object.end_date|date:"N j, Y" }}</td>
               {% with object.summary as summary %}
               <td class="right">
@@ -50,13 +50,13 @@
               {% endwith %}
               <td class="center">
                 {% if object.is_amendment %}
-                    <i class="fa fa-check-square-o"></i>
+                    {{ object.amend_id }}
                 {% else %}
-                    <i class="fa fa-square-o"></i>
+                    Original
                 {% endif %}
               </td>
               <td class="center">
-                {% if object.dupe %}
+                {% if object.is_duplicate %}
                     <i class="fa fa-check-square-o"></i>
                 {% else %}
                     <i class="fa fa-square-o"></i>
