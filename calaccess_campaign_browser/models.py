@@ -165,6 +165,8 @@ class Filing(models.Model):
         choices=FORM_TYPE_CHOICES
     )
     period = models.ForeignKey(FilingPeriod, null=True)
+    start_date = models.DateField(null=True)
+    end_date = models.DateField(null=True)
     date_received = models.DateField(null=True)
     date_filed = models.DateField(null=True)
     is_duplicate = models.BooleanField(

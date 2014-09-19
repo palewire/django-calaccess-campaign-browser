@@ -9,8 +9,8 @@ class Command(BaseCommand):
         """
         Loads raw filings into consolidated tables
         """
-        self.load_periods()
-        self.load_cycles()
+        #self.load_periods()
+        #self.load_cycles()
         self.load_filings()
         self.mark_duplicates()
 
@@ -52,6 +52,7 @@ class Command(BaseCommand):
             FROM (
                 SELECT `session_id`
                 FROM FILER_FILINGS_CD
+                WHERE `FORM_ID` IN ('F450', 'F460')
                 GROUP BY 1
                 ORDER BY 1 DESC
             ) as sessions
@@ -70,6 +71,8 @@ class Command(BaseCommand):
           form_type,
           amend_id,
           period_id,
+          start_date,
+          end_date,
           date_received,
           date_filed,
           is_duplicate
@@ -81,6 +84,8 @@ class Command(BaseCommand):
           ff.form_id as form_type,
           ff.filing_sequence as amend_id,
           ff.real_period_id as period_id,
+          ff.rpt_start as start_date,
+          ff.rpt_end as end_date,
           ff.rpt_date as date_received,
           ff.filing_date as date_filed,
           false

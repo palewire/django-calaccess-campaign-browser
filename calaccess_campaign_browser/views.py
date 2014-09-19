@@ -200,7 +200,7 @@ class CommitteeDetailView(generic.DetailView):
             committee=self.object,
             is_duplicate=False
         ).select_related("cycle", "period").order_by(
-            "-period__end_date", "filing_id_raw", "-amend_id"
+            "-end_date", "filing_id_raw", "-amend_id"
         )
         context['filing_set_short'] = filing_qs[:25]
         context['filing_set_count'] = filing_qs.count()

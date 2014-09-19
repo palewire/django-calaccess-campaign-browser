@@ -75,7 +75,7 @@
             <td>{{ filing.date_filed|date:"N j, Y" }}</td>
             <td>{{ filing.get_form_type_display }}</td>
             <td>{{ filing.cycle.name }}</td>
-            <td>{{ filing.period.start_date|date:"N j" }} - {{ filing.period.end_date|date:"N j, Y" }}</td>
+            <td>{{ filing.start_date|date:"N j" }} - {{ filing.end_date|date:"N j, Y" }}</td>
             {% with filing.summary as summary %}
             <td class="right">${{ summary.total_contributions|floatformat:0|intcomma }}</td>
             <td class="right">${{ summary.total_expenditures|floatformat:0|intcomma }}</td>
