@@ -313,15 +313,9 @@ class Summary(models.Model):
 
 
 class Expenditure(models.Model):
-    '''
-    This is a condensed version of the Raw CAL-ACCESS EXPN_CD table
-    It leaves out a lot of the supporting information for the expense
-    Like jurisdiction info, ballot initiative info,
-    treasurer info, support/opposition info, etc.
-    This just pulls in who got paid and how much
-    And tries to prep the data for categorization by orgs and individuals
-    Data comes from calaccess_raw.models.ExpnCd
-    '''
+    """
+    Who got paid and how much.
+    """
     EXPENDITURE_CODE_CHOICES = (
         ('CMP', 'campaign paraphernalia/misc.'),
         ('CNS', 'campaign consultants'),
@@ -415,6 +409,9 @@ class Expenditure(models.Model):
 
 
 class Contribution(models.Model):
+    """
+    Who gave and how much.
+    """
     cycle = models.ForeignKey(Cycle)
     committee = models.ForeignKey(Committee)
     filing = models.ForeignKey(Filing)
