@@ -64,6 +64,7 @@
                 <th class="right">Expenditures</th>
                 <th class="right">Debts</th>
                 <th class="center">Amendment</th>
+                <th class="center">Duplicate</th>
                 <th class="center">PDF</th>
             </tr>
         </thead>
@@ -88,6 +89,9 @@
                 {% else %}
                     Original
                 {% endif %}
+            </td>
+            <td class="center">
+                {{ filing.dupe }}
             </td>
             <td class="center">
                 <a target="_blank" href="{{ filing.get_calaccess_pdf_url }}">
