@@ -48,7 +48,7 @@ class Command(BaseCommand):
             f.cycle_id as cycle_id,
             f.committee_id as committee_id,
             f.id as filing_id,
-            f.dupe,
+            f.is_duplicate,
             e.line_item,
             e.payee_namt,
             e.payee_namf,
