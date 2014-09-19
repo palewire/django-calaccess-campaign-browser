@@ -7,6 +7,7 @@ from calaccess_campaign_browser.models import (
     Contribution,
     FlatFile,
     Cycle,
+    FilingPeriod,
     Filing,
 )
 
@@ -21,17 +22,16 @@ class BaseAdmin(admin.ModelAdmin):
 class FilingAdmin(BaseAdmin):
     list_display = (
         "filing_id_raw",
-        "committee",
-        "form_id",
+        "committee_short_name",
+        "form_type",
         "cycle",
-        "start_date",
-        "end_date",
+        "period",
         "amend_id",
-        "dupe",
+        "is_duplicate",
     )
     list_filter = (
-        "form_id",
-        "dupe",
+        "form_type",
+        "is_duplicate",
         "cycle",
     )
     search_fields = (
@@ -78,6 +78,15 @@ class CommitteeAdmin(BaseAdmin):
 
 class CycleAdmin(BaseAdmin):
     list_display = ("name",)
+
+
+class FilingPeriodAdmin(BaseAdmin):
+    list_display = (
+        "period_id", "name", "start_date", "end_date", "deadline",
+    )
+    search_fields = (
+        "period_id",
+    )
 
 
 class ContributionAdmin(BaseAdmin):
@@ -135,6 +144,7 @@ class SummaryAdmin(BaseAdmin):
 admin.site.register(Committee, CommitteeAdmin)
 admin.site.register(Filer, FilerAdmin)
 admin.site.register(Cycle, CycleAdmin)
+admin.site.register(FilingPeriod, FilingPeriodAdmin)
 admin.site.register(Filing, FilingAdmin)
 admin.site.register(Expenditure, ExpenditureAdmin)
 admin.site.register(Contribution, ContributionAdmin)

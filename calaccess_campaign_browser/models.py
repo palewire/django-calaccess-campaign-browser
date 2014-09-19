@@ -60,7 +60,10 @@ class Filer(AllCapsNameMixin):
 
     @property
     def real_filings(self):
-        return Filing.objects.filter(committee__filer=self, dupe=False)
+        return Filing.objects.filter(
+            committee__filer=self,
+            is_duplicate=False
+        )
 
     @property
     def total_contributions(self):
@@ -105,7 +108,8 @@ class Committee(AllCapsNameMixin):
     @property
     def real_filings(self):
         return Filing.objects.filter(
-            committee=self, dupe=False
+            committee=self,
+            is_duplicate=False
         ).select_related("cycle")
 
     @property
@@ -129,28 +133,45 @@ class Cycle(models.Model):
         return unicode(self.name)
 
 
+class FilingPeriod(models.Model):
+    """
+    A required quarterly reporting period for committees.
+    """
+    period_id = models.IntegerField(primary_key=True)
+    name = models.CharField(max_length=25, blank=True)
+    start_date = models.DateField()
+    end_date = models.DateField()
+    deadline = models.DateField()
+
+    class Meta:
+        ordering = ("-end_date",)
+
+    def __unicode__(self):
+        return "%s - %s" % (self.start_date, self.end_date)
+
+
 class Filing(models.Model):
     cycle = models.ForeignKey(Cycle)
     committee = models.ForeignKey(Committee)
-    filing_id_raw = models.IntegerField(db_index=True)
-    amend_id = models.IntegerField(db_index=True)
-    FORM_ID_CHOICES = (
-        ('F460', 'Recipient Committee Campaign Statement'),
-        ('F450', 'Recipient Committee Campaign Statement -- Short Form'),
+    filing_id_raw = models.IntegerField('filing ID', db_index=True)
+    amend_id = models.IntegerField('amendment', db_index=True)
+    FORM_TYPE_CHOICES = (
+        ('F460', 'F460: Quarterly'),
+        ('F450', 'F450: Quarterly (Short)'),
     )
-    form_id = models.CharField(
+    form_type = models.CharField(
         max_length=7,
         db_index=True,
-        choices=FORM_ID_CHOICES
+        choices=FORM_TYPE_CHOICES
     )
-    start_date = models.DateField(null=True)
-    end_date = models.DateField(null=True)
+    period = models.ForeignKey(FilingPeriod, null=True)
     date_received = models.DateField(null=True)
     date_filed = models.DateField(null=True)
-    dupe = models.BooleanField(
+    is_duplicate = models.BooleanField(
         default=False,
         db_index=True,
-        verbose_name='duplicate',
+        help_text="A record that has either been superceded by an amendment \
+or was filed unnecessarily. Should be excluded from most analysis."
     )
 
     def __unicode__(self):
@@ -166,6 +187,10 @@ class Filing(models.Model):
             self.amend_id
         )
         return "%s?%s" % (url, qs)
+
+    def committee_short_name(self):
+        return self.committee.short_name
+    committee_short_name.short_description = "committee"
 
     @property
     def summary(self):

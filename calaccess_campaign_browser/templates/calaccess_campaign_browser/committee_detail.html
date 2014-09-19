@@ -63,8 +63,6 @@
                 <th class="right">Contributions</th>
                 <th class="right">Expenditures</th>
                 <th class="right">Debts</th>
-                <th class="center">Amendment</th>
-                <th class="center">Duplicate</th>
                 <th class="center">PDF</th>
             </tr>
         </thead>
@@ -75,24 +73,14 @@
               <a href="{{ filing.get_absolute_url }}">{{ filing.filing_id_raw }}</a>
             </td>
             <td>{{ filing.date_filed|date:"N j, Y" }}</td>
-            <td>{{ filing.form_id }}</td>
+            <td>{{ filing.get_form_type_display }}</td>
             <td>{{ filing.cycle.name }}</td>
-            <td>{{ filing.start_date|date:"N j" }} - {{ filing.end_date|date:"N j, Y" }}</td>
+            <td>{{ filing.period.start_date|date:"N j" }} - {{ filing.period.end_date|date:"N j, Y" }}</td>
             {% with filing.summary as summary %}
-            <td class="right">{{ summary.total_contributions|floatformat:0|intcomma }}</td>
-            <td class="right">{{ summary.total_expenditures|floatformat:0|intcomma }}</td>
-            <td class="right">{{ summary.outstanding_debts|floatformat:0|intcomma }}</td>
+            <td class="right">${{ summary.total_contributions|floatformat:0|intcomma }}</td>
+            <td class="right">${{ summary.total_expenditures|floatformat:0|intcomma }}</td>
+            <td class="right">${{ summary.outstanding_debts|floatformat:0|intcomma }}</td>
             {% endwith %}
-            <td class="center">
-                {% if filing.is_amendment %}
-                    {{ filing.amend_id }}
-                {% else %}
-                    Original
-                {% endif %}
-            </td>
-            <td class="center">
-                {{ filing.dupe }}
-            </td>
             <td class="center">
                 <a target="_blank" href="{{ filing.get_calaccess_pdf_url }}">
                     <i class="fa fa-file-pdf-o"></i>

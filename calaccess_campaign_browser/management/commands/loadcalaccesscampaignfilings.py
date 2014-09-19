@@ -1,6 +1,6 @@
 from django.db import connection
 from django.core.management.base import BaseCommand
-from calaccess_campaign_browser.models import Cycle, Filing
+from calaccess_campaign_browser.models import Cycle, Filing, FilingPeriod
 
 
 class Command(BaseCommand):
@@ -9,9 +9,35 @@ class Command(BaseCommand):
         """
         Loads raw filings into consolidated tables
         """
+        self.load_periods()
         self.load_cycles()
         self.load_filings()
         self.mark_duplicates()
+
+    def load_periods(self):
+        print "- Loading filing periods"
+        c = connection.cursor()
+        sql = """
+            INSERT INTO %(clean_table)s (
+                `period_id`,
+                `name`,
+                `start_date`,
+                `end_date`,
+                `deadline`
+            )
+            SELECT DISTINCT
+                p.`period_id`,
+                p.`period_desc`,
+                p.`start_date`,
+                p.`end_date`,
+                p.`deadline`
+            FROM FILING_PERIOD_CD as p
+            INNER JOIN FILER_FILINGS_CD as ff
+            ON p.period_id = ff.period_id
+            WHERE ff.`FORM_ID` IN ('F450', 'F460')
+        """
+        sql = sql % dict(clean_table=FilingPeriod._meta.db_table)
+        c.execute(sql)
 
     def load_cycles(self):
         print "- Loading cycles"
@@ -41,22 +67,20 @@ class Command(BaseCommand):
           cycle_id,
           committee_id,
           filing_id_raw,
-          form_id,
+          form_type,
           amend_id,
-          start_date,
-          end_date,
+          period_id,
           date_received,
           date_filed,
-          dupe
+          is_duplicate
         )
         SELECT
           cycle.id as cycle_id,
           c.id as committee_id,
           ff.FILING_ID as filing_id_raw,
-          ff.form_id as form_id,
+          ff.form_id as form_type,
           ff.filing_sequence as amend_id,
-          ff.rpt_start as start_date,
-          ff.rpt_end as end_date,
+          ff.real_period_id as period_id,
           ff.rpt_date as date_received,
           ff.filing_date as date_filed,
           false
@@ -66,7 +90,11 @@ class Command(BaseCommand):
                 CASE
                     WHEN `session_id` %% 2 = 0 THEN `session_id`
                     ELSE `session_id` + 1
-                END as cycle
+                END as cycle,
+                CASE
+                    WHEN `period_id` = 0 THEN null
+                    ELSE `period_id`
+                END as real_period_id
             FROM FILER_FILINGS_CD
         ) as ff
         INNER JOIN calaccess_campaign_browser_committee as c
@@ -99,7 +127,7 @@ class Command(BaseCommand):
         UPDATE calaccess_campaign_browser_filing as f
         INNER JOIN tmp_filing_dupes as d
         ON f.`filing_id_raw` = d.`filing_id_raw`
-        SET dupe = true;
+        SET is_duplicate = true;
         """
         c.execute(sql)
 
@@ -119,7 +147,7 @@ class Command(BaseCommand):
         INSERT INTO tmp_filing_max_dupes (filing_id_raw, max_id)
         SELECT f.`filing_id_raw`, MAX(`amend_id`) as max_id
         FROM calaccess_campaign_browser_filing as f
-        WHERE dupe = true
+        WHERE is_duplicate = true
         GROUP BY 1
         """
         c.execute(sql)
@@ -129,9 +157,12 @@ class Command(BaseCommand):
         INNER JOIN tmp_filing_max_dupes as d
         ON f.`filing_id_raw` = d.`filing_id_raw`
         AND f.`amend_id` = d.`max_id`
-        SET dupe = false;
+        SET is_duplicate = false;
         """
         c.execute(sql)
 
         sql = """DROP TABLE tmp_filing_max_dupes;"""
         c.execute(sql)
+
+        # And then anything without a period should go down as a dupe too
+        Filing.objects.filter(period_id=None).update(is_duplicate=True)
