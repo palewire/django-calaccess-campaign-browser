@@ -266,7 +266,9 @@ class CommitteeFilingView(CommitteeDataView):
         """
         committee = Committee.objects.get(pk=self.kwargs['pk'])
         self.committee = committee
-        return committee.filing_set.all().order_by('-date_filed')
+        return committee.filing_set.filter(
+            is_duplicate=False
+        ).order_by('-date_filed')
 
 
 findterms = re.compile(r'"([^"]+)"|(\S+)').findall
