@@ -4,12 +4,12 @@
 {% block content %}
 <div class="row">
     <div class="col-12-lg">
-        <h1>Search contributions</h1>
+        <h1>Search contributions by name</h1>
     </div>
 </div>
 
 <div class="row" style="margin-bottom:20px">
-    <form class="form-inline" role="form" method="GET" action="/search/">
+    <form class="form-inline" role="form" method="GET" action="{% url 'search-contribs-by-name' %}">
         <div class="form-group col-12-lg">
             <input type="text" class="form-control" style="width:100%"
                 id="q" name="q"

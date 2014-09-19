@@ -8,6 +8,7 @@ from django.http import HttpResponse
 from bakery.views import BuildableListView
 from django.utils.encoding import smart_text
 from django.core.urlresolvers import reverse
+from django.views.generic import TemplateView
 from django.shortcuts import render, redirect
 from calaccess_campaign_browser.models import (
     Filer,
@@ -271,6 +272,12 @@ class CommitteeFilingView(CommitteeDataView):
         ).order_by('-date_filed')
 
 
+
+class SearchList(TemplateView):
+    template_name = "calaccess_campaign_browser/search_list.html"
+
+
+
 findterms = re.compile(r'"([^"]+)"|(\S+)').findall
 normspace = re.compile(r'\s{2,}').sub
 
@@ -312,7 +319,7 @@ def get_query(query_string, search_fields):
     return query
 
 
-def search(request):
+def search_contribs_by_name(request):
     query_string = ''
     results = None
     if ('q' in request.GET) and request.GET['q'].strip():
@@ -326,5 +333,5 @@ def search(request):
         'query_string': query_string,
         'results': results
     }
-    template = 'calaccess_campaign_browser/search_results.html'
+    template = 'calaccess_campaign_browser/search_contribs_by_name.html'
     return render(request, template, context)
