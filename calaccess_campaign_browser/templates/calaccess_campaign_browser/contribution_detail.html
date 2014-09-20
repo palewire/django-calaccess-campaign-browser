@@ -1,75 +1,105 @@
 {% extends 'calaccess_campaign_browser/base.html' %}
 {% load humanize %}
 
-{% block title %}
-{% endblock %}
+{% block title %}Contribution - {{ block.super }}{% endblock %}
 
 {% block content %}
-  <div class="row">
+    <div class="row">
+        <div class="col-12-lg">
+            <h1>Contribution</h1></h1>
+        </div>
+    </div>
+
+    <div class="row">
     <div class="col-12-lg">
-
-    <h1>${{ object.amount }} <small><a href="{{ object.committee.get_absolute_url }}">{{ object.committee }}</a></small></h1>
-
-    <p>{{ object.description }}</p>
-    <p><strong>Election cycle:</strong> {{ object.cycle }}</p>
-    <p><strong>Date received: </strong> {{ object.rcpt_date }}</p>
-    <p><strong>Filing: </strong> {{ object.filing }}</p>
-
     <h3>Basics</h3>
-    <table class="table table-responsive">
-        <thead>
-            <tr>
-                <th>City</th>
-                <th>State</th>
-                <th>Zip</th>
-                <th>First Name</th>
-                <th>Last Name</th>
-                <th>Employer</th>
-                <th>Occupation</th>
-            </tr>
-        </thead>
+    <table class="table table-bordered table-hover">
         <tbody>
             <tr>
-                <td>{{ object.ctrib_city }}</td>
-                <td>{{ object.ctrib_st }}</td>
-                <td>{{ object.ctrib_zip4 }}</td>
-                <td>{{ object.ctrib_namf }}</td>
-                <td>{{ object.ctrib_naml }}{% if object.ctrib_nams %}, {{ object.ctrib_nams }}{% endif %}</td>
-                <td>{{ object.ctrib_emp }}</td>
-                <td>{{ object.ctrib_occ }}</td>
+                <th>Date</th>
+                <td>{{ object.date_received|date:"N j, Y" }}</td>
+            </tr>
+            <tr>
+                <th>Amount</th>
+                <td>${{ object.amount|intcomma }}</td>
+            <tr>
+                <th>To</th>
+                <td><a href="{{ object.committee.get_absolute_url }}">{{ object.committee }}</a></td>
+            </tr>
+            <tr>
+                <th>From</th>
+                <td>{{ object.contributor_full_name }}</td>
             </tr>
         </tbody>
     </table>
 
-    <h3>Details</h3>
-    <table class="table table-responsive">
-        <thead>
-            <tr>
-                <th>Backref ID</th>
-                <th>Committee ID</th>
-                <th>Individual ID</th>
-                <th>Form type</th>
-                <th>Line Item</th>
-                <th>Memo Code</th>
-                <th>Memo Ref Number</th>
-                <th>Organization ID</th>
-                <th>Transaction ID</th>
-                <th>Transaction Type</th>
-            </tr>
-        </thead>
+    <h3>Bookkeeping</h3>
+    <table class="table table-bordered table-hover">
         <tbody>
             <tr>
-                <td>{{ object.bakref_tid }}</td>
-                <td>{{ object.cmte_id }}</td>
-                <td>{{ object.individual_id }}</td>
-                <td>{{ object.form_type }}</td>
-                <td>{{ object.line_item }}</td>
-                <td>{{ object.memo_code }}</td>
-                <td>{{ object.memo_refno }}</td>
-                <td>{{ object.org_id }}</td>
-                <td>{{ object.tran_id }}</td>
-                <td>{{ object.tran_type }}</td>
+                <th>Filing</th>
+                <td><a href="{{ object.filing.get_absolute_url }}">{{ object.filing }}</a></td>
             </tr>
+            <tr>
+                <th>Transaction ID</th>
+                <td>${{ object.transaction_id }}</td>
+            </tr>
+            <tr>
+                <th>Transaction type</th>
+                <td>{{ object.transaction_type }}</td>
+            </tr>
+            <tr>
+                <th>Amendment</th>
+                <td>{{ object.amend_id }}</td>
+            </tr>
+            <tr>
+                <th>Backreference transaction ID</th>
+                <td>{{ object.backreference_transaction_id }}</td>
+            </tr>
+            <tr>
+                <th>Crossreference</th>
+                <td>{{ object.is_crossreference }}</td>
+            </tr>
+            <tr>
+                <th>Crossreference schedule</th>
+                <td>{{ object.crossreference_schedule }}</td>
+            </tr>
+            <tr>
+                <th>Description</th>
+                <th>{{ object.contribution_description }}</td>
+            </tr>
+            <tr>
+                <th>Duplicate</th>
+                <td>{{ object.is_duplicate }}</td>
+            </tr>
+            <tr>
+                <th>Raw record</th>
+                <td><a href="/admin/calaccess_raw/rcptcd/{{ object.raw.id }}">{{ object.raw.id }}</a></td>
+            </tr>
+        </tbody>
+    </table>
+
+    <h3>Contributor</h3>
+    <table class="table table-hover">
+        <tbody>
+            {% for field, value in object.contributor_dict.items %}
+            <tr>
+                <th>{{ field|capfirst }}</th>
+                <td>{{ value }}</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+
+    <h3>Intermediary</h3>
+    <table class="table table-hover">
+        <tbody>
+            {% for field, value in object.intermediary_dict.items %}
+            <tr>
+                <th>{{ field|capfirst }}</th>
+                <td>{{ value }}</td>
+            </tr>
+            {% endfor %}
         </tbody>
     </table>
     </div>

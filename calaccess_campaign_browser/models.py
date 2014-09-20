@@ -2,8 +2,9 @@ from django.db import models
 from django.db.models import Sum
 from hurry.filesize import size
 from django.utils.text import slugify
-from .utils.models import AllCapsNameMixin
 from django.core.urlresolvers import reverse
+from django.utils.datastructures import SortedDict
+from .utils.models import AllCapsNameMixin, BaseModel
 
 
 class Filer(AllCapsNameMixin):
@@ -132,7 +133,7 @@ class Committee(AllCapsNameMixin):
         ])
 
 
-class Cycle(models.Model):
+class Cycle(BaseModel):
     name = models.IntegerField(db_index=True)
 
     class Meta:
@@ -142,7 +143,7 @@ class Cycle(models.Model):
         return unicode(self.name)
 
 
-class FilingPeriod(models.Model):
+class FilingPeriod(BaseModel):
     """
     A required quarterly reporting period for committees.
     """
@@ -217,7 +218,7 @@ or was filed unnecessarily. Should be excluded from most analysis."
         return self.amend_id > 0
 
 
-class Summary(models.Model):
+class Summary(BaseModel):
     filing_id_raw = models.IntegerField(db_index=True)
     amend_id = models.IntegerField(db_index=True)
     itemized_monetary_contributions = models.DecimalField(
@@ -312,7 +313,7 @@ class Summary(models.Model):
             return None
 
 
-class Expenditure(models.Model):
+class Expenditure(BaseModel):
     """
     Who got paid and how much.
     """
@@ -408,7 +409,7 @@ class Expenditure(models.Model):
         return reverse('expenditure_detail', args=[str(self.pk)])
 
 
-class Contribution(models.Model):
+class Contribution(BaseModel):
     """
     Who gave and how much.
     """
@@ -416,73 +417,84 @@ class Contribution(models.Model):
     committee = models.ForeignKey(Committee)
     filing = models.ForeignKey(Filing)
 
-    # Raw data fields
-    amount = models.DecimalField(
-        decimal_places=2,
-        max_digits=14,
-        db_column='AMOUNT'
+    # CAL-ACCESS ids
+    transaction_id = models.CharField(
+        'transaction ID',
+        max_length=20,
+        db_index=True
     )
-    bakref_tid = models.CharField(max_length=20, blank=True)
-    cmte_id = models.CharField(max_length=9, blank=True)
-    ctrib_adr1 = models.CharField(max_length=55, blank=True)
-    ctrib_adr2 = models.CharField(max_length=55, blank=True)
-    ctrib_city = models.CharField(max_length=30, blank=True)
-    ctrib_dscr = models.CharField(max_length=90, blank=True)
-    ctrib_emp = models.CharField(max_length=200, blank=True)
-    ctrib_namf = models.CharField(max_length=255, blank=True)
-    ctrib_naml = models.CharField(max_length=200, )
-    ctrib_nams = models.CharField(max_length=10, blank=True)
-    ctrib_namt = models.CharField(max_length=10, blank=True)
-    ctrib_occ = models.CharField(max_length=60, blank=True)
-    ctrib_self = models.CharField(max_length=1, blank=True)
-    ctrib_st = models.CharField(max_length=2, blank=True)
-    ctrib_zip4 = models.CharField(max_length=10, blank=True)
-    cum_oth = models.DecimalField(
-        decimal_places=2, null=True, max_digits=14, blank=True)
-    cum_ytd = models.DecimalField(
-        decimal_places=2, null=True, max_digits=14, blank=True)
-    date_thru = models.DateField(null=True, blank=True)
-    entity_cd = models.CharField(max_length=3)
-    form_type = models.CharField(max_length=9)
-    intr_adr1 = models.CharField(max_length=55, blank=True)
-    intr_adr2 = models.CharField(max_length=55, blank=True)
-    intr_city = models.CharField(max_length=30, blank=True)
-    intr_cmteid = models.CharField(max_length=9, blank=True)
-    intr_emp = models.CharField(max_length=200, blank=True)
-    intr_namf = models.CharField(max_length=255, blank=True)
-    intr_naml = models.CharField(max_length=200, blank=True)
-    intr_nams = models.CharField(max_length=10, blank=True)
-    intr_namt = models.CharField(max_length=10, blank=True)
-    intr_occ = models.CharField(max_length=60, blank=True)
-    intr_self = models.CharField(max_length=1, blank=True)
-    intr_st = models.CharField(max_length=2, blank=True)
-    intr_zip4 = models.CharField(max_length=10, blank=True)
-    line_item = models.IntegerField()
-    memo_code = models.CharField(max_length=1, blank=True)
-    memo_refno = models.CharField(max_length=20, blank=True)
-    rcpt_date = models.DateField(null=True)
-    rec_type = models.CharField(max_length=4)
-    tran_id = models.CharField(max_length=20)
-    tran_type = models.CharField(max_length=1, blank=True)
-    xref_match = models.CharField(max_length=1, blank=True)
-    xref_schnm = models.CharField(max_length=2, blank=True)
+    amend_id = models.IntegerField('amendment', db_index=True)
+    backreference_transaction_id = models.CharField(
+        'backreference transaction ID',
+        max_length=20,
+        db_index=True
+    )
+    is_crossreference = models.CharField(max_length=1, blank=True)
+    crossreference_schedule = models.CharField(max_length=2, blank=True)
 
-    # Derived fields
-    raw_org_name = models.CharField(max_length=255)
-    person_flag = models.BooleanField(default=False)
-    org_id = models.IntegerField(null=True)
-    individual_id = models.IntegerField(null=True)
-    dupe = models.BooleanField(default=False)
+    # Basics about the contrib
+    is_duplicate = models.BooleanField(default=False)
+    transaction_type = models.CharField(max_length=1, blank=True)
+    date_received = models.DateField(null=True)
+    contribution_description = models.CharField(max_length=90, blank=True)
+    amount = models.DecimalField(decimal_places=2, max_digits=14)
+
+    # About the contributor
+    contributor_full_name = models.CharField(max_length=255)
+    contributor_is_person = models.BooleanField(default=False)
+    contributor_prefix = models.CharField(max_length=10, blank=True)
+    contributor_first_name = models.CharField(max_length=255, blank=True)
+    contributor_last_name = models.CharField(max_length=200, blank=True)
+    contributor_suffix = models.CharField(max_length=10, blank=True)
+    contributor_address_1 = models.CharField(max_length=55, blank=True)
+    contributor_address_2 = models.CharField(max_length=55, blank=True)
+    contributor_city = models.CharField(max_length=30, blank=True)
+    contributor_state = models.CharField(max_length=2, blank=True)
+    contributor_zipcode = models.CharField(max_length=10, blank=True)
+    contributor_occupation = models.CharField(max_length=60, blank=True)
+    contributor_employer = models.CharField(max_length=200, blank=True)
+    contributor_selfemployed = models.CharField(max_length=1, blank=True)
+
+    # About the intermediary
+    intermediary_prefix = models.CharField(max_length=10, blank=True)
+    intermediary_first_name = models.CharField(max_length=255, blank=True)
+    intermediary_last_name = models.CharField(max_length=200, blank=True)
+    intermediary_suffix = models.CharField(max_length=10, blank=True)
+    intermediary_address_1 = models.CharField(max_length=55, blank=True)
+    intermediary_address_2 = models.CharField(max_length=55, blank=True)
+    intermediary_city = models.CharField(max_length=30, blank=True)
+    intermediary_state = models.CharField(max_length=2, blank=True)
+    intermediary_zipcode = models.CharField(max_length=10, blank=True)
+    intermediary_occupation = models.CharField(max_length=60, blank=True)
+    intermediary_employer = models.CharField(max_length=200, blank=True)
+    intermediary_selfemployed = models.CharField(max_length=1, blank=True)
+    intermediary_committee_id = models.CharField(max_length=9, blank=True)
 
     @property
     def raw(self):
         from calaccess_raw.models import RcptCd
         return RcptCd.objects.get(
             amend_id=self.amend_id,
-            filing_id=self.filing_id,
-            tran_id=self.tran_id,
-            bakref_tid=self.bakref_tid
+            filing_id=self.filing.filing_id_raw,
+            tran_id=self.transaction_id,
+            bakref_tid=self.backreference_transaction_id
         )
+
+    @property
+    def contributor_dict(self):
+        d = SortedDict({})
+        for k, v in self.to_dict().items():
+            if k.startswith("contributor"):
+                d[k.replace("contributor ", "")] = v
+        return d
+
+    @property
+    def intermediary_dict(self):
+        d = SortedDict({})
+        for k, v in self.to_dict().items():
+            if k.startswith("intermediary"):
+                d[k.replace("intermediary ", "")] = v
+        return d
 
     def get_absolute_url(self):
         return reverse('contribution_detail', args=[str(self.pk)])

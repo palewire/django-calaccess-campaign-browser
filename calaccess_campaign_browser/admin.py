@@ -92,19 +92,19 @@ class FilingPeriodAdmin(BaseAdmin):
 class ContributionAdmin(BaseAdmin):
     list_display = (
         "id",
-        "raw_org_name",
+        "contributor_full_name",
         "committee",
-        "rcpt_date",
+        "date_received",
         "amount",
-        "dupe"
+        "is_duplicate"
     )
     list_filter = (
-        "dupe",
+        "is_duplicate",
     )
     search_fields = (
-        "raw_org_name",
+        "contributor_full_name",
     )
-    date_hierarchy = "rcpt_date"
+    date_hierarchy = "date_received"
 
 
 class ExpenditureAdmin(BaseAdmin):

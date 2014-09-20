@@ -98,46 +98,46 @@
 
 {% if contribution_set_short %}
 <div class="row">
-<div class="col-12-lg">
-    <h3>
-          <a href="{% url 'committee_contribution_list' committee.pk 1 %}">Contributions </a>
-          <div class="btn-group">
-              <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown">
-                Download data <span class="caret"></span>
-              </button>
-              <ul class="dropdown-menu" role="menu">
-                <li><a href="{% url 'committee_contribution_list' committee.pk 1 %}?format=csv">Download CSV</a></li>
-                <li><a href="{% url 'committee_contribution_list' committee.pk 1 %}?format=json">Download JSON</a></li>
-              </ul>
-          </div>
-    </h3>
-    <p>Top 25 contributions by amount</p>
-    <table class="table table-bordered table-hover">
-      <thead>
-        <tr>
-            <th>Date</th>
-            <th>Name</th>
-            <th class="right">Amount</th>
-        </tr>
-      </thead>
-      <tbody>
-          {% for contribution in contribution_set_short %}
+    <div class="col-12-lg">
+        <h3>
+              <a href="{% url 'committee_contribution_list' committee.pk 1 %}">Contributions </a>
+              <div class="btn-group">
+                  <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown">
+                    Download data <span class="caret"></span>
+                  </button>
+                  <ul class="dropdown-menu" role="menu">
+                    <li><a href="{% url 'committee_contribution_list' committee.pk 1 %}?format=csv">Download CSV</a></li>
+                    <li><a href="{% url 'committee_contribution_list' committee.pk 1 %}?format=json">Download JSON</a></li>
+                  </ul>
+              </div>
+        </h3>
+        <p>Top 25 contributions by amount</p>
+        <table class="table table-bordered table-hover">
+          <thead>
             <tr>
-                <td>{{ contribution.rcpt_date }}</td>
-                <td>{{ contribution.raw_org_name }}</td>
-                <td class="right">
-                    <a href="{{ contribution.get_absolute_url }}">
-                        ${{ contribution.amount | intcomma }}
-                    </a>
-                </td>
+                <th>Date</th>
+                <th>Name</th>
+                <th class="right">Amount</th>
             </tr>
-          {% endfor %}
-      </tbody>
-    </table>
-      {% if contribution_set_count > 25 %}
-        <p class="view-more"><a href="{% url 'committee_contribution_list' committee.pk 1 %}">View more... </a></p>
-      {% endif %}
-</div>
+          </thead>
+          <tbody>
+              {% for contribution in contribution_set_short %}
+                <tr>
+                    <td>{{ contribution.date_received }}</td>
+                    <td>{{ contribution.contributor_full_name }}</td>
+                    <td class="right">
+                        <a href="{{ contribution.get_absolute_url }}">
+                            ${{ contribution.amount | intcomma }}
+                        </a>
+                    </td>
+                </tr>
+              {% endfor %}
+          </tbody>
+        </table>
+          {% if contribution_set_count > 25 %}
+            <p class="view-more"><a href="{% url 'committee_contribution_list' committee.pk 1 %}">View more... </a></p>
+          {% endif %}
+    </div>
 </div>
 {% endif %}
 

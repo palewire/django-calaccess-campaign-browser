@@ -1,8 +1,30 @@
 from django.db import models
 from django.template.defaultfilters import title
+from django.utils.datastructures import SortedDict
 
 
-class AllCapsNameMixin(models.Model):
+class BaseModel(models.Model):
+
+    class Meta:
+        abstract = True
+
+    def meta(self):
+        return self._meta
+
+    def klass(self):
+        return self.__class__
+
+    def doc(self):
+        return self.__doc__
+
+    def to_dict(self):
+        d = SortedDict({})
+        for f in self._meta.fields:
+            d[f.verbose_name] = getattr(self, f.name)
+        return d
+
+
+class AllCapsNameMixin(BaseModel):
     """
     Abstract model with name cleaners we can reuse across models.
     """

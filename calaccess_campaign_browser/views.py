@@ -209,7 +209,7 @@ class CommitteeDetailView(generic.DetailView):
         # Contributions
         contribs_qs = Contribution.objects.filter(
             committee=self.object,
-            dupe=False,
+            is_duplicate=False,
         ).order_by('-amount')
         context['contribution_set_short'] = contribs_qs[:25]
         context['contribution_set_count'] = contribs_qs.count()
