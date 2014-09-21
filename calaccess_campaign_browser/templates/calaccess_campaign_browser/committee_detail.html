@@ -124,7 +124,15 @@
               {% for contribution in contribution_set_short %}
                 <tr>
                     <td>{{ contribution.date_received }}</td>
-                    <td>{{ contribution.contributor_full_name }}</td>
+                    <td>
+                        {% if contribution.contributor_committee_id %}
+                            <a href="{{ contribution.contributor_committee.get_absolute_url }}">
+                        {% endif %}
+                                {{ contribution.contributor_full_name }}
+                        {% if contribution.contributor_committee_id %}
+                            </a>
+                        {% endif %}
+                    </td>
                     <td class="right">
                         <a href="{{ contribution.get_absolute_url }}">
                             ${{ contribution.amount | intcomma }}
