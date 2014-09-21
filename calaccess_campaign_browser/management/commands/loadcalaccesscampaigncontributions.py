@@ -1,7 +1,7 @@
 from django.db import connection
 from calaccess_raw.models import RcptCd
 from django.core.management.base import BaseCommand
-from calaccess_campaign_browser.models import Contribution, Filing
+from calaccess_campaign_browser.models import Contribution, Filing, Committee
 
 
 class Command(BaseCommand):
@@ -26,6 +26,7 @@ class Command(BaseCommand):
                 amount,
                 contributor_full_name,
                 contributor_is_person,
+                contributor_committee_id,
                 contributor_prefix,
                 contributor_first_name,
                 contributor_last_name,
@@ -74,6 +75,7 @@ class Command(BaseCommand):
                     WHEN r.ctrib_namf <> '' THEN true
                     ELSE false
                 END as contributor_is_person,
+                c.id,
                 r.ctrib_namt,
                 r.ctrib_namf,
                 r.ctrib_naml,
@@ -103,9 +105,12 @@ class Command(BaseCommand):
             INNER JOIN %(raw_model)s as r
             ON f.filing_id_raw = r.filing_id
             AND f.amend_id = r.amend_id
+            LEFT OUTER JOIN %(committee_model)s as c
+            ON r.cmte_id = c.xref_filer_id
         """ % dict(
             contribs_model=Contribution._meta.db_table,
             filing_model=Filing._meta.db_table,
             raw_model=RcptCd._meta.db_table,
+            committee_model=Committee._meta.db_table,
         )
         c.execute(sql)

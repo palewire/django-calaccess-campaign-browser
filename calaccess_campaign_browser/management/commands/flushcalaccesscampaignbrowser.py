@@ -14,6 +14,7 @@ class Command(BaseCommand):
             TRUNCATE `calaccess_campaign_browser_filing`;
             TRUNCATE `calaccess_campaign_browser_stats`;
             TRUNCATE `calaccess_campaign_browser_summary`;
+            TRUNCATE `calaccess_campaign_browser_filingperiod`;
             TRUNCATE `calaccess_campaign_browser_cycle`;
             TRUNCATE `calaccess_campaign_browser_committee`;
             TRUNCATE `calaccess_campaign_browser_expenditure`;

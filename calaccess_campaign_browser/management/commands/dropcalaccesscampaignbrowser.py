@@ -13,6 +13,7 @@ class Command(BaseCommand):
             DROP TABLE IF EXISTS `calaccess_campaign_browser_expenditure`;
             DROP TABLE IF EXISTS `calaccess_campaign_browser_summary`;
             DROP TABLE IF EXISTS `calaccess_campaign_browser_filing`;
+            DROP TABLE IF EXISTS `calaccess_campaign_browser_filingperiod`;
             DROP TABLE IF EXISTS `calaccess_campaign_browser_cycle`;
             DROP TABLE IF EXISTS `calaccess_campaign_browser_committee`;
             DROP TABLE IF EXISTS `calaccess_campaign_browser_stats`;

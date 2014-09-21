@@ -28,7 +28,16 @@
             </tr>
             <tr>
                 <th>From</th>
-                <td>{{ object.contributor_full_name }}</td>
+                <td>
+                    {% if object.contributor_committee_id %}
+                        <a href="{{ object.contributor_committee.get_absolute_url }}">
+                    {% endif %}
+                            {{ object.contributor_full_name }}
+                    {% if object.contributor_committee_id %}
+                        </a>
+                    {% endif %}
+
+                </td>
             </tr>
         </tbody>
     </table>

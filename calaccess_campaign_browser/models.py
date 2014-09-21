@@ -87,6 +87,11 @@ class Committee(AllCapsNameMixin):
     """
     filer = models.ForeignKey(Filer)
     filer_id_raw = models.IntegerField(db_index=True)
+    xref_filer_id = models.CharField(
+        max_length=32,
+        null=True,
+        db_index=True
+    )
     name = models.CharField(max_length=255, null=True)
     CMTE_TYPE_OPTIONS = (
         ('cand', 'Candidate'),
@@ -414,7 +419,7 @@ class Contribution(BaseModel):
     Who gave and how much.
     """
     cycle = models.ForeignKey(Cycle)
-    committee = models.ForeignKey(Committee)
+    committee = models.ForeignKey(Committee, related_name="contributions_to")
     filing = models.ForeignKey(Filing)
 
     # CAL-ACCESS ids
@@ -442,6 +447,11 @@ class Contribution(BaseModel):
     # About the contributor
     contributor_full_name = models.CharField(max_length=255)
     contributor_is_person = models.BooleanField(default=False)
+    contributor_committee = models.ForeignKey(
+        Committee,
+        null=True,
+        related_name="contributions_from"
+    )
     contributor_prefix = models.CharField(max_length=10, blank=True)
     contributor_first_name = models.CharField(max_length=255, blank=True)
     contributor_last_name = models.CharField(max_length=200, blank=True)

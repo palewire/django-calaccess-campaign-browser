@@ -9,8 +9,8 @@ class Command(BaseCommand):
         """
         Loads raw filings into consolidated tables
         """
-        #self.load_periods()
-        #self.load_cycles()
+        self.load_periods()
+        self.load_cycles()
         self.load_filings()
         self.mark_duplicates()
 

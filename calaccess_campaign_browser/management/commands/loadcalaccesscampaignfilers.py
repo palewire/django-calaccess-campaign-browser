@@ -68,12 +68,14 @@ Committee model"
         INSERT INTO %s (
             filer_id,
             filer_id_raw,
+            xref_filer_id,
             name,
             committee_type
         )
         SELECT
             cand2cmte.`candidate_filer_pk` as filer_id,
             distinct_filers.`filer_id` as filer_id_raw,
+            distinct_filers.`xref_filer_id` as xref_filer_id,
             distinct_filers.`name` as name,
             'cand' as committee_type
         FROM (
@@ -113,6 +115,7 @@ Committee model"
         INNER JOIN (
             SELECT
              FILERNAME_CD.`FILER_ID` as filer_id,
+             FILERNAME_CD.`XREF_FILER_ID` as xref_filer_id,
              REPLACE(TRIM(
                 CONCAT(`NAMT`, " ", `NAMF`, " ", `NAML`, " ", `NAMS`)
              ), '  ', ' ') as name
@@ -199,12 +202,14 @@ and loading into Filer model as PACs"
             INSERT INTO %s (
                 filer_id,
                 filer_id_raw,
+                xref_filer_id,
                 name,
                 committee_type
             )
             SELECT
                 id,
                 filer_id,
+                xref_filer_id,
                 `name`,
                 filer_type
             FROM calaccess_campaign_browser_filer

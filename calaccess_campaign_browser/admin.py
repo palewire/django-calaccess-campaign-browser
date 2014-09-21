@@ -73,6 +73,7 @@ class CommitteeAdmin(BaseAdmin):
     search_fields = (
         "name",
         "filer_id_raw",
+        "xref_filer_id"
     )
 
 
