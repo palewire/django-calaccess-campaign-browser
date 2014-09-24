@@ -25,3 +25,10 @@ Other resources
 * Packaging: `https://pypi.python.org/pypi/django-calaccess-campaign-browser <https://pypi.python.org/pypi/django-calaccess-campaign-browser>`_
 * Testing: `https://travis-ci.org/california-civic-data-coalition/django-calaccess-campaign-browser <https://travis-ci.org/california-civic-data-coalition/django-calaccess-campaign-browser>`_
 * Coverage: `https://coveralls.io/r/california-civic-data-coalition/django-calaccess-campaign-browser <https://coveralls.io/r/california-civic-data-coalition/django-calaccess-campaign-browser>`_
+
+Sponsor
+-------
+
+.. image:: /_static/opennews-logo.png
+
+`Released for OpenNews Code Convening, August 2014 <http://opennews.org/code.html>`_ 
