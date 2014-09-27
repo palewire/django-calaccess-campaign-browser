@@ -197,9 +197,8 @@ class CommitteeDetailView(generic.DetailView):
         context['committee'] = self.object
 
         # Filings
-        filing_qs = Filing.objects.filter(
+        filing_qs = Filing.real.filter(
             committee=self.object,
-            is_duplicate=False
         ).select_related("cycle", "period").order_by(
             "-end_date", "filing_id_raw", "-amend_id"
         )
@@ -207,9 +206,8 @@ class CommitteeDetailView(generic.DetailView):
         context['filing_set_count'] = filing_qs.count()
 
         # Contributions
-        contribs_qs = Contribution.objects.filter(
+        contribs_qs = Contribution.real.filter(
             committee=self.object,
-            is_duplicate=False,
         ).order_by('-amount')
         context['contribution_set_short'] = contribs_qs[:25]
         context['contribution_set_count'] = contribs_qs.count()
