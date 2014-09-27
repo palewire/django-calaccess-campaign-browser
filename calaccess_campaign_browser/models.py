@@ -147,6 +147,20 @@ class Committee(AllCapsNameMixin):
             s.total_expenditures for s in summaries if s.total_expenditures
         ])
 
+    @property
+    def total_expenditures_by_year(self):
+        d = {}
+        for f in self.real_filings:
+            if not f.summary:
+                continue
+            if not f.summary.total_expenditures:
+                continue
+            try:
+                d[f.period.start_date.year] += f.summary.total_expenditures
+            except KeyError:
+                d[f.period.start_date.year] = f.summary.total_expenditures
+        return sorted(d.items(), key=lambda x:x[0], reverse=True)
+
 
 class Cycle(BaseModel):
     name = models.IntegerField(db_index=True)
