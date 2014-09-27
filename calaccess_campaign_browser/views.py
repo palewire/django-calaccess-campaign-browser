@@ -4,6 +4,7 @@ import json
 import datetime
 from django.db.models import Q
 from django.views import generic
+from django.db import connection
 from django.http import HttpResponse
 from bakery.views import BuildableListView
 from django.utils.encoding import smart_text
@@ -195,6 +196,7 @@ class CommitteeDetailView(generic.DetailView):
     def get_context_data(self, **kwargs):
         context = super(CommitteeDetailView, self).get_context_data(**kwargs)
         context['committee'] = self.object
+        year_trunc = connection.ops.date_trunc_sql('year', 'period__start_date')
 
         # Filings
         filing_qs = Filing.real.filter(

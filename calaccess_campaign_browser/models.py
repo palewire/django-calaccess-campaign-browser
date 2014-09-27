@@ -6,6 +6,7 @@ from django.utils.text import slugify
 from django.core.urlresolvers import reverse
 from django.utils.datastructures import SortedDict
 from .utils.models import AllCapsNameMixin, BaseModel
+from django.template.defaultfilters import date as dateformat
 
 
 class Filer(AllCapsNameMixin):
@@ -125,6 +126,20 @@ class Committee(AllCapsNameMixin):
         ])
 
     @property
+    def total_contributions_by_year(self):
+        d = {}
+        for f in self.real_filings:
+            if not f.summary:
+                continue
+            if not f.summary.total_contributions:
+                continue
+            try:
+                d[f.period.start_date.year] += f.summary.total_contributions
+            except KeyError:
+                d[f.period.start_date.year] = f.summary.total_contributions
+        return sorted(d.items(), key=lambda x:x[0], reverse=True)
+
+    @property
     def total_expenditures(self):
         summaries = [f.summary for f in self.real_filings]
         summaries = [s for s in summaries if s]
@@ -157,7 +172,10 @@ class FilingPeriod(BaseModel):
         ordering = ("-end_date",)
 
     def __unicode__(self):
-        return "%s - %s" % (self.start_date, self.end_date)
+        return "%s - %s" % (
+            dateformat(self.start_date, "%Y-%m-%d"),
+            dateformat(self.end_date, "%m-%d"),
+        )
 
 
 class Filing(models.Model):

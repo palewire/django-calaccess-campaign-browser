@@ -7,7 +7,7 @@
 {% include "calaccess_campaign_browser/committee_nav.html" %}
 
 <div class="row">
-    <div class="col-12-lg">
+    <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
         <h3>Summary</h3>
         <table class="table table-bordered table-hover">
             <tr>
@@ -33,7 +33,29 @@
 </div>
 
 <div class="row">
-  <div class="col-12-lg">
+    <div class="col-lg-6 col-md-6 col-sm-12 col-xs-12">
+        <h4>Contributions by year</h4>
+        <table class="table table-bordered table-hover">
+        <thead>
+            <tr>
+                <th>Year</th>
+                <th class="right">Total</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for year, total in committee.total_contributions_by_year %}
+                <tr>
+                    <td>{{ year }}</td>
+                    <td class="right">${{ total|floatformat:0|intcomma }}</td>
+                </tr>
+            {% endfor %}
+        </tbody>
+        </table>
+    </div>
+</div>
+
+<div class="row">
+  <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
     <h3>
           <a href="{% url 'committee_filing_list' committee.pk 1 %}">Filings</a>
           <div class="btn-group">
@@ -51,7 +73,7 @@
 </div>
 
 <div class="row">
-  <div class="col-12-lg">
+  <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
       <table class="table table-bordered table-hover">
         <thead>
             <tr>
@@ -72,10 +94,10 @@
             <td>
               <a href="{{ filing.get_absolute_url }}">{{ filing.filing_id_raw }}</a>
             </td>
-            <td>{{ filing.date_filed|date:"N j, Y" }}</td>
+            <td>{{ filing.date_filed|date:"Y-m-d" }}</td>
             <td>{{ filing.get_form_type_display }}</td>
             <td>{{ filing.cycle.name }}</td>
-            <td>{{ filing.start_date|date:"N j" }} - {{ filing.end_date|date:"N j, Y" }}</td>
+            <td>{{ filing.start_date|date:"Y-m-d" }} - {{ filing.end_date|date:"Y-m-d" }}</td>
             {% with filing.summary as summary %}
             <td class="right">${{ summary.total_contributions|default_if_none:0|floatformat:0|intcomma }}</td>
             <td class="right">${{ summary.total_expenditures|default_if_none:0|floatformat:0|intcomma }}</td>
@@ -98,7 +120,7 @@
 
 {% if contribution_set_short %}
 <div class="row">
-    <div class="col-12-lg">
+    <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
         <h3>
               <a href="{% url 'committee_contribution_list' committee.pk 1 %}">Contributions </a>
               <div class="btn-group">
@@ -123,7 +145,7 @@
           <tbody>
               {% for contribution in contribution_set_short %}
                 <tr>
-                    <td>{{ contribution.date_received }}</td>
+                    <td>{{ contribution.date_received|date:"Y-m-d" }}</td>
                     <td>
                         {% if contribution.contributor_committee_id %}
                             <a href="{{ contribution.contributor_committee.get_absolute_url }}">
@@ -152,7 +174,7 @@
 
 {% if expenditure_set_short %}
 <div class="row">
-<div class="col-12-lg">
+<div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
   <h3>
         <a href="{% url 'committee_expenditure_list' committee.pk 1 %}">Expenditures </a>
         <div class="btn-group">
@@ -179,7 +201,7 @@
         <tbody>
             {% for expenditure in expenditure_set_short %}
               <tr>
-                  <td>{{ expenditure.expn_date }}</td>
+                  <td>{{ expenditure.expn_date|date:"Y-m-d" }}</td>
                   <td>{{ expenditure.name }}</td>
                   <td>{{ expenditure.get_expn_code_display|capfirst }}</td>
                   <td class="right">${{ expenditure.amount|intcomma }}</td>
