@@ -1,6 +1,7 @@
 from django.db import models
-from django.db.models import Sum
 from hurry.filesize import size
+from django.db.models import Sum
+from .managers import RealManager
 from django.utils.text import slugify
 from django.core.urlresolvers import reverse
 from django.utils.datastructures import SortedDict
@@ -61,10 +62,7 @@ class Filer(AllCapsNameMixin):
 
     @property
     def real_filings(self):
-        return Filing.objects.filter(
-            committee__filer=self,
-            is_duplicate=False
-        )
+        return Filing.real.filter(committee__filer=self)
 
     @property
     def total_contributions(self):
@@ -116,10 +114,7 @@ class Committee(AllCapsNameMixin):
 
     @property
     def real_filings(self):
-        return Filing.objects.filter(
-            committee=self,
-            is_duplicate=False
-        ).select_related("cycle")
+        return Filing.real.filter(committee=self).select_related("cycle")
 
     @property
     def total_contributions(self):
@@ -190,6 +185,8 @@ class Filing(models.Model):
         help_text="A record that has either been superceded by an amendment \
 or was filed unnecessarily. Should be excluded from most analysis."
     )
+    objects = models.Manager()
+    real = RealManager()
 
     def __unicode__(self):
         return unicode(self.filing_id_raw)
@@ -498,6 +495,8 @@ class Contribution(BaseModel):
     intermediary_employer = models.CharField(max_length=200, blank=True)
     intermediary_selfemployed = models.CharField(max_length=1, blank=True)
     intermediary_committee_id = models.CharField(max_length=9, blank=True)
+    objects = models.Manager()
+    real = RealManager()
 
     @property
     def raw(self):
