@@ -423,6 +423,7 @@ class Contribution(BaseModel):
     filing = models.ForeignKey(Filing)
 
     # CAL-ACCESS ids
+    filing_id_raw = models.IntegerField(db_index=True)
     transaction_id = models.CharField(
         'transaction ID',
         max_length=20,
@@ -464,6 +465,24 @@ class Contribution(BaseModel):
     contributor_occupation = models.CharField(max_length=60, blank=True)
     contributor_employer = models.CharField(max_length=200, blank=True)
     contributor_selfemployed = models.CharField(max_length=1, blank=True)
+    ENTITY_CODE_CHOICES = (
+        ("", "None"),
+        ("0", "0"),
+        ("BNM", "BNM"),
+        ("COM", "Recipient committee"),
+        ("IND", "Individual"),
+        ("OFF", "OFF"),
+        ("OTH", "Other"),
+        ("PTY", "Political party"),
+        ("RCP", "RCP"),
+        ("SCC", "Small contributor committee"),
+    )
+    contributor_entity_type = models.CharField(
+        max_length=3,
+        blank=True,
+        help_text="The type of entity that made that contribution",
+        choices=ENTITY_CODE_CHOICES
+    )
 
     # About the intermediary
     intermediary_prefix = models.CharField(max_length=10, blank=True)
