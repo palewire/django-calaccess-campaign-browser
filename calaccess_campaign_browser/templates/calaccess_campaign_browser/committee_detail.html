@@ -34,6 +34,47 @@
 
 <div class="row">
     <div class="col-lg-6 col-md-6 col-sm-12 col-xs-12">
+        <h4>Contributions by cycle</h4>
+        <table class="table table-bordered table-hover">
+        <thead>
+            <tr>
+                <th>Year</th>
+                <th class="right">Total</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for year, total in committee.total_contributions_by_cycle %}
+                <tr>
+                    <td>{{ year }}</td>
+                    <td class="right">${{ total|floatformat:0|intcomma }}</td>
+                </tr>
+            {% endfor %}
+        </tbody>
+        </table>
+    </div>
+    <div class="col-lg-6 col-md-6 col-sm-12 col-xs-12">
+        <h4>Expenditures by cycle</h4>
+        <table class="table table-bordered table-hover">
+        <thead>
+            <tr>
+                <th>Year</th>
+                <th class="right">Total</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for year, total in committee.total_expenditures_by_cycle %}
+                <tr>
+                    <td>{{ year }}</td>
+                    <td class="right">${{ total|floatformat:0|intcomma }}</td>
+                </tr>
+            {% endfor %}
+        </tbody>
+        </table>
+    </div>
+</div>
+
+<div class="row">
+    <div class="col-lg-6 col-md-6 col-sm-12 col-xs-12">
         <h4>Contributions by year</h4>
         <table class="table table-bordered table-hover">
         <thead>

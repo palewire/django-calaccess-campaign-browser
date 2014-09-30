@@ -83,18 +83,16 @@ class CommitteeDetailView(generic.DetailView):
         context['filing_set_count'] = filing_qs.count()
 
         # Contributions
-        contribs_qs = Contribution.real.filter(
-            committee=self.object,
-        ).order_by('-amount')
-        context['contribution_set_short'] = contribs_qs[:25]
+        contribs_qs = Contribution.real.filter(committee=self.object)
+        context['contribution_set_short'] = contribs_qs.order_by('-amount')[:25]
         context['contribution_set_count'] = contribs_qs.count()
 
         # Expenditures
         expends_qs = Expenditure.objects.filter(
             committee=self.object,
             dupe=False
-        ).order_by('-amount')
-        context['expenditure_set_short'] = expends_qs[:25]
+        )
+        context['expenditure_set_short'] = expends_qs.order_by('-amount')[:25]
         context['expenditure_set_count'] = expends_qs.count()
 
         # Close out

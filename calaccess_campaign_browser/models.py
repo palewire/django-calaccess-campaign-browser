@@ -139,12 +139,40 @@ class Committee(AllCapsNameMixin):
         return sorted(d.items(), key=lambda x:x[0], reverse=True)
 
     @property
+    def total_contributions_by_cycle(self):
+        d = {}
+        for f in self.real_filings:
+            if not f.summary:
+                continue
+            if not f.summary.total_contributions:
+                continue
+            try:
+                d[f.cycle.name] += f.summary.total_contributions
+            except KeyError:
+                d[f.cycle.name] = f.summary.total_contributions
+        return sorted(d.items(), key=lambda x:x[0], reverse=True)
+
+    @property
     def total_expenditures(self):
         summaries = [f.summary for f in self.real_filings]
         summaries = [s for s in summaries if s]
         return sum([
             s.total_expenditures for s in summaries if s.total_expenditures
         ])
+
+    @property
+    def total_expenditures_by_cycle(self):
+        d = {}
+        for f in self.real_filings:
+            if not f.summary:
+                continue
+            if not f.summary.total_expenditures:
+                continue
+            try:
+                d[f.cycle.name] += f.summary.total_expenditures
+            except KeyError:
+                d[f.cycle.name] = f.summary.total_expenditures
+        return sorted(d.items(), key=lambda x:x[0], reverse=True)
 
     @property
     def total_expenditures_by_year(self):
