@@ -1,6 +1,7 @@
 import datetime
-from .base import CommitteeDataView
+from .search import get_query
 from django.views import generic
+from .base import CommitteeDataView
 from django.core.urlresolvers import reverse
 from django.shortcuts import redirect
 from calaccess_campaign_browser.models import (
