@@ -3,14 +3,14 @@
 
 {% block content %}
 <div class="row">
-    <div class="col-12-lg">
+    <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
         <h1>Search contributions by name</h1>
     </div>
 </div>
 
 <div class="row" style="margin-bottom:20px">
     <form class="form-inline" role="form" method="GET" action="{% url 'search-contribs-by-name' %}">
-        <div class="form-group col-12-lg">
+        <div class="form-group col-lg-12 col-md-12 col-sm-12 col-xs-12">
             <input type="text" class="form-control" style="width:100%"
                 id="q" name="q"
                 {% if query_string %}value="{{ query_string }}"{% else %}placeholder="Search contributions"{% endif %}>
@@ -20,7 +20,7 @@
 </div>
 
 <div class="row">
-<div class="col-12-lg">
+<div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
     <strong>Results:</strong> {{ results|length }}
     <table class="table table-responsive">
         <thead>

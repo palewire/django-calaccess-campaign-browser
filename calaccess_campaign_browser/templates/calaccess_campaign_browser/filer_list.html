@@ -5,14 +5,14 @@
 
 {% block content %}
 <div class="row">
-<div class="col-12-lg">
+<div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
     <h1>Filers</h1>
 </div>
 </div>
 
 <div class="row" style="margin-bottom:10px">
     <form class="form-inline" role="form" method="GET" action="{% url 'filer_page' 1 %}">
-        <div class="form-group col-12-lg">
+        <div class="form-group col-lg-5 col-md-6 col-sm-8 col-xs-8">
             <input type="text" class="form-control" style="width:100%"
                 id="q" name="q"
                 {% if query_string %}value="{{ query_string }}"{% else %}placeholder="Search"{% endif %}>
@@ -24,7 +24,7 @@
 {% include "calaccess_campaign_browser/paginator.html" %}
 
   <div class="row">
-    <div class="col-12-lg">
+    <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
         <table class="table table-bordered table-hover">
           <thead>
             <tr>
