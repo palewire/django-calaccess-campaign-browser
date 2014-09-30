@@ -5,7 +5,6 @@ from calaccess_campaign_browser.models import (
     Summary,
     Expenditure,
     Contribution,
-    FlatFile,
     Cycle,
     FilingPeriod,
     Filing,
@@ -149,5 +148,4 @@ admin.site.register(FilingPeriod, FilingPeriodAdmin)
 admin.site.register(Filing, FilingAdmin)
 admin.site.register(Expenditure, ExpenditureAdmin)
 admin.site.register(Contribution, ContributionAdmin)
-admin.site.register(FlatFile)
 admin.site.register(Summary, SummaryAdmin)
