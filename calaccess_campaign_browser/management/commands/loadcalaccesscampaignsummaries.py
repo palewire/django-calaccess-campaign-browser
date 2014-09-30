@@ -1,7 +1,6 @@
 import os
 import csv
 from django.db import connection
-from django.conf import settings
 from calaccess_raw import get_download_directory
 from django.utils.datastructures import SortedDict
 from django.core.management.base import BaseCommand

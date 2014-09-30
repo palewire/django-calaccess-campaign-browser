@@ -3,6 +3,7 @@ from tastypie.api import Api
 from django.views.generic.base import RedirectView
 from calaccess_campaign_browser.api import FilerResource
 from calaccess_campaign_browser import views
+from calaccess_campaign_browser.views import search
 
 v1_api = Api(api_name='v1')
 v1_api.register(FilerResource())
@@ -65,10 +66,10 @@ urlpatterns = patterns(
         views.ExpenditureDetailView.as_view(),
         name='expenditure_detail',
     ),
-    url(r'^search/$', views.SearchList.as_view(), name='search-list'),
+    url(r'^search/$', search.SearchList.as_view(), name='search-list'),
     url(
         r'^search/contribs-by-name/$',
-        views.search_contribs_by_name,
+        search.search_contribs_by_name,
         name='search-contribs-by-name'
     ),
     # API

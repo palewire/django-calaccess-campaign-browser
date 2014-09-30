@@ -1,6 +1,5 @@
 from django.db import models
 from hurry.filesize import size
-from django.db.models import Sum
 from .managers import RealManager
 from django.utils.text import slugify
 from django.core.urlresolvers import reverse

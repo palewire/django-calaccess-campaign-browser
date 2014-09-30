@@ -1,6 +1,5 @@
 from django.db import connection
 from django.core.management.base import BaseCommand
-from calaccess_campaign_browser.models import Expenditure
 
 
 class Command(BaseCommand):

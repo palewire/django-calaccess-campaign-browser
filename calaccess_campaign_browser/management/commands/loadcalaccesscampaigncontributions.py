@@ -2,7 +2,6 @@ import os
 import csv
 import copy
 import tempfile
-from pprint import pprint
 from django.db import connection
 from calaccess_raw.models import RcptCd
 from calaccess_raw import get_download_directory
