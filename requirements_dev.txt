@@ -12,7 +12,6 @@ Sphinx==1.2.2
 argh==0.23.3
 argparse==1.2.1
 backports.ssl-match-hostname==3.4.0.2
-boto==2.28.0
 coverage==3.7.1
 csvkit==0.6.1
 dbf==0.95.012
@@ -28,8 +27,6 @@ django-tastypie==0.11.1
 docutils==0.12
 enum34==1.0
 hurry.filesize==0.9
-ipdb==0.8
-ipython==2.2.0
 jdcal==1.0
 livereload==2.0.0
 openpyxl==2.0.5
