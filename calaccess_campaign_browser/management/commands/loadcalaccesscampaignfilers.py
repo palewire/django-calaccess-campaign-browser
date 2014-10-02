@@ -19,7 +19,7 @@ class Command(BaseCommand):
         c = connection.cursor()
         sql = """
         INSERT INTO %s (
-            filer_id,
+            filer_id_raw,
             status,
             effective_date,
             xref_filer_id,
@@ -143,7 +143,7 @@ and loading into Filer model as PACs"
         c = connection.cursor()
         sql = """
         INSERT INTO %s (
-            filer_id,
+            filer_id_raw,
             status,
             effective_date,
             xref_filer_id,

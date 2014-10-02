@@ -17,7 +17,7 @@ class Filer(AllCapsNameMixin):
     Committees (PACs) that contribute money to numerous candidates for office.
     """
     # straight out of the filer table
-    filer_id = models.IntegerField(db_index=True)
+    filer_id_raw = models.IntegerField(db_index=True)
     STATUS_CHOICES = (
         ('A', 'Active'),
         ('ACTIVE', 'Active'),
