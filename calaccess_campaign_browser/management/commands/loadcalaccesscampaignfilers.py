@@ -7,9 +7,9 @@ class Command(BaseCommand):
 
     def handle(self, *args, **options):
         self.load_candidate_filers()
-        self.load_candidate_committees()
-        self.load_pac_filers()
-        self.load_pac_committees()
+        #self.load_candidate_committees()
+        #self.load_pac_filers()
+        #self.load_pac_committees()
 
     def load_candidate_filers(self):
         """
@@ -24,7 +24,8 @@ class Command(BaseCommand):
             effective_date,
             xref_filer_id,
             filer_type,
-            name
+            name,
+            party
         )
         SELECT
          FILERNAME_CD.`FILER_ID` as filer_id,
@@ -36,20 +37,43 @@ class Command(BaseCommand):
         -- Combining and cleaning up the name data from the source
          REPLACE(TRIM(
             CONCAT(`NAMT`, " ", `NAMF`, " ", `NAML`, " ", `NAMS`)
-         ), '  ', ' ') as name
+         ), '  ', ' ') as name,
+         max_plus_metadata.`PARTY_CD`
         FROM FILERNAME_CD
-        INNER JOIN (
-            -- Joining against a subquery that returns the last record
-            -- in the source table because there are duplicates and we
-            -- do not know of any logical way to better infer the most
-            -- recent or complete record.
-            SELECT FILER_ID, MAX(`id`) as `id`
-            FROM FILERNAME_CD
-            -- This filter limits the source data to only candidate filers
-            WHERE `FILER_TYPE` = 'CANDIDATE/OFFICEHOLDER'
-            GROUP BY 1
-        ) as max
-        ON FILERNAME_CD.`id` = max.`id`
+        INNER JOIN 
+        (
+            SELECT
+                max.`FILER_ID`,
+                max.id,
+                ft.`PARTY_CD`
+            FROM (
+                -- Joining against a subquery that returns the last record
+                -- in the source table because there are duplicates and we
+                -- do not know of any logical way to better infer the most
+                -- recent or complete record.
+                SELECT FILER_ID, MAX(`id`) as `id`
+                FROM FILERNAME_CD
+                -- This filter limits the source data to only candidate filers
+                WHERE `FILER_TYPE` = 'CANDIDATE/OFFICEHOLDER'
+                GROUP BY 1
+            ) as max
+            LEFT OUTER JOIN (
+                -- Joining against a subquery that returns the last record
+                -- in the source table because there are duplicates and we
+                -- do not know of any logical way to better infer the most
+                -- recent or complete record.
+                SELECT FILER_TO_FILER_TYPE_CD.`FILER_ID`, PARTY_CD
+                FROM FILER_TO_FILER_TYPE_CD
+                INNER JOIN (
+                    SELECT FILER_ID, MAX(`id`) as `id`
+                    FROM FILER_TO_FILER_TYPE_CD
+                    GROUP BY 1
+                ) as maxft
+                ON FILER_TO_FILER_TYPE_CD.`id` = maxft.`id`
+            ) as ft
+            ON max.`FILER_ID` = ft.`FILER_ID`
+        ) as max_plus_metadata
+        ON FILERNAME_CD.`id` = max_plus_metadata.`id`
         """ % (
             models.Filer._meta.db_table,
         )
@@ -84,23 +108,23 @@ Committee model"
             -- to the candidate filer records from either direction (ie A or B)
             SELECT
                 f.`id` as candidate_filer_pk,
-                f.`FILER_ID` as candidate_filer_id,
+                f.`filer_id_raw` as candidate_filer_id,
                 committee_filer_id_a.`FILER_ID_A` as committee_filer_id
-            FROM calaccess_campaign_browser_filer f
+            FROM calaccess_campaign_browser_filer as f
             INNER JOIN (
                 SELECT DISTINCT `FILER_ID_A`, `FILER_ID_B`
                 FROM FILER_LINKS_CD
                 WHERE LINK_TYPE = '12011'
                 AND `FILER_ID_A` IS NOT NULL
             ) as committee_filer_id_a
-            ON f.`FILER_ID` = committee_filer_id_a.`FILER_ID_B`
-            AND f.`FILER_ID` <> committee_filer_id_a.`FILER_ID_A`
+            ON f.`filer_id_raw` = committee_filer_id_a.`FILER_ID_B`
+            AND f.`filer_id_raw` <> committee_filer_id_a.`FILER_ID_A`
 
             UNION
 
             SELECT
                 f.`id` as candidate_filer_pk,
-                f.`FILER_ID` as candidate_filer_id,
+                f.`filer_id_raw` as candidate_filer_id,
                 committee_filer_id_a.`FILER_ID_B` as committee_filer_id
             FROM calaccess_campaign_browser_filer f
             INNER JOIN (
@@ -109,8 +133,8 @@ Committee model"
                 WHERE LINK_TYPE = '12011'
                 AND `FILER_ID_B` IS NOT NULL
             ) as committee_filer_id_a
-            ON f.`FILER_ID` = committee_filer_id_a.`FILER_ID_A`
-            AND f.`FILER_ID` <> committee_filer_id_a.`FILER_ID_B`
+            ON f.`filer_id_raw` = committee_filer_id_a.`FILER_ID_A`
+            AND f.`filer_id_raw` <> committee_filer_id_a.`FILER_ID_B`
         ) as cand2cmte
         INNER JOIN (
             SELECT
@@ -208,7 +232,7 @@ and loading into Filer model as PACs"
             )
             SELECT
                 id,
-                filer_id,
+                filer_id_raw,
                 xref_filer_id,
                 `name`,
                 filer_type

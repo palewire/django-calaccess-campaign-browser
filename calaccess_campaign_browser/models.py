@@ -16,8 +16,43 @@ class Filer(AllCapsNameMixin):
     money on their behalf (i.e. Jerry Brown) as well as Political Action
     Committees (PACs) that contribute money to numerous candidates for office.
     """
-    # straight out of the filer table
+    name = models.CharField(max_length=255, null=True)
     filer_id_raw = models.IntegerField(db_index=True)
+    xref_filer_id = models.CharField(
+        max_length=32,
+        null=True,
+        db_index=True
+    )
+    FILER_TYPE_OPTIONS = (
+        ('pac', 'PAC'),
+        ('cand', 'Candidate'),
+    )
+    filer_type = models.CharField(
+        max_length=10,
+        choices=FILER_TYPE_OPTIONS,
+        db_index=True,
+    )
+    PARTY_CHOICES = (
+        ('16013', 'Americans Elect'),
+        ('16012', 'No party preference'),
+        ('16011', 'Unknown'),
+        ('16010', 'Natural law'),
+        ('16009', 'Non-partisan'),
+        ('16008', 'Libertarian'),
+        ('16007', 'Independent'),
+        ('16006', 'Peace and Freedom'),
+        ('16005', 'American Independent'),
+        ('16004', 'Reform'),
+        ('16003', 'Green'),
+        ('16002', 'Republican'),
+        ('16001', 'Democratic'),
+        ('0', 'N/A'),
+    )
+    party = models.CharField(
+        max_length=255,
+        choices=PARTY_CHOICES,
+        db_index=True
+    )
     STATUS_CHOICES = (
         ('A', 'Active'),
         ('ACTIVE', 'Active'),
@@ -35,22 +70,7 @@ class Filer(AllCapsNameMixin):
         null=True,
         choices=STATUS_CHOICES
     )
-    FILER_TYPE_OPTIONS = (
-        ('pac', 'PAC'),
-        ('cand', 'Candidate'),
-    )
-    filer_type = models.CharField(
-        max_length=10,
-        choices=FILER_TYPE_OPTIONS,
-        db_index=True,
-    )
-    name = models.CharField(max_length=255, null=True)
     effective_date = models.DateField(null=True)
-    xref_filer_id = models.CharField(
-        max_length=32,
-        null=True,
-        db_index=True
-    )
 
     class Meta:
         ordering = ("name",)

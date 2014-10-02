@@ -40,20 +40,22 @@ class FilingAdmin(BaseAdmin):
 
 class FilerAdmin(BaseAdmin):
     list_display = (
-        "filer_id",
+        "filer_id_raw",
         "name",
         "filer_type",
+        "party",
         "status",
         "effective_date",
         "xref_filer_id"
     )
     list_filter = (
         "filer_type",
+        "party",
         "status",
     )
     search_fields = (
         "name",
-        "filer_id",
+        "filer_id_raw",
         "xref_filer_id"
     )
     date_hierarchy = "effective_date"
