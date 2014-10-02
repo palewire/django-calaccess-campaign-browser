@@ -19,13 +19,16 @@ class Filer(AllCapsNameMixin):
     # straight out of the filer table
     filer_id = models.IntegerField(db_index=True)
     STATUS_CHOICES = (
-        ('A', 'A'),
+        ('A', 'Active'),
         ('ACTIVE', 'Active'),
         ('INACTIVE', 'Inactive'),
-        ('R', 'R'),
-        ('S', 'S'),
+        ('N', 'Inactive'),
+        ('P', 'Pending'),
+        ('R', 'Revoked'),
+        ('S', 'Suspended'),
         ('TERMINATED', 'Terminated'),
-        ('W', 'W'),
+        ('W', 'Withdrawn'),
+        ('Y', 'Active'),
     )
     status = models.CharField(
         max_length=255,
