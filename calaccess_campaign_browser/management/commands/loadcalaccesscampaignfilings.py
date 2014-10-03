@@ -1,21 +1,22 @@
 from django.db import connection
-from django.core.management.base import BaseCommand
 from calaccess_campaign_browser.models import Cycle, Filing, FilingPeriod
+from calaccess_campaign_browser.management.commands import CalAccessCommand
 
 
-class Command(BaseCommand):
+class Command(CalAccessCommand):
 
     def handle(self, *args, **options):
         """
         Loads raw filings into consolidated tables
         """
+        self.header("Loading filings")
         self.load_periods()
         self.load_cycles()
         self.load_filings()
         self.mark_duplicates()
 
     def load_periods(self):
-        print "- Loading filing periods"
+        self.log(" Loading filing periods")
         c = connection.cursor()
         sql = """
             INSERT INTO %(clean_table)s (
@@ -40,7 +41,7 @@ class Command(BaseCommand):
         c.execute(sql)
 
     def load_cycles(self):
-        print "- Loading cycles"
+        self.log(" Loading cycles")
         c = connection.cursor()
         sql = """
             INSERT INTO %(cycle_table)s (`name`)
@@ -61,7 +62,7 @@ class Command(BaseCommand):
         c.execute(sql)
 
     def load_filings(self):
-        print "- Loading filings"
+        self.log(" Loading filings")
         c = connection.cursor()
         sql = """
         INSERT INTO %(filing_table)s (
@@ -112,7 +113,7 @@ class Command(BaseCommand):
         c.execute(sql)
 
     def mark_duplicates(self):
-        print "- Marking duplicates"
+        self.log(" Marking duplicates")
         c = connection.cursor()
 
         # Mark all recurring filing ids as duplicates
