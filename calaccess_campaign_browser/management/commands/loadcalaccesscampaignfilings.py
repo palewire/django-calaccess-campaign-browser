@@ -62,7 +62,7 @@ class Command(CalAccessCommand):
         c.execute(sql)
 
     def load_filings(self):
-        self.log(" Loading filings")
+        self.log(" Loading form 450 and 460 filings")
         c = connection.cursor()
         sql = """
         INSERT INTO %(filing_table)s (
