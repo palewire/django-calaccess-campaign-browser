@@ -28,8 +28,10 @@
         <table class="table table-bordered table-hover">
           <thead>
             <tr>
+              <th>ID</th>
               <th>Name</th>
               <th>Type</th>
+              <th>Party</th>
               <th>Status</th>
               <th>Effective date</th>
               <th class="right">Committees</th>
@@ -38,15 +40,19 @@
           <tbody>
           {% for filer in object_list %}
             <tr>
-              <td>
               {% with filer.committee_set.count as count %}
+              <td>
                 {% if count %}
-                <a href="{{ filer.get_absolute_url }}">{{ filer.short_name }}</a>
+                <a href="{{ filer.get_absolute_url }}">{{ filer.filer_id_raw }}</a>
                 {% else %}
-                {{ filer }}
+                {{ filer.filer_id_raw }}
                 {% endif %}
               </td>
+              <td>
+                {{ filer.short_name }}
+              </td>
               <td>{{ filer.get_filer_type_display }}</td>
+              <td>{{ filer.get_party_display }}</td>
               <td>{{ filer.get_status_display }}</td>
               <td>{{ filer.effective_date }}</td>
               <td class="right">{{ count }}</td>

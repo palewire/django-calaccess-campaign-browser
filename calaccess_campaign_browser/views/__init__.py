@@ -31,7 +31,7 @@ class FilerListView(generic.ListView):
         qs = Filer.objects.exclude(name="")
         if ('q' in self.request.GET) and self.request.GET['q'].strip():
             query = get_query(self.request.GET['q'], [
-                'name', 'filer_id', 'xref_filer_id'
+                'name', 'filer_id_raw', 'xref_filer_id'
             ])
             qs = qs.filter(query)
         return qs
