@@ -29,8 +29,7 @@ class Filer(AllCapsNameMixin):
     )
     filer_type = models.CharField(
         max_length=10,
-        choices=FILER_TYPE_OPTIONS,
-        db_index=True,
+        choices=FILER_TYPE_OPTIONS
     )
     PARTY_CHOICES = (
         ('16013', 'Americans Elect'),
@@ -50,8 +49,7 @@ class Filer(AllCapsNameMixin):
     )
     party = models.CharField(
         max_length=255,
-        choices=PARTY_CHOICES,
-        db_index=True
+        choices=PARTY_CHOICES
     )
     STATUS_CHOICES = (
         ('A', 'Active'),
