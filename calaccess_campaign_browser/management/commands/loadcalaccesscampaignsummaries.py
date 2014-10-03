@@ -3,13 +3,14 @@ import csv
 from django.db import connection
 from calaccess_raw import get_download_directory
 from django.utils.datastructures import SortedDict
-from django.core.management.base import BaseCommand
 from calaccess_campaign_browser.models import Summary
+from calaccess_campaign_browser.management.commands import CalAccessCommand
 
 
-class Command(BaseCommand):
+class Command(CalAccessCommand):
 
     def handle(self, *args, **options):
+        self.header("Loading summary totals")
         self.data_dir = get_download_directory()
         self.source_csv = os.path.join(self.data_dir, 'csv', 'smry_cd.csv')
         self.target_csv = os.path.join(
@@ -21,7 +22,7 @@ class Command(BaseCommand):
         self.load_csv()
 
     def load_csv(self):
-        print "- Loading transformed CSV into the database"
+        self.log(" Loading transformed CSV")
         c = connection.cursor()
         sql = """
             LOAD DATA LOCAL INFILE '%s'
@@ -47,7 +48,7 @@ class Command(BaseCommand):
         c.execute(sql)
 
     def transform_csv(self):
-        print "- Transforming summary totals CSV to prep for database"
+        self.log(" Transforming source CSV")
         grouped = {}
         form2field = {
             # F460
@@ -69,7 +70,7 @@ class Command(BaseCommand):
             'F450-2': 'unitemized_expenditures',
             'E-6': 'total_expenditures',
         }
-        print "-- Regrouping source CSV"
+        self.log("  Regrouping")
         for r in csv.DictReader(open(self.source_csv, 'rb')):
             uid = "%s-%s" % (r['FILING_ID'], r['AMEND_ID'])
             formkey = "%s-%s" % (r['FORM_TYPE'], r['LINE_ITEM'])
@@ -93,7 +94,7 @@ class Command(BaseCommand):
                     ("outstanding_debts", "\N")
                 ))
                 grouped[uid][field] = self.safeamt(r['AMOUNT_A'])
-        print "-- Writing regrouped data to filesystem"
+        self.log("  Writing to filesystem")
         out = csv.writer(open(self.target_csv, "wb"))
         outheaders = (
             "filing_id_raw",
