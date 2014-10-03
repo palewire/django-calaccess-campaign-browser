@@ -34,13 +34,18 @@ class FilerListView(generic.ListView):
                 'name', 'filer_id_raw', 'xref_filer_id'
             ])
             qs = qs.filter(query)
+        if ('p' in self.request.GET) and self.request.GET['p'].strip():
+            qs = qs.filter(party=self.request.GET['p'])
         return qs
 
     def get_context_data(self, **kwargs):
         context = super(FilerListView, self).get_context_data(**kwargs)
         if ('q' in self.request.GET) and self.request.GET['q'].strip():
             context['query_string'] = self.request.GET['q']
+        if ('p' in self.request.GET) and self.request.GET['p'].strip():
+            context['party'] = self.request.GET['p']
         context['base_url'] = reverse("filer_list")
+        context['party_list'] = sorted(Filer.PARTY_CHOICES, key=lambda x:x[1])
         return context
 
 
