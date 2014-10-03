@@ -1,24 +1,26 @@
 from django.db import connection
-from django.core.management.base import BaseCommand
+from calaccess_campaign_browser import models
+from calaccess_campaign_browser.management.commands import CalAccessCommand
 
 
-class Command(BaseCommand):
+class Command(CalAccessCommand):
 
     def handle(self, *args, **options):
-        c = connection.cursor()
-        print "Dropping campaign browser database tables"
-        sql = """
-            BEGIN;
-            DROP TABLE IF EXISTS `calaccess_campaign_browser_contribution`;
-            DROP TABLE IF EXISTS `calaccess_campaign_browser_expenditure`;
-            DROP TABLE IF EXISTS `calaccess_campaign_browser_summary`;
-            DROP TABLE IF EXISTS `calaccess_campaign_browser_filing`;
-            DROP TABLE IF EXISTS `calaccess_campaign_browser_filingperiod`;
-            DROP TABLE IF EXISTS `calaccess_campaign_browser_cycle`;
-            DROP TABLE IF EXISTS `calaccess_campaign_browser_committee`;
-            DROP TABLE IF EXISTS `calaccess_campaign_browser_stats`;
-            DROP TABLE IF EXISTS `calaccess_campaign_browser_filer`;
-            COMMIT;
-        """
-        c.execute(sql)
-
+        self.cursor = connection.cursor()
+        self.header("Dropping CAL-ACCESS campaign browser tables")
+        model_list = [
+            models.Contribution,
+            models.Expenditure,
+            models.Summary,
+            models.Filing,
+            models.FilingPeriod,
+            models.Cycle,
+            models.Committee,
+            models.Filer,
+        ]
+        self.cursor.execute("""SET @OLD_SQL_NOTES=@@SQL_NOTES, SQL_NOTES=0;""")
+        sql = """DROP TABLE IF EXISTS `%s`;"""
+        for m in model_list:
+            self.log(" %s" % m.__name__)
+            self.cursor.execute(sql % m._meta.db_table)
+        self.cursor.execute("""SET SQL_NOTES=@OLD_SQL_NOTES;""")
