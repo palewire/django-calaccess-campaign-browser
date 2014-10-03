@@ -13,6 +13,7 @@
             <tr>
                 <th>ID</th>
                 <th>Type</th>
+                <th>Party</th>
                 <th class="right">Contributions</th>
                 <th class="right">Expenditures</th>
                 <th>CAL-ACCESS</th>
@@ -20,6 +21,7 @@
             <tr>
                 <td>{{ committee.filer_id_raw }}</td>
                 <td>{{ committee.get_committee_type_display }}</td>
+                <td>{{ committee.filer.get_party_display }}</td>
                 <td class="right">${{ committee.total_contributions|default_if_none:0|floatformat:0|intcomma }}</td>
                 <td class="right">${{ committee.total_expenditures|default_if_none:0|floatformat:0|intcomma }}</td>
                 <td>
