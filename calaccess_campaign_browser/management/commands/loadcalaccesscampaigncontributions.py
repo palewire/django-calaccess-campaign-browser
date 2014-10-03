@@ -5,13 +5,14 @@ import tempfile
 from django.db import connection
 from calaccess_raw.models import RcptCd
 from calaccess_raw import get_download_directory
-from django.core.management.base import BaseCommand
+from calaccess_campaign_browser.management.commands import CalAccessCommand
 from calaccess_campaign_browser.models import Contribution, Filing, Committee
 
 
-class Command(BaseCommand):
+class Command(CalAccessCommand):
 
     def handle(self, *args, **options):
+        self.header("Loading contributions")
         self.data_dir = os.path.join(get_download_directory(), 'csv')
         self.source_csv = os.path.join(self.data_dir, 'rcpt_cd.csv')
         self.tmp_csv = tempfile.NamedTemporaryFile().name
@@ -23,9 +24,8 @@ class Command(BaseCommand):
         self.load_contributions()
 
     def transform_csv(self):
-        print "- Marking duplicates"
-
-        print "-- Outputing CSV dump sorted by unique identifier"
+        self.log(" Marking duplicates")
+        self.log("  Dumping CSV sorted by unique identifier")
         c = connection.cursor()
         sql = """
         SELECT
@@ -172,7 +172,7 @@ class Command(BaseCommand):
         OUTHEADERS = copy.copy(INHEADERS)
         OUTHEADERS.append("IS_DUPLICATE")
 
-        print "-- Marking duplicates in a new CSV"
+        self.log("  Marking duplicates in a new CSV")
         with open(self.tmp_csv,'r') as fin:
             fout = csv.DictWriter(
                 open(self.target_csv, 'wb'),
@@ -194,7 +194,7 @@ class Command(BaseCommand):
                     continue
 
     def load_contributions(self):
-        print "- Loading contributions"
+        self.log(" Loading CSV")
         c = connection.cursor()
         sql = """
         CREATE TABLE `RCPT_CD_TMP` (
@@ -457,4 +457,4 @@ class Command(BaseCommand):
             committee_model=Committee._meta.db_table,
         )
         c.execute(sql)
-        c.execute("DROP TABLE RCPT_CD_TMP")
+        c.execute("DROP TABLE RCPT_CD_TMP;")

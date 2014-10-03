@@ -182,7 +182,7 @@
 <div class="row">
     <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
         <h3>
-              <a href="{% url 'committee_contribution_list' committee.pk 1 %}">Contributions </a>
+              <a href="{% url 'committee_contribution_list' committee.pk 1 %}">Contributions received</a>
               <div class="btn-group">
                   <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown">
                     Download data <span class="caret"></span>
@@ -231,6 +231,40 @@
 </div>
 {% endif %}
 
+{% if contribs_out_list %}
+<div class="row">
+    <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
+        <h3>Contributions made</h3>
+        <p>Top 25 by amount</p>
+        <table class="table table-bordered table-hover">
+          <thead>
+            <tr>
+                <th>Date</th>
+                <th>Name</th>
+                <th class="right">Amount</th>
+            </tr>
+          </thead>
+          <tbody>
+              {% for obj in contribs_out_list %}
+                <tr>
+                    <td>{{ obj.date_received|date:"Y-m-d" }}</td>
+                    <td>
+                    <a href="{{ obj.committee.get_absolute_url }}">
+                        {{ obj.committee.short_name }}
+                    </a>
+                    </td>
+                    <td class="right">
+                        <a href="{{ obj.get_absolute_url }}">
+                            ${{ obj.amount | intcomma }}
+                        </a>
+                    </td>
+                </tr>
+              {% endfor %}
+          </tbody>
+        </table>
+    </div>
+</div>
+{% endif %}
 
 {% if expenditure_set_short %}
 <div class="row">
