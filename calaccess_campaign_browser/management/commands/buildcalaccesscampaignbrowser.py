@@ -1,8 +1,8 @@
 from django.core.management import call_command
-from django.core.management.base import BaseCommand
+from calaccess_campaign_browser.management.commands import CalAccessCommand
 
 
-class Command(BaseCommand):
+class Command(CalAccessCommand):
     help = 'Load data from the raw source files into consolidated tables'
 
     def handle(self, *args, **options):
@@ -12,3 +12,4 @@ class Command(BaseCommand):
         call_command("loadcalaccesscampaignsummaries")
         call_command("loadcalaccesscampaigncontributions")
         call_command("loadcalaccesscampaignexpenditures")
+        self.success("Done!")

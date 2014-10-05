@@ -1,11 +1,11 @@
 from django.db import connection
-from django.core.management.base import BaseCommand
+from calaccess_campaign_browser.management.commands import CalAccessCommand
 
 
-class Command(BaseCommand):
+class Command(CalAccessCommand):
 
     def handle(self, *args, **options):
-        print "- Loading expenditures"
+        self.header("Loading expenditures")
         c = connection.cursor()
         sql = """
         INSERT INTO calaccess_campaign_browser_expenditure (
