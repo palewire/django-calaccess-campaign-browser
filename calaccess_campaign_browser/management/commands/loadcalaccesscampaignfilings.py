@@ -116,16 +116,15 @@ class Command(CalAccessCommand):
         self.log(" Marking duplicates")
         c = connection.cursor()
 
-        # Mark all recurring filing ids as duplicates
-        sql = """CREATE TABLE tmp_filing_dupes (filing_id_raw int);"""
-        c.execute(sql)
-
         sql = """
-        INSERT INTO tmp_filing_dupes (filing_id_raw)
-        SELECT filing_id_raw
-        FROM calaccess_campaign_browser_filing
-        GROUP BY 1
-        HAVING COUNT(*) > 1;
+        CREATE TEMPORARY TABLE tmp_filing_dupes (
+            index(`filing_id_raw`)
+        ) AS (
+            SELECT filing_id_raw
+            FROM calaccess_campaign_browser_filing
+            GROUP BY 1
+            HAVING COUNT(*) > 1
+        );
         """
         c.execute(sql)
 
@@ -142,19 +141,15 @@ class Command(CalAccessCommand):
 
         # Unmark all those with the maximum id number among their set
         sql = """
-        CREATE TABLE tmp_filing_max_dupes (
-            filing_id_raw int,
-            max_id int
+        CREATE TEMPORARY TABLE tmp_filing_max_dupes (
+            index(`filing_id_raw`),
+            index(`max_id`)
+        ) AS (
+            SELECT f.`filing_id_raw`, MAX(`amend_id`) as max_id
+            FROM calaccess_campaign_browser_filing as f
+            WHERE is_duplicate = true
+            GROUP BY 1
         );
-        """
-        c.execute(sql)
-
-        sql = """
-        INSERT INTO tmp_filing_max_dupes (filing_id_raw, max_id)
-        SELECT f.`filing_id_raw`, MAX(`amend_id`) as max_id
-        FROM calaccess_campaign_browser_filing as f
-        WHERE is_duplicate = true
-        GROUP BY 1
         """
         c.execute(sql)
 
