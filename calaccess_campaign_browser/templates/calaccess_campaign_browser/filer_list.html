@@ -16,6 +16,12 @@
             <input type="text" class="form-control"
                 id="q" name="q"
                 {% if query_string %}value="{{ query_string }}"{% else %}placeholder="Search"{% endif %}>
+            <select name="t" class="form-control">
+                <option value="">All types</option>
+                {% for db, display in type_list %}
+                <option value="{{ db }}" {% if type == db %}SELECTED{% endif %}>{{ display }}</option>
+                {% endfor %}
+            </select>
             <select name="p" class="form-control">
                 <option value="">All parties</option>
                 {% for db, display in party_list %}

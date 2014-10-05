@@ -23,13 +23,13 @@ class Filer(AllCapsNameMixin):
         null=True,
         db_index=True
     )
-    FILER_TYPE_OPTIONS = (
+    FILER_TYPE_CHOICES = (
         ('pac', 'PAC'),
         ('cand', 'Candidate'),
     )
     filer_type = models.CharField(
         max_length=10,
-        choices=FILER_TYPE_OPTIONS
+        choices=FILER_TYPE_CHOICES
     )
     PARTY_CHOICES = (
         ('16013', 'Americans Elect'),

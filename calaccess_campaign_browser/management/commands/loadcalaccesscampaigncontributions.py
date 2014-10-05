@@ -20,13 +20,17 @@ class Command(CalAccessCommand):
             self.data_dir,
             'rcpt_cd_transformed.csv'
         )
+        self.cursor = connection.cursor()
+        # Ignore MySQL "note" warnings so this can be run with DEBUG=True
+        self.cursor.execute("""SET @OLD_SQL_NOTES=@@SQL_NOTES, SQL_NOTES=0;""")
         self.transform_csv()
         self.load_contributions()
+        # Revert database to default "note" warning behavior
+        self.cursor.execute("""SET SQL_NOTES=@OLD_SQL_NOTES;""")
 
     def transform_csv(self):
         self.log(" Marking duplicates")
         self.log("  Dumping CSV sorted by unique identifier")
-        c = connection.cursor()
         sql = """
         SELECT
             `FILING_ID`,
@@ -102,7 +106,7 @@ class Command(CalAccessCommand):
             raw_model=RcptCd._meta.db_table,
             tmp_csv=self.tmp_csv,
         )
-        c.execute(sql)
+        self.cursor.execute(sql)
 
         INHEADERS = [
             "FILING_ID",
@@ -195,9 +199,9 @@ class Command(CalAccessCommand):
 
     def load_contributions(self):
         self.log(" Loading CSV")
-        c = connection.cursor()
+        self.cursor.execute("DROP TABLE IF EXISTS TMP_RCPT_CD;")
         sql = """
-        CREATE TABLE `RCPT_CD_TMP` (
+        CREATE TABLE `TMP_RCPT_CD` (
           `AMEND_ID` int(11),
           `AMOUNT` decimal(14,2),
           `BAKREF_TID` varchar(20),
@@ -270,11 +274,11 @@ class Command(CalAccessCommand):
           `IS_DUPLICATE` bool
         )
         """
-        c.execute(sql)
+        self.cursor.execute(sql)
 
         sql = """
             LOAD DATA LOCAL INFILE '%s'
-            INTO TABLE RCPT_CD_TMP
+            INTO TABLE TMP_RCPT_CD
             FIELDS TERMINATED BY ','
             OPTIONALLY ENCLOSED BY '"'
             LINES TERMINATED BY '\\n'
@@ -347,7 +351,8 @@ class Command(CalAccessCommand):
         """ % (
             self.target_csv,
         )
-        c.execute(sql)
+        self.cursor.execute(sql)
+
         sql = """
             INSERT INTO %(contribs_model)s (
                 cycle_id,
@@ -453,8 +458,8 @@ class Command(CalAccessCommand):
         """ % dict(
             contribs_model=Contribution._meta.db_table,
             filing_model=Filing._meta.db_table,
-            raw_model=RcptCd._meta.db_table + "_TMP",
+            raw_model="TMP_RCPT_CD",
             committee_model=Committee._meta.db_table,
         )
-        c.execute(sql)
-        c.execute("DROP TABLE RCPT_CD_TMP;")
+        self.cursor.execute(sql)
+        self.cursor.execute("DROP TABLE TMP_RCPT_CD;")
