@@ -67,9 +67,11 @@ class CommitteeAdmin(BaseAdmin):
         "name",
         "filer",
         "committee_type",
+        "party",
     )
     list_filter = (
         "committee_type",
+        "party",
     )
     search_fields = (
         "name",

@@ -142,7 +142,9 @@ class Command(CalAccessCommand):
         INNER JOIN tmp_max_filers_with_party as max
         ON fn.`id` = max.`max_id`
         WHERE fn.`FILER_TYPE` = 'CANDIDATE/OFFICEHOLDER'
-        """ % (models.Filer._meta.db_table,)
+        """ % (
+            models.Filer._meta.db_table,
+        )
 
         self.conn.execute(sql)
 
@@ -202,14 +204,16 @@ class Command(CalAccessCommand):
             filer_id_raw,
             xref_filer_id,
             name,
-            committee_type
+            committee_type,
+            party
         )
         SELECT
             tmp_cand2cmte.`candidate_filer_pk` as filer_id,
             distinct_filers.`filer_id` as filer_id_raw,
             distinct_filers.`xref_filer_id` as xref_filer_id,
             distinct_filers.`name` as name,
-            'cand' as committee_type
+            'cand' as committee_type,
+            distinct_filers.`party` as party
         FROM tmp_cand2cmte
         INNER JOIN (
             SELECT
@@ -221,10 +225,11 @@ class Command(CalAccessCommand):
                     ),
                     '  ',
                     ' '
-                ) as name
+                ) as name,
+                max.`party`
             FROM FILERNAME_CD
-            INNER JOIN tmp_max_filers
-            ON FILERNAME_CD.`id` = tmp_max_filers.`max_id`
+            INNER JOIN tmp_max_filers_with_party as max
+            ON FILERNAME_CD.`id` = max.`max_id`
         ) as distinct_filers
         ON tmp_cand2cmte.`committee_filer_id` = distinct_filers.`filer_id`;
         """ % (models.Committee._meta.db_table,)
@@ -330,14 +335,16 @@ class Command(CalAccessCommand):
                 filer_id_raw,
                 xref_filer_id,
                 name,
-                committee_type
+                committee_type,
+                party
             )
             SELECT
                 id,
                 filer_id_raw,
                 xref_filer_id,
                 `name`,
-                filer_type
+                filer_type,
+                party
             FROM %(filer_model)s
             WHERE filer_type = 'pac'
         """ % dict(

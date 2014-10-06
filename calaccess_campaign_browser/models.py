@@ -122,6 +122,26 @@ class Committee(AllCapsNameMixin):
         choices=CMTE_TYPE_OPTIONS,
         db_index=True,
     )
+    PARTY_CHOICES = (
+        ('16013', 'Americans Elect'),
+        ('16012', 'No party preference'),
+        ('16011', 'Unknown'),
+        ('16010', 'Natural law'),
+        ('16009', 'Non-partisan'),
+        ('16008', 'Libertarian'),
+        ('16007', 'Independent'),
+        ('16006', 'Peace and Freedom'),
+        ('16005', 'American Independent'),
+        ('16004', 'Reform'),
+        ('16003', 'Green'),
+        ('16002', 'Republican'),
+        ('16001', 'Democratic'),
+        ('0', 'N/A'),
+    )
+    party = models.CharField(
+        max_length=255,
+        choices=PARTY_CHOICES
+    )
 
     class Meta:
         ordering = ("name",)
