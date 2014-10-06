@@ -55,13 +55,19 @@ class Command(CalAccessCommand):
         # Create a table with the party affiliation recorded by each filer.
         # This requires brutal removal of duplicates as above.
         sql = """
-        CREATE TEMPORARY TABLE tmp_max_filer_party (
+        CREATE TEMPORARY TABLE tmp_max_filer_metadata (
             INDEX(`filer_id`),
-            INDEX(`party`)
+            INDEX(`party`),
+            INDEX(`race`),
+            INDEX(`category`),
+            INDEX(`category_type`)
         ) AS (
             SELECT
                 ft.`FILER_ID` as `filer_id`,
-                ft.`PARTY_CD` as `party`
+                ft.`PARTY_CD` as `party`,
+                ft.`RACE` as `race`,
+                ft.`CATEGORY` as `category`,
+                ft.`CATEGORY_TYPE` as `category_type`
             FROM FILER_TO_FILER_TYPE_CD as ft
             INNER JOIN (
                 SELECT FILER_ID, MAX(`id`) as `id`
@@ -75,18 +81,24 @@ class Command(CalAccessCommand):
 
         # Create table that combines the two
         sql = """
-        CREATE TEMPORARY TABLE tmp_max_filers_with_party (
+        CREATE TEMPORARY TABLE tmp_max_filers_with_metadata (
             INDEX(`filer_id`),
             INDEX(`max_id`),
-            INDEX(`party`)
+            INDEX(`party`),
+            INDEX(`race`),
+            INDEX(`category`),
+            INDEX(`category_type`)
         ) AS (
             SELECT
                 max.`filer_id` as `filer_id`,
                 max.`max_id` as `max_id`,
-                party.party as `party`
+                metadata.party as `party`,
+                metadata.race as `race`,
+                metadata.category as `category`,
+                metadata.category_type as `category_type`
             FROM tmp_max_filers as max
-            INNER JOIN tmp_max_filer_party as party
-            ON max.`filer_id` = party.`filer_id`
+            INNER JOIN tmp_max_filer_metadata as metadata
+            ON max.`filer_id` = metadata.`filer_id`
         );
         """
         self.conn.execute(sql)
@@ -98,8 +110,8 @@ class Command(CalAccessCommand):
         self.log(" Dropping temporary tables")
         table_list = [
             "tmp_max_filers",
-            "tmp_max_filer_party",
-            "tmp_max_filers_with_party",
+            "tmp_max_filer_metadata",
+            "tmp_max_filers_with_metadata",
             "tmp_cand2cmte",
             "tmp_other_filers",
             "tmp_max_other_filers",
@@ -137,9 +149,9 @@ class Command(CalAccessCommand):
                 '  ',
                 ' '
             ) as name,
-            `max`.`party`
+            max.`party`
         FROM FILERNAME_CD as fn
-        INNER JOIN tmp_max_filers_with_party as max
+        INNER JOIN tmp_max_filers_with_metadata as max
         ON fn.`id` = max.`max_id`
         WHERE fn.`FILER_TYPE` = 'CANDIDATE/OFFICEHOLDER'
         """ % (
@@ -205,7 +217,10 @@ class Command(CalAccessCommand):
             xref_filer_id,
             name,
             committee_type,
-            party
+            party,
+            race,
+            category,
+            category_type
         )
         SELECT
             tmp_cand2cmte.`candidate_filer_pk` as filer_id,
@@ -213,12 +228,15 @@ class Command(CalAccessCommand):
             distinct_filers.`xref_filer_id` as xref_filer_id,
             distinct_filers.`name` as name,
             'cand' as committee_type,
-            distinct_filers.`party` as party
+            distinct_filers.`party` as party,
+            distinct_filers.`race` as race,
+            distinct_filers.`category` as category,
+            distinct_filers.`category_type` as category_type
         FROM tmp_cand2cmte
         INNER JOIN (
             SELECT
-                FILERNAME_CD.`FILER_ID` as filer_id,
-                FILERNAME_CD.`XREF_FILER_ID` as xref_filer_id,
+                fn.`FILER_ID` as filer_id,
+                fn.`XREF_FILER_ID` as xref_filer_id,
                 REPLACE(
                     TRIM(
                         CONCAT(`NAMT`, " ", `NAMF`, " ", `NAML`, " ", `NAMS`)
@@ -226,10 +244,13 @@ class Command(CalAccessCommand):
                     '  ',
                     ' '
                 ) as name,
-                max.`party`
-            FROM FILERNAME_CD
-            INNER JOIN tmp_max_filers_with_party as max
-            ON FILERNAME_CD.`id` = max.`max_id`
+                max.`party`,
+                max.`race`,
+                max.`category`,
+                max.`category_type`
+            FROM FILERNAME_CD as fn
+            INNER JOIN tmp_max_filers_with_metadata as max
+            ON fn.`id` = max.`max_id`
         ) as distinct_filers
         ON tmp_cand2cmte.`committee_filer_id` = distinct_filers.`filer_id`;
         """ % (models.Committee._meta.db_table,)
@@ -312,12 +333,12 @@ class Command(CalAccessCommand):
                 '  ',
                 ' '
             ) as name,
-            tmp_max_filer_party.`party`
+            tmp_max_filer_metadata.`party`
         FROM FILERNAME_CD as fn
         INNER JOIN tmp_max_other_filers as max
         ON fn.`id` = max.`max_id`
-        LEFT OUTER JOIN tmp_max_filer_party
-        ON fn.`FILER_ID` = tmp_max_filer_party.`filer_id`
+        LEFT OUTER JOIN tmp_max_filer_metadata
+        ON fn.`FILER_ID` = tmp_max_filer_metadata.`filer_id`
         WHERE fn.`FILER_TYPE` = 'RECIPIENT COMMITTEE';
         """ % (models.Filer._meta.db_table,)
 
@@ -336,16 +357,24 @@ class Command(CalAccessCommand):
                 xref_filer_id,
                 name,
                 committee_type,
-                party
+                party,
+                race,
+                category,
+                category_type
             )
             SELECT
-                id,
-                filer_id_raw,
-                xref_filer_id,
-                `name`,
-                filer_type,
-                party
+                %(filer_model)s.`id`,
+                %(filer_model)s.`filer_id_raw`,
+                %(filer_model)s.`xref_filer_id`,
+                %(filer_model)s.`name`,
+                %(filer_model)s.`filer_type`,
+                %(filer_model)s.`party`,
+                metadata.`race`,
+                metadata.`category`,
+                metadata.`category_type`
             FROM %(filer_model)s
+            LEFT OUTER JOIN tmp_max_filer_metadata as metadata
+            ON %(filer_model)s.`filer_id_raw` = metadata.`filer_id`
             WHERE filer_type = 'pac'
         """ % dict(
             committee_model=models.Committee._meta.db_table,
