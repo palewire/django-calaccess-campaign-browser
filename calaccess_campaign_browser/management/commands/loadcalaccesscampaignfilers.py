@@ -57,17 +57,15 @@ class Command(CalAccessCommand):
         sql = """
         CREATE TEMPORARY TABLE tmp_max_filer_metadata (
             INDEX(`filer_id`),
-            INDEX(`party`),
-            INDEX(`race`),
-            INDEX(`category`),
-            INDEX(`category_type`)
+            INDEX(`party`)
         ) AS (
             SELECT
                 ft.`FILER_ID` as `filer_id`,
                 ft.`PARTY_CD` as `party`,
                 ft.`RACE` as `race`,
                 ft.`CATEGORY` as `category`,
-                ft.`CATEGORY_TYPE` as `category_type`
+                ft.`CATEGORY_TYPE` as `category_type`,
+                ft.`EFFECT_DT` as `effective_date`
             FROM FILER_TO_FILER_TYPE_CD as ft
             INNER JOIN (
                 SELECT FILER_ID, MAX(`id`) as `id`
@@ -83,11 +81,7 @@ class Command(CalAccessCommand):
         sql = """
         CREATE TEMPORARY TABLE tmp_max_filers_with_metadata (
             INDEX(`filer_id`),
-            INDEX(`max_id`),
-            INDEX(`party`),
-            INDEX(`race`),
-            INDEX(`category`),
-            INDEX(`category_type`)
+            INDEX(`max_id`)
         ) AS (
             SELECT
                 max.`filer_id` as `filer_id`,
@@ -95,7 +89,8 @@ class Command(CalAccessCommand):
                 metadata.party as `party`,
                 metadata.race as `race`,
                 metadata.category as `category`,
-                metadata.category_type as `category_type`
+                metadata.category_type as `category_type`,
+                metadata.effective_date as `effective_date`
             FROM tmp_max_filers as max
             INNER JOIN tmp_max_filer_metadata as metadata
             ON max.`filer_id` = metadata.`filer_id`
@@ -220,7 +215,8 @@ class Command(CalAccessCommand):
             party,
             race,
             category,
-            category_type
+            category_type,
+            effective_date
         )
         SELECT
             tmp_cand2cmte.`candidate_filer_pk` as filer_id,
@@ -231,7 +227,8 @@ class Command(CalAccessCommand):
             distinct_filers.`party` as party,
             distinct_filers.`race` as race,
             distinct_filers.`category` as category,
-            distinct_filers.`category_type` as category_type
+            distinct_filers.`category_type` as category_type,
+            distinct_filers.`effective_date` as effective_date
         FROM tmp_cand2cmte
         INNER JOIN (
             SELECT
@@ -247,7 +244,8 @@ class Command(CalAccessCommand):
                 max.`party`,
                 max.`race`,
                 max.`category`,
-                max.`category_type`
+                max.`category_type`,
+                max.`effective_date`
             FROM FILERNAME_CD as fn
             INNER JOIN tmp_max_filers_with_metadata as max
             ON fn.`id` = max.`max_id`
@@ -360,7 +358,8 @@ class Command(CalAccessCommand):
                 party,
                 race,
                 category,
-                category_type
+                category_type,
+                effective_date
             )
             SELECT
                 %(filer_model)s.`id`,
@@ -371,7 +370,8 @@ class Command(CalAccessCommand):
                 %(filer_model)s.`party`,
                 metadata.`race`,
                 metadata.`category`,
-                metadata.`category_type`
+                metadata.`category_type`,
+                metadata.`effective_date`
             FROM %(filer_model)s
             LEFT OUTER JOIN tmp_max_filer_metadata as metadata
             ON %(filer_model)s.`filer_id_raw` = metadata.`filer_id`

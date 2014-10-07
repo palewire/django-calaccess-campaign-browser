@@ -336,6 +336,7 @@ class Committee(AllCapsNameMixin):
         null=True,
         choices=CATEGORY_TYPE_CHOICES
     )
+    effective_date = models.DateField(null=True)
 
     class Meta:
         ordering = ("name",)
@@ -346,6 +347,10 @@ class Committee(AllCapsNameMixin):
     def get_calaccess_url(self):
         url = "http://cal-access.ss.ca.gov/Campaign/Committees/Detail.aspx?id="
         return url + str(self.filer_id_raw) 
+
+    @property
+    def filer_short_name(self):
+        return self.filer.short_name
 
     @property
     def real_filings(self):

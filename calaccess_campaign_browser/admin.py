@@ -64,13 +64,11 @@ class FilerAdmin(BaseAdmin):
 class CommitteeAdmin(BaseAdmin):
     list_display = (
         "filer_id_raw",
-        "name",
-        "filer",
+        "short_name",
+        "filer_short_name",
         "committee_type",
-        "category",
-        "category_type",
         "party",
-        "race",
+        "effective_date",
     )
     list_filter = (
         "committee_type",
@@ -84,6 +82,7 @@ class CommitteeAdmin(BaseAdmin):
         "filer_id_raw",
         "xref_filer_id"
     )
+    date_hierarchy = "effective_date"
 
 
 class CycleAdmin(BaseAdmin):
