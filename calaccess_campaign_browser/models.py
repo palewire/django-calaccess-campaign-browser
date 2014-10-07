@@ -144,7 +144,6 @@ class Committee(AllCapsNameMixin):
     )
     COMMITTEE_STATUS_CHOICES = (
         ('', 'N/A'),
-        ('A', 'Active'),
         ('N', 'Inactive'),
         ('P', 'Pending'),
         ('R', 'Revoked'),
