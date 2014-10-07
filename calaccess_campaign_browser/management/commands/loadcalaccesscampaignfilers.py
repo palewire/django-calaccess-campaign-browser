@@ -83,16 +83,9 @@ class Command(CalAccessCommand):
             SELECT
                 ft.`FILER_ID` as `filer_id`,
                 ft.`PARTY_CD` as `party`,
-                ft.`RACE` as `race`,
-                ft.`CATEGORY` as `category`,
-                ft.`CATEGORY_TYPE` as `category_type`,
+                ft.`CATEGORY_TYPE` as `level_of_government`,
                 ft.`EFFECT_DT` as `effective_date`,
-                ft.`ACTIVE` as `status`,
-                ft.`ELECTION_TYPE` as `election_type`,
-                CASE
-                    WHEN ft.`SESSION_ID` % 2 = 0 THEN ft.`SESSION_ID`
-                    ELSE ft.`SESSION_ID` + 1
-                END as cycle
+                ft.`ACTIVE` as `status`
             FROM FILER_TO_FILER_TYPE_CD as ft
             INNER JOIN (
                 SELECT FILER_ID, MAX(`id`) as `id`
@@ -114,13 +107,9 @@ class Command(CalAccessCommand):
                 max.`filer_id` as `filer_id`,
                 max.`max_id` as `max_id`,
                 metadata.party as `party`,
-                metadata.race as `race`,
-                metadata.category as `category`,
-                metadata.category_type as `category_type`,
+                metadata.level_of_government as `level_of_government`,
                 metadata.effective_date as `effective_date`,
-                metadata.status as `status`,
-                metadata.election_type as `election_type`,
-                metadata.cycle as `cycle`
+                metadata.status as `status`
             FROM tmp_max_filers as max
             INNER JOIN tmp_max_filer_metadata as metadata
             ON max.`filer_id` = metadata.`filer_id`
@@ -243,13 +232,9 @@ class Command(CalAccessCommand):
             name,
             committee_type,
             party,
-            race,
-            category,
-            category_type,
+            level_of_government,
             effective_date,
-            status,
-            election_type,
-            cycle_id
+            status
         )
         SELECT
             tmp_cand2cmte.`candidate_filer_pk` as filer_id,
@@ -258,13 +243,9 @@ class Command(CalAccessCommand):
             distinct_filers.`name` as name,
             'cand' as committee_type,
             distinct_filers.`party` as party,
-            distinct_filers.`race` as race,
-            distinct_filers.`category` as category,
-            distinct_filers.`category_type` as category_type,
+            distinct_filers.`level_of_government` as level_of_government,
             distinct_filers.`effective_date` as effective_date,
-            distinct_filers.`status` as status,
-            distinct_filers.`election_type` as election_type,
-            distinct_filers.`cycle` as cycle
+            distinct_filers.`status` as status
         FROM tmp_cand2cmte
         INNER JOIN (
             SELECT
@@ -278,13 +259,9 @@ class Command(CalAccessCommand):
                     ' '
                 ) as name,
                 max.`party`,
-                max.`race`,
-                max.`category`,
-                max.`category_type`,
+                max.`level_of_government`,
                 max.`effective_date`,
-                max.`status`,
-                max.`election_type`,
-                max.`cycle`
+                max.`status`
             FROM FILERNAME_CD as fn
             INNER JOIN tmp_max_filers_with_metadata as max
             ON fn.`id` = max.`max_id`
@@ -395,13 +372,9 @@ class Command(CalAccessCommand):
                 name,
                 committee_type,
                 party,
-                race,
-                category,
-                category_type,
+                level_of_government,
                 effective_date,
-                status,
-                election_type,
-                cycle_id
+                status
             )
             SELECT
                 %(filer_model)s.`id`,
@@ -410,13 +383,9 @@ class Command(CalAccessCommand):
                 %(filer_model)s.`name`,
                 %(filer_model)s.`filer_type`,
                 %(filer_model)s.`party`,
-                metadata.`race`,
-                metadata.`category`,
-                metadata.`category_type`,
+                metadata.`level_of_government`,
                 metadata.`effective_date`,
-                metadata.`status`,
-                metadata.`election_type`,
-                metadata.`cycle`
+                metadata.`status`
             FROM %(filer_model)s
             LEFT OUTER JOIN tmp_max_filer_metadata as metadata
             ON %(filer_model)s.`filer_id_raw` = metadata.`filer_id`
