@@ -156,6 +156,20 @@ class Committee(AllCapsNameMixin):
         null=True,
         choices=COMMITTEE_STATUS_CHOICES
     )
+    ELECTION_TYPE_CHOICES = (
+        ('0', 'N/A'),
+        ('3002', 'Primary'),
+        ('3001', 'General'),
+        ('3006', 'Special runoff'),
+        ('3005', 'Officeholder'),
+        ('3004', 'Special election'),
+        ('3003', 'Recall'),
+    )
+    election_type = models.CharField(
+        max_length=255,
+        null=True,
+        choices=ELECTION_TYPE_CHOICES
+    )
     RACE_CHOICES = (
         ('0', 'N/A'),
         ('30059', 'APPELLATE COURT JUDGE'),
@@ -321,13 +335,13 @@ class Committee(AllCapsNameMixin):
         choices=CATEGORY_CHOICES
     )
     CATEGORY_TYPE_CHOICES = (
-        ('40501', 'LOCAL'),
-        ('40502', 'STATE'),
-        ('40503', 'COUNTY'),
-        ('40504', 'MULTI-COUNTY'),
-        ('40505', 'CITY'),
-        ('40506', 'FEDERAL'),
-        ('40507', 'SUPERIOR COURT JUDGE'),
+        ('40501', 'Local'),
+        ('40502', 'State'),
+        ('40503', 'County'),
+        ('40504', 'Multi-county'),
+        ('40505', 'City'),
+        ('40506', 'Federal'),
+        ('40507', 'Superior court judge'),
         ('0', 'N/A'),
     )
     category_type = models.CharField(
@@ -336,6 +350,7 @@ class Committee(AllCapsNameMixin):
         choices=CATEGORY_TYPE_CHOICES
     )
     effective_date = models.DateField(null=True)
+    cycle = models.ForeignKey('Cycle')
 
     class Meta:
         ordering = ("name",)
@@ -429,7 +444,7 @@ class Committee(AllCapsNameMixin):
 
 
 class Cycle(BaseModel):
-    name = models.IntegerField(db_index=True)
+    name = models.IntegerField(db_index=True, primary_key=True)
 
     class Meta:
         ordering = ("-name",)

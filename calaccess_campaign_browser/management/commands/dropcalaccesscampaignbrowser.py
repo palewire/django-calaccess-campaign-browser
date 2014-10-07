@@ -20,9 +20,9 @@ class Command(CalAccessCommand):
             models.Summary,
             models.Filing,
             models.FilingPeriod,
-            models.Cycle,
             models.Committee,
             models.Filer,
+            models.Cycle,
         ]
         sql = """DROP TABLE IF EXISTS `%s`;"""
         for m in model_list:

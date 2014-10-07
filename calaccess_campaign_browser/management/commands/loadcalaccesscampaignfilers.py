@@ -15,6 +15,7 @@ class Command(CalAccessCommand):
 
         self.drop_temp_tables()
         self.create_temp_tables()
+        self.load_cycles()
         self.load_candidate_filers()
         self.create_temp_candidate_committee_tables()
         self.load_candidate_committees()
@@ -25,6 +26,26 @@ class Command(CalAccessCommand):
 
         # Revert database to default "note" warning behavior
         self.conn.execute("""SET SQL_NOTES=@OLD_SQL_NOTES;""")
+
+    def load_cycles(self):
+        self.log(" Loading cycles")
+        c = connection.cursor()
+        sql = """
+            INSERT INTO %(cycle_table)s (`name`)
+            SELECT DISTINCT
+                CASE
+                    WHEN `session_id` %% 2 = 0 THEN `session_id`
+                    ELSE `session_id` + 1
+                END as cycle
+            FROM (
+                SELECT `session_id`
+                FROM FILER_TO_FILER_TYPE_CD
+                GROUP BY 1
+                ORDER BY 1 DESC
+            ) as sessions
+        """
+        sql = sql % dict(cycle_table=models.Cycle._meta.db_table)
+        c.execute(sql)
 
     def create_temp_tables(self):
         """
@@ -66,7 +87,12 @@ class Command(CalAccessCommand):
                 ft.`CATEGORY` as `category`,
                 ft.`CATEGORY_TYPE` as `category_type`,
                 ft.`EFFECT_DT` as `effective_date`,
-                ft.`ACTIVE` as `status` 
+                ft.`ACTIVE` as `status`,
+                ft.`ELECTION_TYPE` as `election_type`,
+                CASE
+                    WHEN ft.`SESSION_ID` % 2 = 0 THEN ft.`SESSION_ID`
+                    ELSE ft.`SESSION_ID` + 1
+                END as cycle
             FROM FILER_TO_FILER_TYPE_CD as ft
             INNER JOIN (
                 SELECT FILER_ID, MAX(`id`) as `id`
@@ -92,7 +118,9 @@ class Command(CalAccessCommand):
                 metadata.category as `category`,
                 metadata.category_type as `category_type`,
                 metadata.effective_date as `effective_date`,
-                metadata.status as `status`
+                metadata.status as `status`,
+                metadata.election_type as `election_type`,
+                metadata.cycle as `cycle`
             FROM tmp_max_filers as max
             INNER JOIN tmp_max_filer_metadata as metadata
             ON max.`filer_id` = metadata.`filer_id`
@@ -219,7 +247,9 @@ class Command(CalAccessCommand):
             category,
             category_type,
             effective_date,
-            status
+            status,
+            election_type,
+            cycle_id
         )
         SELECT
             tmp_cand2cmte.`candidate_filer_pk` as filer_id,
@@ -232,7 +262,9 @@ class Command(CalAccessCommand):
             distinct_filers.`category` as category,
             distinct_filers.`category_type` as category_type,
             distinct_filers.`effective_date` as effective_date,
-            distinct_filers.`status` as status
+            distinct_filers.`status` as status,
+            distinct_filers.`election_type` as election_type,
+            distinct_filers.`cycle` as cycle
         FROM tmp_cand2cmte
         INNER JOIN (
             SELECT
@@ -250,7 +282,9 @@ class Command(CalAccessCommand):
                 max.`category`,
                 max.`category_type`,
                 max.`effective_date`,
-                max.`status`
+                max.`status`,
+                max.`election_type`,
+                max.`cycle`
             FROM FILERNAME_CD as fn
             INNER JOIN tmp_max_filers_with_metadata as max
             ON fn.`id` = max.`max_id`
@@ -365,7 +399,9 @@ class Command(CalAccessCommand):
                 category,
                 category_type,
                 effective_date,
-                status
+                status,
+                election_type,
+                cycle_id
             )
             SELECT
                 %(filer_model)s.`id`,
@@ -378,7 +414,9 @@ class Command(CalAccessCommand):
                 metadata.`category`,
                 metadata.`category_type`,
                 metadata.`effective_date`,
-                metadata.`status`
+                metadata.`status`,
+                metadata.`election_type`,
+                metadata.`cycle`
             FROM %(filer_model)s
             LEFT OUTER JOIN tmp_max_filer_metadata as metadata
             ON %(filer_model)s.`filer_id_raw` = metadata.`filer_id`

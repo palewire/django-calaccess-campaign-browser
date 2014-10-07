@@ -11,7 +11,6 @@ class Command(CalAccessCommand):
         """
         self.header("Loading filings")
         self.load_periods()
-        self.load_cycles()
         self.load_filings()
         self.mark_duplicates()
 
@@ -40,27 +39,6 @@ class Command(CalAccessCommand):
         sql = sql % dict(clean_table=FilingPeriod._meta.db_table)
         c.execute(sql)
 
-    def load_cycles(self):
-        self.log(" Loading cycles")
-        c = connection.cursor()
-        sql = """
-            INSERT INTO %(cycle_table)s (`name`)
-            SELECT DISTINCT
-                CASE
-                    WHEN `session_id` %% 2 = 0 THEN `session_id`
-                    ELSE `session_id` + 1
-                END as cycle
-            FROM (
-                SELECT `session_id`
-                FROM FILER_FILINGS_CD
-                WHERE `FORM_ID` IN ('F450', 'F460')
-                GROUP BY 1
-                ORDER BY 1 DESC
-            ) as sessions
-        """
-        sql = sql % dict(cycle_table=Cycle._meta.db_table)
-        c.execute(sql)
-
     def load_filings(self):
         self.log(" Loading form 450 and 460 filings")
         c = connection.cursor()
@@ -79,7 +57,7 @@ class Command(CalAccessCommand):
           is_duplicate
         )
         SELECT
-          cycle.id as cycle_id,
+          cycle.name as cycle_id,
           c.id as committee_id,
           ff.FILING_ID as filing_id_raw,
           ff.form_id as form_type,
