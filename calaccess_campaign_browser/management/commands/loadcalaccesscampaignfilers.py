@@ -42,7 +42,7 @@ class Command(CalAccessCommand):
                 FROM FILER_TO_FILER_TYPE_CD
                 GROUP BY 1
                 ORDER BY 1 DESC
-            ) as sessions
+            ) as sessions;
         """
         sql = sql % dict(cycle_table=models.Cycle._meta.db_table)
         c.execute(sql)
@@ -167,7 +167,7 @@ class Command(CalAccessCommand):
         FROM FILERNAME_CD as fn
         INNER JOIN tmp_max_filers_with_metadata as max
         ON fn.`id` = max.`max_id`
-        WHERE fn.`FILER_TYPE` = 'CANDIDATE/OFFICEHOLDER'
+        WHERE fn.`FILER_TYPE` = 'CANDIDATE/OFFICEHOLDER';
         """ % (
             models.Filer._meta.db_table,
         )
@@ -212,7 +212,7 @@ class Command(CalAccessCommand):
                 AND `FILER_ID_B` IS NOT NULL
             ) as committee_filer_id_a
             ON f.`filer_id_raw` = committee_filer_id_a.`FILER_ID_A`
-            AND f.`filer_id_raw` <> committee_filer_id_a.`FILER_ID_B`
+            AND f.`filer_id_raw` <> committee_filer_id_a.`FILER_ID_B`;
         """ % dict(filer_model=models.Filer._meta.db_table,)
 
         self.conn.execute(sql)
@@ -389,7 +389,7 @@ class Command(CalAccessCommand):
             FROM %(filer_model)s
             LEFT OUTER JOIN tmp_max_filer_metadata as metadata
             ON %(filer_model)s.`filer_id_raw` = metadata.`filer_id`
-            WHERE filer_type = 'pac'
+            WHERE filer_type = 'pac';
         """ % dict(
             committee_model=models.Committee._meta.db_table,
             filer_model=models.Filer._meta.db_table,

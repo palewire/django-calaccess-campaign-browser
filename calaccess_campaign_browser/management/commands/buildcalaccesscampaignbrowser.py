@@ -3,7 +3,7 @@ from calaccess_campaign_browser.management.commands import CalAccessCommand
 
 
 class Command(CalAccessCommand):
-    help = 'Load data from the raw source files into consolidated tables'
+    help = 'Transforms and loads refined data from raw CAL-ACCESS source files'
 
     def handle(self, *args, **options):
         call_command("flushcalaccesscampaignbrowser")

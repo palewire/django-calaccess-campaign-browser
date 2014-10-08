@@ -39,7 +39,7 @@
                 <a href="{{ object.committee.get_absolute_url }}">{{ object.committee.short_name }}</a>
               </td>
               <td>{{ object.form_type }}</td>
-              <td>{{ object.start_date|date:"Y-m-d" }} - {{ object.end_date|date:"Y-m-d" }}</td>
+              <td>{{ object.start_date|date:"Y-m-d" }}-{{ object.end_date|date:"Y-m-d" }}</td>
               {% with object.summary as summary %}
               <td class="right">
                     {{ summary.total_contributions|floatformat:0|intcomma }}
