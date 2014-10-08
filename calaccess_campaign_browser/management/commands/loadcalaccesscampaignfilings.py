@@ -1,15 +1,30 @@
 from django.db import connection
+from optparse import make_option
 from calaccess_campaign_browser.models import Cycle, Filing, FilingPeriod
 from calaccess_campaign_browser.management.commands import CalAccessCommand
 
 
+custom_options = (
+    make_option(
+        "--flush",
+        action="store_true",
+        dest="flush",
+        default=False,
+        help="Flush table before loading data"
+    ),
+)
+
+
 class Command(CalAccessCommand):
+    option_list = CalAccessCommand.option_list + custom_options
 
     def handle(self, *args, **options):
         """
         Loads raw filings into consolidated tables
         """
         self.header("Loading filings")
+        if options['flush']:
+            self.flush()
         self.load_periods()
         self.load_filings()
         self.mark_duplicates()
@@ -34,13 +49,25 @@ class Command(CalAccessCommand):
             FROM FILING_PERIOD_CD as p
             INNER JOIN FILER_FILINGS_CD as ff
             ON p.period_id = ff.period_id
-            WHERE ff.`FORM_ID` IN ('F450', 'F460')
+            WHERE ff.`FORM_ID` IN ('F450', 'F460', 'F497')
         """
         sql = sql % dict(clean_table=FilingPeriod._meta.db_table)
         c.execute(sql)
 
+    def flush(self):
+        self.log(" Flushing filings and filing periods")
+        c = connection.cursor()
+        c.execute("""SET @OLD_SQL_NOTES=@@SQL_NOTES, SQL_NOTES=0;""")
+        c.execute("""SET FOREIGN_KEY_CHECKS = 0;""")
+        sql = """TRUNCATE `%s`;""" % (FilingPeriod._meta.db_table)
+        c.execute(sql)
+        sql = """TRUNCATE `%s`;""" % (Filing._meta.db_table)
+        c.execute(sql)
+        c.execute("""SET SQL_NOTES=@OLD_SQL_NOTES;""")
+        c.execute("""SET FOREIGN_KEY_CHECKS = 1;""")
+
     def load_filings(self):
-        self.log(" Loading form 450 and 460 filings")
+        self.log(" Loading form 450, 460, 497 filings")
         c = connection.cursor()
         sql = """
         INSERT INTO %(filing_table)s (
@@ -85,7 +112,7 @@ class Command(CalAccessCommand):
         ON ff.`filer_id` = c.`filer_id_raw`
         INNER JOIN calaccess_campaign_browser_cycle as cycle
         ON ff.cycle = cycle.name
-        WHERE `FORM_ID` IN ('F450', 'F460')
+        WHERE `FORM_ID` IN ('F450', 'F460', 'F497')
         """
         sql = sql % dict(filing_table=Filing._meta.db_table)
         c.execute(sql)

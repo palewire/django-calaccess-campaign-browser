@@ -300,6 +300,7 @@ class Filing(models.Model):
     filing_id_raw = models.IntegerField('filing ID', db_index=True)
     amend_id = models.IntegerField('amendment', db_index=True)
     FORM_TYPE_CHOICES = (
+        ('F497', 'F497: Late filing'),
         ('F460', 'F460: Quarterly'),
         ('F450', 'F450: Quarterly (Short)'),
     )
