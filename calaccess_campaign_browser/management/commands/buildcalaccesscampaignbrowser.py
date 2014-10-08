@@ -10,6 +10,6 @@ class Command(CalAccessCommand):
         call_command("loadcalaccesscampaignfilers")
         call_command("loadcalaccesscampaignfilings")
         call_command("loadcalaccesscampaignsummaries")
-        #call_command("loadcalaccesscampaigncontributions")
-        #call_command("loadcalaccesscampaignexpenditures")
+        call_command("loadcalaccesscampaigncontributions")
+        call_command("loadcalaccesscampaignexpenditures")
         self.success("Done!")
