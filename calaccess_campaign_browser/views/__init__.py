@@ -87,8 +87,8 @@ class CommitteeDetailView(generic.DetailView):
         context['committee'] = self.object
 
         # Filings
-        filing_qs = Filing.real.filter(
-            committee=self.object,
+        filing_qs = Filing.real.by_committee(
+            self.object,
         ).select_related("cycle", "period").order_by(
             "-end_date", "filing_id_raw", "-amend_id"
         )

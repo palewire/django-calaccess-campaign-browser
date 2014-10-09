@@ -1,6 +1,6 @@
+import managers
 from django.db import models
 from hurry.filesize import size
-from .managers import RealManager
 from django.utils.text import slugify
 from django.core.urlresolvers import reverse
 from django.utils.datastructures import SortedDict
@@ -321,7 +321,7 @@ class Filing(models.Model):
 or was filed unnecessarily. Should be excluded from most analysis."
     )
     objects = models.Manager()
-    real = RealManager()
+    real = managers.RealFilingManager()
 
     def __unicode__(self):
         return unicode(self.filing_id_raw)
@@ -631,7 +631,7 @@ class Contribution(BaseModel):
     intermediary_selfemployed = models.CharField(max_length=1, blank=True)
     intermediary_committee_id = models.CharField(max_length=9, blank=True)
     objects = models.Manager()
-    real = RealManager()
+    real = managers.RealContributionManager()
 
     @property
     def raw(self):
