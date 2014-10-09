@@ -190,11 +190,17 @@
             <td>{{ filing.get_form_type_display }}</td>
             <td>{{ filing.cycle.name }}</td>
             <td>{{ filing.start_date|date:"Y-m-d" }} - {{ filing.end_date|date:"Y-m-d" }}</td>
-            <td class="right">${{ filing.total_contributions|default_if_none:0|floatformat:0|intcomma }}</td>
-            {% with filing.summary as summary %}
-            <td class="right">${{ summary.total_expenditures|default_if_none:0|floatformat:0|intcomma }}</td>
-            <td class="right">${{ summary.outstanding_debts|default_if_none:0|floatformat:0|intcomma }}</td>
-            {% endwith %}
+            <td class="right">
+                ${{ filing.total_contributions|default_if_none:0|floatformat:0|intcomma }}
+            </td>
+            <td class="right">
+                ${{ filing.total_expenditures|default_if_none:0|floatformat:0|intcomma }}
+            </td>
+            <td class="right">
+                {% if filing.summary.outstanding_debts != None %}
+                ${{ filing.summary.outstanding_debts|default_if_none:0|floatformat:0|intcomma }}
+                {% endif %}
+            </td>
             <td class="center">
                 <a target="_blank" href="{{ filing.get_calaccess_pdf_url }}">
                     <i class="fa fa-file-pdf-o"></i>

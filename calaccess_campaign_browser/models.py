@@ -225,38 +225,33 @@ class Committee(AllCapsNameMixin):
 
     @property
     def total_expenditures(self):
-        summaries = [f.summary for f in self.real_filings]
-        summaries = [s for s in summaries if s]
         return sum([
-            s.total_expenditures for s in summaries if s.total_expenditures
+            f.total_expenditures for f in self.real_filings
+                if f.total_expenditures
         ])
 
     @property
     def total_expenditures_by_cycle(self):
         d = {}
         for f in self.real_filings:
-            if not f.summary:
-                continue
-            if not f.summary.total_expenditures:
+            if not f.total_expenditures:
                 continue
             try:
-                d[f.cycle.name] += f.summary.total_expenditures
+                d[f.cycle.name] += f.total_expenditures
             except KeyError:
-                d[f.cycle.name] = f.summary.total_expenditures
+                d[f.cycle.name] = f.total_expenditures
         return sorted(d.items(), key=lambda x:x[0], reverse=True)
 
     @property
     def total_expenditures_by_year(self):
         d = {}
         for f in self.real_filings:
-            if not f.summary:
-                continue
-            if not f.summary.total_expenditures:
+            if not f.total_expenditures:
                 continue
             try:
-                d[f.period.start_date.year] += f.summary.total_expenditures
+                d[f.period.start_date.year] += f.total_expenditures
             except KeyError:
-                d[f.period.start_date.year] = f.summary.total_expenditures
+                d[f.period.start_date.year] = f.total_expenditures
         return sorted(d.items(), key=lambda x:x[0], reverse=True)
 
 
@@ -369,8 +364,24 @@ or was filed unnecessarily. Should be excluded from most analysis."
                 filing=self
             ).aggregate(total=Sum('amount'))['total']
 
+    @property
+    def total_expenditures(self):
+        if self.is_quarterly:
+            summary = self.summary
+            if summary:
+                return summary.total_expenditures
+            else:
+                return None
+        elif self.is_late:
+            return Expenditure.real.filter(
+                filing=self
+            ).aggregate(total=Sum('amount'))['total']
+
 
 class Summary(BaseModel):
+    """
+    A set of summary totals provided by a filing's cover sheet.
+    """
     filing_id_raw = models.IntegerField(db_index=True)
     amend_id = models.IntegerField(db_index=True)
     itemized_monetary_contributions = models.DecimalField(
