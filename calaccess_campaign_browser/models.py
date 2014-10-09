@@ -1,6 +1,7 @@
 import managers
 from django.db import models
 from hurry.filesize import size
+from django.db.models import Sum
 from django.utils.text import slugify
 from django.core.urlresolvers import reverse
 from django.utils.datastructures import SortedDict
@@ -189,42 +190,37 @@ class Committee(AllCapsNameMixin):
 
     @property
     def real_filings(self):
-        return Filing.real.filter(committee=self).select_related("cycle")
+        return Filing.real.by_committee(self).select_related("cycle")
 
     @property
     def total_contributions(self):
-        summaries = [f.summary for f in self.real_filings]
-        summaries = [s for s in summaries if s]
         return sum([
-            s.total_contributions for s in summaries if s.total_contributions
+            f.total_contributions for f in self.real_filings
+                if f.total_contributions
         ])
 
     @property
     def total_contributions_by_year(self):
         d = {}
         for f in self.real_filings:
-            if not f.summary:
-                continue
-            if not f.summary.total_contributions:
+            if not f.total_contributions:
                 continue
             try:
-                d[f.period.start_date.year] += f.summary.total_contributions
+                d[f.period.start_date.year] += f.total_contributions
             except KeyError:
-                d[f.period.start_date.year] = f.summary.total_contributions
+                d[f.period.start_date.year] = f.total_contributions
         return sorted(d.items(), key=lambda x:x[0], reverse=True)
 
     @property
     def total_contributions_by_cycle(self):
         d = {}
         for f in self.real_filings:
-            if not f.summary:
-                continue
-            if not f.summary.total_contributions:
+            if not f.total_contributions:
                 continue
             try:
-                d[f.cycle.name] += f.summary.total_contributions
+                d[f.cycle.name] += f.total_contributions
             except KeyError:
-                d[f.cycle.name] = f.summary.total_contributions
+                d[f.cycle.name] = f.total_contributions
         return sorted(d.items(), key=lambda x:x[0], reverse=True)
 
     @property
@@ -353,6 +349,25 @@ or was filed unnecessarily. Should be excluded from most analysis."
 
     def is_amendment(self):
         return self.amend_id > 0
+
+    def is_late(self):
+        return self.form_type == 'F497'
+
+    def is_quarterly(self):
+        return self.form_type in ['F450', 'F460']
+
+    @property
+    def total_contributions(self):
+        if self.is_quarterly:
+            summary = self.summary
+            if summary:
+                return summary.total_contributions
+            else:
+                return None
+        elif self.is_late:
+            return Contribution.real.filter(
+                filing=self
+            ).aggregate(total=Sum('amount'))['total']
 
 
 class Summary(BaseModel):
