@@ -1,10 +1,10 @@
-from optparse import make_option
 import os
 import csvkit
+from optparse import make_option
+from collections import OrderedDict
 
-from django.core.management.base import BaseCommand
 from django.conf import settings
-from django.utils.datastructures import SortedDict
+from django.core.management.base import BaseCommand
 
 from calaccess_campaign_browser.models import (
     Contribution,
@@ -62,7 +62,7 @@ class Command(BaseCommand):
         outfile_path = os.path.join(self.data_dir,  csv_name)
         outfile = open(outfile_path, 'w')
 
-        header_translation = SortedDict([
+        header_translation = OrderedDict([
             ('amount', 'amount'),
             ('filing_id', 'filing_id'),
             ('committee__name', 'committee_name'),
