@@ -256,7 +256,7 @@
                     </td>
                     <td class="right">
                         <a href="{{ contribution.get_absolute_url }}">
-                            ${{ contribution.amount | intcomma }}
+                            ${{ contribution.amount|floatformat:0|intcomma }}
                         </a>
                     </td>
                 </tr>
@@ -294,7 +294,7 @@
                     </td>
                     <td class="right">
                         <a href="{{ obj.get_absolute_url }}">
-                            ${{ obj.amount | intcomma }}
+                            ${{ obj.amount|floatformat:0|intcomma }}
                         </a>
                     </td>
                 </tr>
