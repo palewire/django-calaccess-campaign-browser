@@ -56,13 +56,43 @@ class Command(BaseCommand):
         if options['summary']:
             self.summary()
 
-    def contributions(self):
-        print 'working on contributions'
-        csv_name = 'contributions.csv'
+
+    def export_to_csv(self, outfile_name, header_translation):
+        print 'working on %s' % outfile_name
+        csv_name = '%s.csv' % outfile_name
         outfile_path = os.path.join(self.data_dir,  csv_name)
         outfile = open(outfile_path, 'w')
 
-        header_translation = OrderedDict([
+        csv_writer = csvkit.unicsv.UnicodeCSVDictWriter(
+            outfile, fieldnames=header_translation.keys(), delimiter=',')
+
+        csv_writer.writerow(header_translation)
+
+        for c in Cycle.objects.all():
+            if outfile_name == 'contributions':
+                dict_rows = Contribution.objects.filter(cycle=c).exclude(
+                    is_duplicate=True).values(*header_translation.keys())
+
+            elif outfile_name == 'expenditures':
+                dict_rows = Expenditure.objects.filter(cycle=c).exclude(
+                    dupe=True).values(*header_translation.keys())
+
+            elif outfile_name == 'summary':
+                dict_rows = Summary.objects.filter(cycle=c).exclude(
+                    is_duplicate=True).values(*header_translation.keys())
+
+            else:
+                print "You did not specify 'contributions, 'expenditures' or 'summary'. Exiting"
+                raise
+
+            csv_writer.writerows(dict_rows)
+
+        outfile.close()
+
+        print 'Exported %s' % outfile_name
+
+    def contributions(self):
+        header = OrderedDict([
             ('amount', 'amount'),
             ('filing_id', 'filing_id'),
             ('committee__name', 'committee_name'),
@@ -79,79 +109,34 @@ class Command(BaseCommand):
             ('contributor_state', 'contributor_state'),
             ('contributor_zipcode', 'contributor_zipcode'),
         ])
-        csv_writer = csvkit.unicsv.UnicodeCSVDictWriter(
-            outfile, fieldnames=header_translation.keys(), delimiter=',')
-        csv_writer.writerow(header_translation)
-        for c in Cycle.objects.all():
-            dict_rows = Contribution.objects.filter(cycle=c).exclude(
-                is_duplicate=True).values(*header_translation.keys())
-            csv_writer.writerows(dict_rows)
-        outfile.close()
-        print 'Exported contributions'
+
+        self.export_to_csv('contributions', header)
+
 
     def expenditures(self):
-        print 'working on expenditures'
-        csv_name = 'expenditures.csv'
-        outfile_path = os.path.join(self.data_dir,  csv_name)
-        outfile = open(outfile_path, 'w')
-
-        header_translation = SortedDict([
+        header = OrderedDict([
             ('amount', 'amount'),
-            ('bakref_tid', 'bakref_tid'),
-            ('cmte_id', 'cmte_id'),
-            ('committee__filer__name', 'filer'),
-            ('committee__filer__filer_id', 'filer_id'),
-            ('committee__name', 'committee'),
-            ('committee__filer_id_raw', 'committee_id'),
-            ('cum_ytd', 'cum_ytd'),
-            ('cycle__name', 'cycle'),
-            ('entity_cd', 'entity_cd'),
-            ('expn_chkno', 'expn_chkno'),
-            ('expn_code', 'expn_code'),
-            ('expn_date', 'expn_date'),
-            ('expn_dscr', 'expn_dscr'),
-            ('filing__filing_id_raw', 'filing_id'),
-            ('filing__start_date', 'filing_start_date'),
-            ('filing__end_date', 'filing_end_date'),
-            ('form_type', 'form_type'),
-            ('g_from_e_f', 'g_from_e_f'),
-            ('id', 'id'),
-            ('individual_id', 'individual_id'),
-            ('line_item', 'line_item'),
-            ('memo_code', 'memo_code'),
-            ('memo_refno', 'memo_refno'),
-            ('name', 'name'),
-            ('org_id', 'org_id'),
-            ('payee_adr1', 'payee_adr1'),
-            ('payee_adr2', 'payee_adr2'),
+            ('filing_id', 'filing_id'),
+            ('committee__name', 'committee_name'),
+            ('cycle_id', 'cycle'),
+            ('expn_date', 'date_received'),
+            ('payee_namf', 'payee_first_name'),
+            ('payee_naml', 'payee_last_name'),
+            ('name', 'payee_full_name'),
+            ('payee_namt', 'payee_occupation'),
+            ('raw_org_name', 'payee_employer'),
+            ('payee_adr1', 'payee_address_1'),
+            ('payee_adr2', 'payee_address_2'),
             ('payee_city', 'payee_city'),
-            ('payee_namf', 'payee_namf'),
-            ('payee_naml', 'payee_naml'),
-            ('payee_nams', 'payee_nams'),
-            ('payee_namt', 'payee_namt'),
-            ('payee_st', 'payee_st'),
-            ('payee_zip4', 'payee_zip4'),
-            ('tran_id', 'tran_id'),
-            ('xref_match', 'xref_match'),
-            ('xref_schnm', 'xref_schnm'),
+            ('payee_st', 'payee_state'),
+            ('payee_zip4', 'payee_zipcode'),
         ])
-        csv_writer = csvkit.unicsv.UnicodeCSVDictWriter(
-            outfile, fieldnames=header_translation.keys(), delimiter='|')
-        csv_writer.writerow(header_translation)
-        for c in Cycle.objects.all():
-            dict_rows = Expenditure.objects.filter(cycle=c).exclude(
-                dupe=True).values(*header_translation.keys())
-            csv_writer.writerows(dict_rows)
-        outfile.close()
-        print 'Exported expenditures '
+
+        self.export_to_csv('expenditures', header)
+
 
     def summary(self):
-        print 'working on summary'
-        csv_name = 'summary.csv'
-        outfile_path = os.path.join(self.data_dir,  csv_name)
-        outfile = open(outfile_path, 'w')
-
-        header_translation = SortedDict([
+        header = OrderedDict([
             ('committee__filer__name', 'filer'),
             ('committee__filer__filer_id', 'filer_id'),
             ('committee__name', 'committee'),
@@ -179,12 +164,5 @@ class Command(BaseCommand):
                 'unitemized_monetary_contributions'
             ),
         ])
-        csv_writer = csvkit.unicsv.UnicodeCSVDictWriter(
-            outfile, fieldnames=header_translation.keys(), delimiter='|')
-        csv_writer.writerow(header_translation)
-        for c in Cycle.objects.all():
-            dict_rows = Summary.objects.filter(cycle=c).exclude(
-                dupe=True).values(*header_translation.keys())
-            csv_writer.writerows(dict_rows)
-        outfile.close()
-        print 'Exported summary'
+
+        self.export_to_csv('summary', header)
