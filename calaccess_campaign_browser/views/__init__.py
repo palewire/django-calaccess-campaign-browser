@@ -131,7 +131,9 @@ contribution_list.html'
         """
         committee = Committee.objects.get(pk=self.kwargs['pk'])
         self.committee = committee
-        return committee.contribution_set.all().order_by('-rcpt_date')
+        return Contribution.real.filter(
+            committee=self.committee,
+        ).order_by("-date_received")
 
 
 class CommitteeExpenditureView(CommitteeDataView):

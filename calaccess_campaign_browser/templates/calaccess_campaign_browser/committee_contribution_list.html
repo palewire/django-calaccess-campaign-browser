@@ -44,26 +44,34 @@
   <div class="row">
     <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
     <table class="table table-bordered table-hover">
-      <thead>
-        <tr>
-            <th>Date</th>
-            <th>Name</th>
-            <th class="success right">Amount</th>
-        </tr>
-      </thead>
-      <tbody>
-          {% for contribution in committee_contributions %}
+          <thead>
             <tr>
-                <td>{{ contribution.rcpt_date }}</td>
-                <td>{{ contribution.raw_org_name }}</td>
-                <td class="success right">
-                    <a href="{{ contribution.get_absolute_url }}">
-                        ${{ contribution.amount | intcomma }}
-                    </a>
-                </td>
+                <th>Date</th>
+                <th>Name</th>
+                <th class="right">Amount</th>
             </tr>
-          {% endfor %}
-      </tbody>
+          </thead>
+          <tbody>
+              {% for obj in object_list %}
+                <tr>
+                    <td>{{ obj.date_received|date:"Y-m-d" }}</td>
+                    <td>
+                        {% if obj.contributor_committee_id %}
+                            <a href="{{ obj.contributor_committee.get_absolute_url }}">
+                        {% endif %}
+                                {{ obj.contributor_full_name }}
+                        {% if obj.contributor_committee_id %}
+                            </a>
+                        {% endif %}
+                    </td>
+                    <td class="right">
+                        <a href="{{ obj.get_absolute_url }}">
+                            ${{ obj.amount | intcomma }}
+                        </a>
+                    </td>
+                </tr>
+              {% endfor %}
+          </tbody>
     </table>
     </div>
   </div>
