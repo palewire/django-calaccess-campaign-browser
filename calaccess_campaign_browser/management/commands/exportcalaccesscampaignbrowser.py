@@ -78,7 +78,7 @@ class Command(BaseCommand):
                     dupe=True).values(*header_translation.keys())
 
             elif outfile_name == 'summary':
-                dict_rows = Summary.objects.filter(cycle=c).exclude(
+                dict_rows = Summary.objects.all.exclude(
                     is_duplicate=True).values(*header_translation.keys())
 
             else:
