@@ -37,6 +37,70 @@ custom_options = (
     ),
 )
 
+contributions_header = OrderedDict([
+    ('amount', 'amount'),
+    ('filing_id', 'filing_id'),
+    ('committee__name', 'committee_name'),
+    ('cycle_id', 'cycle'),
+    ('date_received', 'date_received'),
+    ('contributor_first_name', 'contributor_first_name'),
+    ('contributor_last_name', 'contributor_last_name'),
+    ('contributor_full_name', 'contributor_full_name'),
+    ('contributor_occupation', 'contributor_occupation'),
+    ('contributor_employer', 'contributor_employer'),
+    ('contributor_address_1', 'contributor_address_1'),
+    ('contributor_address_2', 'contributor_address_2'),
+    ('contributor_city', 'contributor_city'),
+    ('contributor_state', 'contributor_state'),
+    ('contributor_zipcode', 'contributor_zipcode'),
+])
+expenditures_header = OrderedDict([
+    ('amount', 'amount'),
+    ('filing_id', 'filing_id'),
+    ('committee__name', 'committee_name'),
+    ('cycle_id', 'cycle'),
+    ('expn_date', 'date_received'),
+    ('payee_namf', 'payee_first_name'),
+    ('payee_naml', 'payee_last_name'),
+    ('name', 'payee_full_name'),
+    ('payee_namt', 'payee_occupation'),
+    ('raw_org_name', 'payee_employer'),
+    ('payee_adr1', 'payee_address_1'),
+    ('payee_adr2', 'payee_address_2'),
+    ('payee_city', 'payee_city'),
+    ('payee_st', 'payee_state'),
+    ('payee_zip4', 'payee_zipcode'),
+])
+summary_header = OrderedDict([
+    ('committee__filer__name', 'filer'),
+    ('committee__filer__filer_id', 'filer_id'),
+    ('committee__name', 'committee'),
+    ('committee__filer_id_raw', 'committee_id'),
+    ('cycle__name', 'cycle'),
+    ('ending_cash_balance', 'ending_cash_balance'),
+    ('filing__filing_id_raw', 'filing_id'),
+    ('filing__start_date', 'filing_start_date'),
+    ('filing__end_date', 'filing_end_date'),
+    ('form_type', 'form_type'),
+    ('id', 'id'),
+    ('itemized_expenditures', 'itemized_expenditures'),
+    (
+        'itemized_monetary_contributions',
+        'itemized_monetary_contributions'
+    ),
+    ('non_monetary_contributions', 'non_monetary_contributions'),
+    ('outstanding_debts', 'outstanding_debts'),
+    ('total_contributions', 'total_contributions'),
+    ('total_expenditures', 'total_expenditures'),
+    ('total_monetary_contributions', 'total_monetary_contributions'),
+    ('unitemized_expenditures', 'unitemized_expenditures'),
+    (
+        'unitemized_monetary_contributions',
+        'unitemized_monetary_contributions'
+    ),
+])
+
+
 
 class Command(BaseCommand):
     help = 'Export refined CAL-ACCESS campaign browser data as CSV files'
@@ -50,11 +114,11 @@ class Command(BaseCommand):
     def handle(self, *args, **options):
         self.set_options(*args, **options)
         if options['contributions']:
-            self.contributions()
+            self.export_to_csv('contributions', contributions_header)
         if options['expenditures']:
-            self.expenditures()
+            self.export_to_csv('expenditures', expenditures_header)
         if options['summary']:
-            self.summary()
+            self.export_to_csv('summary', summary_header)
 
 
     def export_to_csv(self, outfile_name, header_translation):
@@ -90,79 +154,3 @@ class Command(BaseCommand):
         outfile.close()
 
         print 'Exported %s' % outfile_name
-
-    def contributions(self):
-        header = OrderedDict([
-            ('amount', 'amount'),
-            ('filing_id', 'filing_id'),
-            ('committee__name', 'committee_name'),
-            ('cycle_id', 'cycle'),
-            ('date_received', 'date_received'),
-            ('contributor_first_name', 'contributor_first_name'),
-            ('contributor_last_name', 'contributor_last_name'),
-            ('contributor_full_name', 'contributor_full_name'),
-            ('contributor_occupation', 'contributor_occupation'),
-            ('contributor_employer', 'contributor_employer'),
-            ('contributor_address_1', 'contributor_address_1'),
-            ('contributor_address_2', 'contributor_address_2'),
-            ('contributor_city', 'contributor_city'),
-            ('contributor_state', 'contributor_state'),
-            ('contributor_zipcode', 'contributor_zipcode'),
-        ])
-
-        self.export_to_csv('contributions', header)
-
-
-    def expenditures(self):
-        header = OrderedDict([
-            ('amount', 'amount'),
-            ('filing_id', 'filing_id'),
-            ('committee__name', 'committee_name'),
-            ('cycle_id', 'cycle'),
-            ('expn_date', 'date_received'),
-            ('payee_namf', 'payee_first_name'),
-            ('payee_naml', 'payee_last_name'),
-            ('name', 'payee_full_name'),
-            ('payee_namt', 'payee_occupation'),
-            ('raw_org_name', 'payee_employer'),
-            ('payee_adr1', 'payee_address_1'),
-            ('payee_adr2', 'payee_address_2'),
-            ('payee_city', 'payee_city'),
-            ('payee_st', 'payee_state'),
-            ('payee_zip4', 'payee_zipcode'),
-        ])
-
-        self.export_to_csv('expenditures', header)
-
-
-    def summary(self):
-        header = OrderedDict([
-            ('committee__filer__name', 'filer'),
-            ('committee__filer__filer_id', 'filer_id'),
-            ('committee__name', 'committee'),
-            ('committee__filer_id_raw', 'committee_id'),
-            ('cycle__name', 'cycle'),
-            ('ending_cash_balance', 'ending_cash_balance'),
-            ('filing__filing_id_raw', 'filing_id'),
-            ('filing__start_date', 'filing_start_date'),
-            ('filing__end_date', 'filing_end_date'),
-            ('form_type', 'form_type'),
-            ('id', 'id'),
-            ('itemized_expenditures', 'itemized_expenditures'),
-            (
-                'itemized_monetary_contributions',
-                'itemized_monetary_contributions'
-            ),
-            ('non_monetary_contributions', 'non_monetary_contributions'),
-            ('outstanding_debts', 'outstanding_debts'),
-            ('total_contributions', 'total_contributions'),
-            ('total_expenditures', 'total_expenditures'),
-            ('total_monetary_contributions', 'total_monetary_contributions'),
-            ('unitemized_expenditures', 'unitemized_expenditures'),
-            (
-                'unitemized_monetary_contributions',
-                'unitemized_monetary_contributions'
-            ),
-        ])
-
-        self.export_to_csv('summary', header)
