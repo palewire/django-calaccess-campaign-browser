@@ -19,7 +19,7 @@ class LatestView(generic.ListView):
     template_name = 'calaccess_campaign_browser/latest.html'
     queryset = Filing.objects.exclude(
         date_filed__gt=NEXT_YEAR
-    ).select_related("committee").order_by("-date_filed")[:100]
+    ).select_related("committee").order_by("-date_filed")[:500]
 
 
 class FilerListView(generic.ListView):
