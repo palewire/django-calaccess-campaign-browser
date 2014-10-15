@@ -55,10 +55,11 @@ def search_contribs_by_name(request):
     if ('q' in request.GET) and request.GET['q'].strip():
         query_string = request.GET['q']
         query = get_query(query_string, [
-            'ctrib_city', 'ctrib_st', 'ctrib_zip4',
-            'ctrib_namf', 'ctrib_naml', 'ctrib_emp', 'ctrib_occ'
+            'contributor_city', 'contributor_zipcode',
+            'contributor_first_name', 'contributor_last_name',
+            'contributor_employer', 'contributor_occupation'
         ])
-        results = Contribution.objects.filter(query)
+        results = Contribution.real.filter(query)
     context = {
         'query_string': query_string,
         'results': results
