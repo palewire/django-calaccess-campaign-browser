@@ -10,7 +10,7 @@
 
 <div class="row" style="margin-bottom:20px">
     <form class="form-inline" role="form" method="GET" action="{% url 'search-contribs-by-name' %}">
-        <div class="form-group col-lg-12 col-md-12 col-sm-12 col-xs-12">
+        <div class="form-group col-lg-8 col-md-8 col-sm-8 col-xs-8">
             <input type="text" class="form-control" style="width:100%"
                 id="q" name="q"
                 {% if query_string %}value="{{ query_string }}"{% else %}placeholder="Search contributions"{% endif %}>
