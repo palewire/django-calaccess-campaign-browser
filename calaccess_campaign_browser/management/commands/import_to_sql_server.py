@@ -130,7 +130,7 @@ class Command(BaseCommand):
 
             if table_name == 'contributions':
                 headers = ','.join(contributions_header.values())
-            elif table_name === 'expenditures':
+            elif table_name == 'expenditures':
                 headers = ','.join(expenditures_header.values())
             else:
                 pass
