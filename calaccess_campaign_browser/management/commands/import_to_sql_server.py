@@ -83,15 +83,15 @@ class Command(BaseCommand):
                 [committee_name] nvarchar(600),
                 [cycle] int,
                 [date_received] date,
-                [payee_first_name] nvarchar(255)
-                [payee_last_name] nvarchar(600)
-                [payee_full_name] nvarchar(50)
-                [payee_occupation] nvarchar(50)
-                [payee_employer] nvarchar(60)
-                [payee_address_1] nvarchar(55)
-                [payee_address_2] nvarchar(55)
-                [payee_city] nvarchar(50)
-                [payee_state] nvarchar(90)
+                [payee_first_name] nvarchar(255),
+                [payee_last_name] nvarchar(600),
+                [payee_full_name] nvarchar(50),
+                [payee_occupation] nvarchar(50),
+                [payee_employer] nvarchar(60),
+                [payee_address_1] nvarchar(55),
+                [payee_address_2] nvarchar(55),
+                [payee_city] nvarchar(50),
+                [payee_state] nvarchar(90),
                 [payee_zipcode] nvarchar(200)
             )
         '''
