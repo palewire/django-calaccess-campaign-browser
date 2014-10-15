@@ -96,7 +96,7 @@ class CommitteeDetailView(generic.DetailView):
         context['filing_set_count'] = filing_qs.count()
 
         # Contributions
-        contribs_qs = Contribution.real.filter(committee=self.object)
+        contribs_qs = Contribution.real.by_committee_to(self.object)
         context['contribution_set_short'] = contribs_qs.order_by('-amount')[:25]
         context['contribution_set_count'] = contribs_qs.count()
 

@@ -57,6 +57,36 @@ class RealContributionManager(models.Manager):
         qs = super(RealContributionManager, self).get_queryset()
         return qs.exclude(is_duplicate=True)
 
+    def by_committee_to(self, obj_or_id):
+        """
+        Returns the "real" or valid contributions received by
+        a particular committee.
+        """
+        from .models import Committee, Filing
+
+        # Pull the committee object
+        if isinstance(obj_or_id, int):
+            try:
+                cmte = Committee.objects.get(id=obj_or_id)
+            except Committee.DoesNotExist:
+                cmte = Committee.objects.get(filing_id_raw=obj_or_id)
+        elif isinstance(obj_or_id, Committee):
+            cmte = obj_or_id
+        else:
+            raise ValueError("You must submit a committee object or ID")
+
+        # Get a list of the valid filings for this committee
+        filing_list = Filing.real.by_committee(cmte)
+
+        # Filer to only contributions from real filings by this committee
+        qs = self.get_queryset().filter(
+            committee=cmte,
+            filing__in=filing_list
+        )
+
+        # Retun the result
+        return qs
+
 
 class RealExpenditureManager(models.Manager):
     """
