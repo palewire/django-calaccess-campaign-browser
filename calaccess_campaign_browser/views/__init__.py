@@ -129,8 +129,8 @@ contribution_list.html'
         """
         committee = Committee.objects.get(pk=self.kwargs['pk'])
         self.committee = committee
-        return Contribution.real.filter(
-            committee=self.committee,
+        return Contribution.real.by_committee_to(
+            self.committee,
         ).order_by("-date_received")
 
 

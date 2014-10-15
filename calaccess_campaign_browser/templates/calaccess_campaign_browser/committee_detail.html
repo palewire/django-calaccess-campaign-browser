@@ -16,7 +16,6 @@
                 <th>Effective date</th>
                 <th>Status</th>
                 <th>Type</th>
-                <th>Cycle</th>
                 <th>Party</th>
                 <th>CAL-ACCESS</th>
             </tr>
@@ -26,7 +25,6 @@
                 <td>{{ committee.effective_date|date:"Y-m-d" }}</td>
                 <td>{{ committee.get_status_display }}</td>
                 <td>{{ committee.get_committee_type_display }}</td>
-                <td>{{ committee.cycle }}</td>
                 <td>{{ committee.get_party_display }}</td>
                 <td>
                     <a target="_blank" href="{{ committee.get_calaccess_url }}">
