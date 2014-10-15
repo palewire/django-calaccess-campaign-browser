@@ -56,3 +56,12 @@ class RealContributionManager(models.Manager):
     def get_queryset(self):
         qs = super(RealContributionManager, self).get_queryset()
         return qs.exclude(is_duplicate=True)
+
+
+class RealExpenditureManager(models.Manager):
+    """
+    Only returns records that are not duplicates.
+    """
+    def get_queryset(self):
+        qs = super(RealExpenditureManager, self).get_queryset()
+        return qs.exclude(dupe=True)

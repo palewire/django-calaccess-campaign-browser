@@ -560,6 +560,8 @@ class Expenditure(BaseModel):
     individual_id = models.IntegerField(null=True)
 
     dupe = models.BooleanField(default=False)
+    objects = models.Manager()
+    real = managers.RealExpenditureManager()
 
     @property
     def raw(self):
