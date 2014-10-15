@@ -51,7 +51,7 @@ class RealFilingManager(BaseRealManager):
             most_recent_quarterly = qs.filter(
                 form_type__in=['F450', 'F460']
             ).order_by("-period__end_date")[0]
-        except qs.model.DoesNotExist:
+        except (qs.model.DoesNotExist, IndexError):
             # If there are none, just return everything
             return qs
 
