@@ -342,12 +342,15 @@ or was filed unnecessarily. Should be excluded from most analysis."
         except Summary.DoesNotExist:
             return None
 
+    @property
     def is_amendment(self):
         return self.amend_id > 0
 
+    @property
     def is_late(self):
         return self.form_type == 'F497'
 
+    @property
     def is_quarterly(self):
         return self.form_type in ['F450', 'F460']
 
