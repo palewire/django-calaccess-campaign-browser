@@ -280,8 +280,8 @@ class FilingPeriod(BaseModel):
 
     def __unicode__(self):
         return "%s - %s" % (
-            dateformat(self.start_date, "%Y-%m-%d"),
-            dateformat(self.end_date, "%m-%d"),
+            dateformat(self.start_date, "Y-m-d"),
+            dateformat(self.end_date, "Y-m-d"),
         )
 
 

@@ -53,13 +53,11 @@
                 <th>No.</th>
                 <th>Filed</th>
                 <th>Form</th>
-                <th>Cycle</th>
                 <th>Period</th>
                 <th class="right">Contributions</th>
                 <th class="right">Expenditures</th>
                 <th class="right">Debts</th>
-                <th class="center">Amendment</th>
-                <th class="center">Duplicate</th>
+                <th class="center">PDF</th>
             </tr>
         </thead>
         <tbody>
@@ -68,26 +66,16 @@
             <td>
               <a href="{{ filing.get_absolute_url }}">{{ filing.filing_id_raw }}</a>
             </td>
-            <td>{{ filing.date_filed|date:"N j, Y" }}</td>
-            <td>{{ filing.form_id }}</td>
-            <td>{{ filing.cycle.name }}</td>
-            <td>{{ filing.start_date|date:"N j" }} - {{ filing.end_date|date:"N j, Y" }}</td>
-            <td class="right">{{ filing.summary.total_contributions|floatformat:0|intcomma }}</td>
-            <td class="right">{{ filing.summary.total_expenditures|floatformat:0|intcomma }}</td>
-            <td class="right">{{ filing.summary.outstanding_debts|floatformat:0|intcomma }}</td>
+            <td>{{ filing.date_filed|date:"Y-m-d" }}</td>
+            <td>{{ filing.form_type }}</td>
+            <td>{{ filing.period }}</td>
+            <td class="right">${{ filing.total_contributions|default:0|floatformat:0|intcomma }}</td>
+            <td class="right">${{ filing.total_expenditures|default:0|floatformat:0|intcomma }}</td>
+            <td class="right">${{ filing.summary.outstanding_debts|default:0|floatformat:0|intcomma }}</td>
             <td class="center">
-                {% if filing.is_amendment %}
-                    <i class="fa fa-check-square-o"></i>
-                {% else %}
-                    <i class="fa fa-square-o"></i>
-                {% endif %}
-            </td>
-            <td class="center">
-                {% if filing.dupe %}
-                    <i class="fa fa-check-square-o"></i>
-                {% else %}
-                    <i class="fa fa-square-o"></i>
-                {% endif %}
+                <a target="_blank" href="{{ filing.get_calaccess_pdf_url }}">
+                    <i class="fa fa-file-pdf-o"></i>
+                </a>
             </td>
           </tr>
         {% endfor %}

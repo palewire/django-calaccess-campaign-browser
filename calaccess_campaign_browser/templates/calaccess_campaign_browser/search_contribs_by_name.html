@@ -26,13 +26,14 @@
         <thead>
             <tr>
                 <th>ID</th>
+                <th>Date</th>
                 <th>First Name</th>
                 <th>Last Name</th>
                 <th>Employer</th>
                 <th>Occupation</th>
                 <th>City</th>
                 <th>State</th>
-                <th>Zip</th>
+                <th>ZIP Code</th>
                 <th>Committee</th>
                 <th class="right">Amount</th>
             </tr>
@@ -45,6 +46,7 @@
                         {{ i.transaction_id }}
                     </a>
                 </td>
+                <td>{{ i.date_received|date:'Y-m-d' }}</td>
                 <td>{{ i.contributor_first_name }}</td>
                 <td>{{ i.contributor_last_name }}</td>
                 <td>{{ i.contributor_employer }}</td>
@@ -57,7 +59,7 @@
                         {{ i.committee }}
                     </a>
                 </td>
-                <td class="right">{{ i.amount }}</td>
+                <td class="right">${{ i.amount|default:0|floatformat:0|intcomma }}</td>
             </tr>
         {% endfor %}
         </tbody>

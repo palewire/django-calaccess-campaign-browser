@@ -59,7 +59,7 @@ def search_contribs_by_name(request):
             'contributor_first_name', 'contributor_last_name',
             'contributor_employer', 'contributor_occupation'
         ])
-        results = Contribution.real.filter(query)
+        results = Contribution.real.filter(query).order_by("-date_received")
     context = {
         'query_string': query_string,
         'results': results
