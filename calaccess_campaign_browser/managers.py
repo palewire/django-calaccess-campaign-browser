@@ -1,31 +1,47 @@
 from django.db import models
 
 
-class RealFilingManager(models.Manager):
+class BaseRealManager(models.Manager):
     """
-    Only returns records that are not duplicates
-    and should be treated for lists and counts as "real."
+    Base class with common methods used by managers that exclude duplicate
+    records from data models.
     """
     def get_queryset(self):
-        qs = super(RealFilingManager, self).get_queryset()
+        qs = super(BaseRealManager, self).get_queryset()
         return qs.exclude(is_duplicate=True)
 
-    def by_committee(self, obj_or_id):
+    def get_committee(self, obj_or_id):
         """
-        Returns the "real" or valid filings for a particular committee.
+        Returns a Committee model object whether you submit the primary key
+        from our database or the CAL-ACCESS filing id.
+
+        If a Committee object is submitted it is returns as is.
         """
         from .models import Committee
 
         # Pull the committee object
-        if isinstance(obj_or_id, int):
+        if isinstance(obj_or_id, Committee):
+            cmte = obj_or_id
+        elif isinstance(obj_or_id, int):
             try:
                 cmte = Committee.objects.get(id=obj_or_id)
             except Committee.DoesNotExist:
                 cmte = Committee.objects.get(filing_id_raw=obj_or_id)
-        elif isinstance(obj_or_id, Committee):
-            cmte = obj_or_id
         else:
             raise ValueError("You must submit a committee object or ID")
+        return cmte
+
+
+class RealFilingManager(BaseRealManager):
+    """
+    Only returns records that are not duplicates
+    and should be treated for lists and counts as "real."
+    """
+    def by_committee(self, obj_or_id):
+        """
+        Returns the "real" or valid filings for a particular committee.
+        """
+        cmte = self.get_committee(obj_or_id)
 
         # Filer to only filings by this committee
         qs = self.get_queryset().filter(committee=cmte)
@@ -49,31 +65,19 @@ class RealFilingManager(models.Manager):
         return qs
 
 
-class RealContributionManager(models.Manager):
+class RealContributionManager(BaseRealManager):
     """
     Only returns records that are not duplicates.
     """
-    def get_queryset(self):
-        qs = super(RealContributionManager, self).get_queryset()
-        return qs.exclude(is_duplicate=True)
-
     def by_committee_to(self, obj_or_id):
         """
         Returns the "real" or valid contributions received by
         a particular committee.
         """
-        from .models import Committee, Filing
+        from .models import Filing
 
         # Pull the committee object
-        if isinstance(obj_or_id, int):
-            try:
-                cmte = Committee.objects.get(id=obj_or_id)
-            except Committee.DoesNotExist:
-                cmte = Committee.objects.get(filing_id_raw=obj_or_id)
-        elif isinstance(obj_or_id, Committee):
-            cmte = obj_or_id
-        else:
-            raise ValueError("You must submit a committee object or ID")
+        cmte = self.get_committee(obj_or_id)
 
         # Get a list of the valid filings for this committee
         filing_list = Filing.real.by_committee(cmte)
