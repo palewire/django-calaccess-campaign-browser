@@ -91,6 +91,28 @@ class RealContributionManager(BaseRealManager):
         # Retun the result
         return qs
 
+    def by_committee_from(self, obj_or_id):
+        """
+        Returns the "real" or valid contributions made by
+        a particular committee.
+        """
+        from .models import Filing
+
+        # Pull the committee object
+        cmte = self.get_committee(obj_or_id)
+
+        # Get a list of the valid filings for this committee
+        filing_list = Filing.real.by_committee(cmte)
+
+        # Filer to only contributions from real filings by this committee
+        qs = self.get_queryset().filter(
+            contributor_committee=cmte,
+            filing__in=filing_list
+        )
+
+        # Retun the result
+        return qs
+
 
 class RealExpenditureManager(models.Manager):
     """

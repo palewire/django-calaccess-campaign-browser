@@ -101,9 +101,7 @@ class CommitteeDetailView(generic.DetailView):
         context['contribution_set_count'] = contribs_qs.count()
 
         # Transfer to other committees
-        contribs_out = Contribution.real.filter(
-            contributor_committee=self.object
-        )
+        contribs_out = Contribution.real.by_committee_from(self.object)
         context['contribs_out_list'] = contribs_out.order_by('-amount')[:25]
         context['contribs_out_set_count'] = contribs_out.count()
 
