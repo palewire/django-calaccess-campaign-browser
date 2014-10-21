@@ -1,4 +1,12 @@
 Pushing to SQL Server
 =====================
 
-Coming Soon
+Add to settings:
+
+
+SQL_SERVER_DRIVER
+SQL_SERVER_ADDRESS
+SQL_SERVER_PORT
+SQL_SERVER_USER
+SQL_SERVER_PASSWORD
+SQL_SERVER_DATABASE
