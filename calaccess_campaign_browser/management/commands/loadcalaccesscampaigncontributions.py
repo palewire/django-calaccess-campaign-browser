@@ -341,6 +341,7 @@ class Command(CalAccessCommand):
             AND f.amend_id = r.amend_id
             LEFT OUTER JOIN %(committee_model)s as c
             ON r.cmte_id = c.xref_filer_id
+            WHERE r.`FORM_TYPE` = 'F497P1'
         """ % dict(
             contribs_model=Contribution._meta.db_table,
             filing_model=Filing._meta.db_table,
