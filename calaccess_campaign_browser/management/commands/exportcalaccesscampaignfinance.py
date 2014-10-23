@@ -72,17 +72,16 @@ expenditures_header = OrderedDict([
     ('payee_zip4', 'payee_zipcode'),
 ])
 summary_header = OrderedDict([
-    ('committee__filer__name', 'filer'),
-    ('committee__filer__filer_id', 'filer_id'),
-    ('committee__name', 'committee'),
-    ('committee__filer_id_raw', 'committee_id'),
-    ('cycle__name', 'cycle'),
+    # ('committee__filer__name', 'filer'),
+    # ('committee__filer__filer_id', 'filer_id'),
+    # ('committee__name', 'committee'),
+    # ('committee__filer_id_raw', 'committee_id'),
+    # ('cycle__name', 'cycle'),
     ('ending_cash_balance', 'ending_cash_balance'),
-    ('filing__filing_id_raw', 'filing_id'),
-    ('filing__start_date', 'filing_start_date'),
-    ('filing__end_date', 'filing_end_date'),
-    ('form_type', 'form_type'),
-    ('id', 'id'),
+    ('filing_id_raw', 'filing_id'),
+    ('amend_id', 'amend_id'),
+    # ('filing__start_date', 'filing_start_date'),
+    # ('filing__end_date', 'filing_end_date'),
     ('itemized_expenditures', 'itemized_expenditures'),
     (
         'itemized_monetary_contributions',
@@ -136,20 +135,24 @@ class Command(BaseCommand):
             if outfile_name == 'contributions':
                 dict_rows = Contribution.objects.filter(cycle=c).exclude(
                     is_duplicate=True).values(*header_translation.keys())
+                csv_writer.writerows(dict_rows)
 
             elif outfile_name == 'expenditures':
                 dict_rows = Expenditure.objects.filter(cycle=c).exclude(
                     dupe=True).values(*header_translation.keys())
+                csv_writer.writerows(dict_rows)
 
             elif outfile_name == 'summary':
-                dict_rows = Summary.objects.all.exclude(
-                    is_duplicate=True).values(*header_translation.keys())
+                pass
 
             else:
                 print "You did not specify 'contributions, 'expenditures' or 'summary'. Exiting"
                 raise
 
-            csv_writer.writerows(dict_rows)
+        # Summary specific
+        if outfile_name == 'summary':
+            rows = Summary.objects.all().values(*header_translation.keys())
+            csv_writer.writerows(rows)
 
         outfile.close()
 
