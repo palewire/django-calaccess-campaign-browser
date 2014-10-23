@@ -388,6 +388,10 @@ class Summary(BaseModel):
     """
     A set of summary totals provided by a filing's cover sheet.
     """
+    # cycle = models.ForeignKey(Cycle)
+    # committee = models.ForeignKey(Committee)
+    filing = models.ForeignKey(Filing)
+
     filing_id_raw = models.IntegerField(db_index=True)
     amend_id = models.IntegerField(db_index=True)
     itemized_monetary_contributions = models.DecimalField(
@@ -457,29 +461,29 @@ class Summary(BaseModel):
     def __unicode__(self):
         return unicode(self.filing_id_raw)
 
-    @property
-    def cycle(self):
-        try:
-            return self.filing.cycle
-        except:
-            return None
+    # @property
+    # def cycle(self):
+    #     try:
+    #         return self.filing.cycle
+    #     except:
+    #         return None
 
-    @property
-    def committee(self):
-        try:
-            return self.filing.committee
-        except:
-            return None
+    # @property
+    # def committee(self):
+    #     try:
+    #         return self.filing.committee
+    #     except:
+    #         return None
 
-    @property
-    def filing(self):
-        try:
-            return Filing.objects.get(
-                filing_id_raw=self.filing_id_raw,
-                amend_id=self.amend_id
-            )
-        except Filing.DoesNotExist:
-            return None
+    # @property
+    # def filing(self):
+    #     try:
+    #         return Filing.objects.get(
+    #             filing_id_raw=self.filing_id_raw,
+    #             amend_id=self.amend_id
+    #         )
+    #     except Filing.DoesNotExist:
+    #         return None
 
 
 class Expenditure(BaseModel):
