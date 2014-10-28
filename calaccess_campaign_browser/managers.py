@@ -50,7 +50,7 @@ class RealFilingManager(BaseRealManager):
         try:
             most_recent_quarterly = qs.filter(
                 form_type__in=['F450', 'F460']
-            ).order_by("-period__end_date")[0]
+            ).order_by("-end_date")[0]
         except (qs.model.DoesNotExist, IndexError):
             # If there are none, just return everything
             return qs
@@ -58,7 +58,7 @@ class RealFilingManager(BaseRealManager):
         # Exclude all F497 late filings that come before that date
         qs = qs.exclude(
             form_type='F497', 
-            period__start_date__lte=most_recent_quarterly.period.end_date
+            period__start_date__lte=most_recent_quarterly.end_date
         )
 
         # Retun the result
