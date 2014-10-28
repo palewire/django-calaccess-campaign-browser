@@ -58,7 +58,7 @@ class RealFilingManager(BaseRealManager):
         # Exclude all F497 late filings that come before that date
         qs = qs.exclude(
             form_type='F497', 
-            period__start_date__lte=most_recent_quarterly.end_date
+            start_date__lte=most_recent_quarterly.end_date
         )
 
         # Retun the result

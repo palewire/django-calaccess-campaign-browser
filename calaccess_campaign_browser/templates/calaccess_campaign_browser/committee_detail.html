@@ -193,7 +193,7 @@
             </td>
             <td>{{ filing.date_filed|date:"Y-m-d" }}</td>
             <td>{{ filing.get_form_type_display }}</td>
-            <td>{{ filing.period }}</td>
+            <td>{{ filing.start_date|date:"Y-m-d" }} - {{ filing.end_date|date:"Y-m-d" }}</td>
             <td class="right">
                 ${{ filing.total_contributions|default_if_none:0|floatformat:0|intcomma }}
             </td>
