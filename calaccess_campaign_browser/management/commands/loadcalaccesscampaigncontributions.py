@@ -16,10 +16,10 @@ class Command(CalAccessCommand):
         self.set_options(*args, **options)
         # Ignore MySQL "note" warnings so this can be run with DEBUG=True
         self.cursor.execute("""SET @OLD_SQL_NOTES=@@SQL_NOTES, SQL_NOTES=0;""")
-        self.log("Quarterly filings")
+        self.log(" Quarterly filings")
         self.transform_quarterly_contributions_csv()
         self.load_quarterly_contributions()
-        self.log("Late filings")
+        self.log(" Late filings")
         self.transform_late_contributions_csv()
         self.load_late_contributions()
         # Revert database to default "note" warning behavior
