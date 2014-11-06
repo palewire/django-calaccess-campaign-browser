@@ -1,4 +1,4 @@
-.PHONY: bootstrap docs reload runserver shell test
+.PHONY: bootstrap docs reload rs runserver shell test
 
 bootstrap:
 	mysqladmin -h localhost -u root -pmysql drop campaign_finance
@@ -16,6 +16,9 @@ reload:
 	python example/manage.py dropcalaccesscampaignbrowser
 	python example/manage.py migrate --noinput
 	python example/manage.py loadcalaccesscampaignfilers
+
+rs:
+	python example/manage.py runserver
 
 runserver:
 	python example/manage.py runserver
