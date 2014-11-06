@@ -25,7 +25,7 @@ Then create a new database named ``calaccess``.
 
 .. code-block:: bash
 
-    mysqladmin -h localhost -u root -p create calaccess
+    $ mysqladmin -h localhost -u root -p create calaccess
 
 Also in the Django settings, configure a database connection. Currently this application only supports MySQL backends.
 
