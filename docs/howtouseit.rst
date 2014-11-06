@@ -18,6 +18,15 @@ that contains the raw government database it will work with to refine to your Dj
        'calaccess_campaign_browser',
    )
 
+Make sure you have MySQL installed. If you don't, now is the time to hit Google and figure out how. If
+you're using Apple's OSX operating system, you can `install via Homebrew <http://benjsicam.me/blog/how-to-install-mysql-on-mac-os-x-using-homebrew-tutorial/>`_. If you need to clean up after a previous MySQL installation, `this might help <http://stackoverflow.com/questions/4359131/brew-install-mysql-on-mac-os/6378429#6378429>`_.
+
+Then create a new database named ``calaccess``.
+
+.. code-block:: bash
+
+    mysqladmin -h localhost -u root -p create calaccess
+
 Also in the Django settings, configure a database connection. Currently this application only supports MySQL backends.
 
 .. code-block:: python
@@ -25,7 +34,7 @@ Also in the Django settings, configure a database connection. Currently this app
     DATABASES = {
         'default': {
             'ENGINE': 'django.db.backends.mysql',
-            'NAME': 'my_calaccess_db',
+            'NAME': 'calaccess',
             'USER': 'username',
             'PASSWORD': 'password',
             'HOST': 'localhost',
