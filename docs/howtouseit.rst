@@ -1,14 +1,19 @@
 How to use it
 =============
 
-Install the application and its dependencies with ``pip``
+This library is intended to be plugged into project created with the Django web
+framework. Before you can begin, you'll need to get one of those up and running.
+If you don't know how, go `check out the official Django documentation <https://docs.djangoproject.com/en/dev/intro/tutorial01/>`_. 
+
+
+Once you've got that going, install this application and its dependencies with ``pip``.
 
 .. code-block:: bash
 
    $ pip install django-calaccess-campaign-browser
 
-Add this ``campaign_finance`` app as well as the underlying ``calaccess`` app
-that contains the raw government database it will work with to refine to your Django project's ``settings.py`` file:
+Add this ``calaccess_campaign_browser`` app as well as the underlying ``calaccess_raw`` app
+that contains the raw government database to your Django project's ``settings.py`` file.
 
 .. code-block:: python
 
@@ -19,8 +24,8 @@ that contains the raw government database it will work with to refine to your Dj
    )
 
 Make sure you have MySQL installed. If you don't, now is the time to hit Google and figure out how. If
-you're using Apple's OSX operating system, you can `install via Homebrew <http://benjsicam.me/blog/how-to-install-mysql-on-mac-os-x-using-homebrew-tutorial/>`_. If you need to clean up after a previous MySQL installation, `this might help <http://stackoverflow.com/questions/4359131/brew-install-mysql-on-mac-os/6378429#6378429>`_.
-
+you're using Apple's OSX operating system, you can `install via 
+Homebrew <http://benjsicam.me/blog/how-to-install-mysql-on-mac-os-x-using-homebrew-tutorial/>`_.
 Then create a new database named ``calaccess``.
 
 .. code-block:: bash
@@ -52,28 +57,13 @@ Now you're ready to sync the database tables.
 
     $ python manage.py migrate
 
-A final setting, ``CALACCESS_DOWNLOAD_DIR``, tels our application where to store the large files it's going to download. You can put it anywhere you want.
-
-.. code-block:: python
-
-    CALACCESS_DOWNLOAD_DIR = "/path/to/wherever/"
-
-Or you could put the files in your system's temp directory, if you felt like it
-
-.. code-block:: python
-
-    import tempfile
-    CALACCESS_DOWNLOAD_DIR = tempfile.gettempdir()
-
-Run the management command that installs the raw data dump from the California
-Secretary of State.
+Run the management command that installs the raw data dump from the California Secretary of State.
 
 .. code-block:: bash
 
     $ python manage.py downloadcalaccessrawdata
 
-Run the management command that extracts and refines campaign finance data from from the raw
-calaccess data dump.
+Run the management command that extracts and refines campaign finance data from from the raw CAL-ACCESS data dump.
 
 .. code-block:: bash
 
