@@ -1,6 +1,6 @@
 from django.db import connection
 from optparse import make_option
-from calaccess_campaign_browser.models import Cycle, Filing, FilingPeriod
+from calaccess_campaign_browser.models import Filing, FilingPeriod
 from calaccess_campaign_browser.management.commands import CalAccessCommand
 
 
