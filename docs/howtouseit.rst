@@ -50,7 +50,7 @@ Now you're ready to sync the database tables.
 
 .. code-block:: bash
 
-    $ python manage.py syncdb
+    $ python manage.py migrate
 
 A final setting, ``CALACCESS_DOWNLOAD_DIR``, tels our application where to store the large files it's going to download. You can put it anywhere you want.
 

@@ -66,7 +66,7 @@ Finally create your database and get to work.
 
 .. code-block:: bash
 
-    $ python example/manage.py syncdb
+    $ python example/manage.py migrate
 
 You might start by loading the data dump from the web.
 
