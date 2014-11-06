@@ -50,8 +50,8 @@ class FilerListView(generic.ListView):
             context['party'] = self.request.GET['p']
         context.update(dict(
             base_url=reverse("filer_list"),
-            type_list=sorted(Filer.FILER_TYPE_CHOICES, key=lambda x:x[1]),
-            party_list=sorted(Filer.PARTY_CHOICES, key=lambda x:x[1]),
+            type_list=sorted(Filer.FILER_TYPE_CHOICES, key=lambda x: x[1]),
+            party_list=sorted(Filer.PARTY_CHOICES, key=lambda x: x[1]),
         ))
         return context
 
@@ -97,8 +97,8 @@ class CommitteeDetailView(generic.DetailView):
 
         # Contributions
         contribs_qs = Contribution.real.by_committee_to(self.object)
-        context['contribution_set_short'] = contribs_qs.order_by('-amount')[:25]
-        context['contribution_set_count'] = contribs_qs.count()
+        context['contribs_set_short'] = contribs_qs.order_by('-amount')[:25]
+        context['contribs_set_count'] = contribs_qs.count()
 
         # Transfer to other committees
         contribs_out = Contribution.real.by_committee_from(self.object)

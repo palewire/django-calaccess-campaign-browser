@@ -61,7 +61,7 @@ class Command(CalAccessCommand):
         CREATE TEMPORARY TABLE tmp_max_filers (
             INDEX(`filer_id`),
             INDEX(`max_id`)
-        ) AS (  
+        ) AS (
             SELECT
                 fn.`FILER_ID` as `filer_id`,
                 MAX(fn.`id`) as `max_id`

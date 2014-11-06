@@ -5,22 +5,13 @@ from django.core.management.base import BaseCommand
 class CalAccessCommand(BaseCommand):
 
     def header(self, string):
-        self.stdout.write(
-            colorize(string, fg="cyan", opts=("bold",))
-        )
+        self.stdout.write(colorize(string, fg="cyan", opts=("bold",)))
 
     def log(self, string):
-        self.stdout.write(
-            colorize("%s" % string, fg="white")
-        )
+        self.stdout.write(colorize("%s" % string, fg="white"))
 
     def success(self, string):
-        self.stdout.write(
-            colorize(string, fg="green")
-        )
+        self.stdout.write(colorize(string, fg="green"))
 
     def failure(self, string):
-        self.stdout.write(
-            colorize(string, fg="red")
-        )
-
+        self.stdout.write(colorize(string, fg="red"))

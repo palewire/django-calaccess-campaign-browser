@@ -182,7 +182,7 @@ class Committee(AllCapsNameMixin):
 
     def get_calaccess_url(self):
         url = "http://cal-access.ss.ca.gov/Campaign/Committees/Detail.aspx?id="
-        return url + str(self.filer_id_raw) 
+        return url + str(self.filer_id_raw)
 
     @property
     def filer_short_name(self):
@@ -196,7 +196,7 @@ class Committee(AllCapsNameMixin):
     def total_contributions(self):
         return sum([
             f.total_contributions for f in self.real_filings
-                if f.total_contributions
+            if f.total_contributions
         ])
 
     @property
@@ -209,7 +209,7 @@ class Committee(AllCapsNameMixin):
                 d[f.period.start_date.year] += f.total_contributions
             except KeyError:
                 d[f.period.start_date.year] = f.total_contributions
-        return sorted(d.items(), key=lambda x:x[0], reverse=True)
+        return sorted(d.items(), key=lambda x: x[0], reverse=True)
 
     @property
     def total_contributions_by_cycle(self):
@@ -221,13 +221,13 @@ class Committee(AllCapsNameMixin):
                 d[f.cycle.name] += f.total_contributions
             except KeyError:
                 d[f.cycle.name] = f.total_contributions
-        return sorted(d.items(), key=lambda x:x[0], reverse=True)
+        return sorted(d.items(), key=lambda x: x[0], reverse=True)
 
     @property
     def total_expenditures(self):
         return sum([
             f.total_expenditures for f in self.real_filings
-                if f.total_expenditures
+            if f.total_expenditures
         ])
 
     @property
@@ -240,7 +240,7 @@ class Committee(AllCapsNameMixin):
                 d[f.cycle.name] += f.total_expenditures
             except KeyError:
                 d[f.cycle.name] = f.total_expenditures
-        return sorted(d.items(), key=lambda x:x[0], reverse=True)
+        return sorted(d.items(), key=lambda x: x[0], reverse=True)
 
     @property
     def total_expenditures_by_year(self):
@@ -252,7 +252,7 @@ class Committee(AllCapsNameMixin):
                 d[f.period.start_date.year] += f.total_expenditures
             except KeyError:
                 d[f.period.start_date.year] = f.total_expenditures
-        return sorted(d.items(), key=lambda x:x[0], reverse=True)
+        return sorted(d.items(), key=lambda x: x[0], reverse=True)
 
 
 class Cycle(BaseModel):
