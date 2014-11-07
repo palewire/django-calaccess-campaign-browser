@@ -19,8 +19,8 @@
         <table class="table table-bordered table-hover">
           <thead>
             <tr>
-              <th>Committee name</th>
               <th>Filer ID</th>
+              <th>Committee name</th>
               <th>Type</th>
               <th class="right">Contributions</th>
               <th class="right">Expenditures</th>
@@ -31,16 +31,16 @@
             <tr>
               <td>
                 <a href="{{ committee.get_absolute_url }}">
-                    {{ committee.short_name }}
+                    {{ committee.filer_id_raw }}
                 </a>
               </td>
-              <td>{{ committee.filer_id_raw }}</td>
+              <td>{{ committee.short_name }}</td>
               <td>{{ committee.get_committee_type_display }}</td>
               <td class="right">
-                    {{ committee.total_contributions|floatformat:0|intcomma }}
+                    ${{ committee.total_contributions|default:0|floatformat:0|intcomma }}
               </td>
               <td class="right">
-                    {{ committee.total_expenditures|floatformat:0|intcomma }}
+                    ${{ committee.total_expenditures|default:0|floatformat:0|intcomma }}
               </td>
             </tr>
           {% endfor %}
