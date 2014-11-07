@@ -74,5 +74,4 @@ urlpatterns = patterns(
     ),
     # API
     url(r'^api/', include(v1_api.urls)),
-
 )
