@@ -12,14 +12,15 @@ from calaccess_campaign_browser.models import (
     Contribution
 )
 
-NEXT_YEAR = datetime.date.today() + datetime.timedelta(days=365)
-
 
 class LatestView(generic.ListView):
     template_name = 'calaccess_campaign_browser/latest.html'
-    queryset = Filing.objects.exclude(
-        date_filed__gt=NEXT_YEAR
-    ).select_related("committee").order_by("-date_filed")[:500]
+
+    def get_queryset(self, *args, **kwargs):
+        next_year = datetime.date.today() + datetime.timedelta(days=365)
+        return Filing.objects.exclude(
+            date_filed__gt=next_year
+        ).select_related("committee").order_by("-date_filed")[:500]
 
 
 class FilerListView(generic.ListView):

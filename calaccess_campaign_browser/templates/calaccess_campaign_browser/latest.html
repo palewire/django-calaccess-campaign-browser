@@ -24,8 +24,6 @@
               <th>Period</th>
               <th class="right">Contributions</th>
               <th class="right">Expenditures</th>
-              <th class="center">Amendment</th>
-              <th class="center">Duplicate</th>
             </tr>
           </thead>
           <tbody>
@@ -38,27 +36,13 @@
               <td>
                 <a href="{{ object.committee.get_absolute_url }}">{{ object.committee.short_name }}</a>
               </td>
-              <td>{{ object.form_type }}</td>
-              <td>{{ object.start_date|date:"Y-m-d" }}-{{ object.end_date|date:"Y-m-d" }}</td>
+              <td>{{ object.get_form_type_display }}</td>
+              <td>{{ object.start_date|date:"Y-m-d" }} - {{ object.end_date|date:"Y-m-d" }}</td>
               <td class="right">
                     ${{ object.total_contributions|default:0|floatformat:0|intcomma }}
               </td>
               <td class="right">
                     ${{ object.total_expenditures|default:0|floatformat:0|intcomma }}
-              </td>
-              <td class="center">
-                {% if object.is_amendment %}
-                    {{ object.amend_id }}
-                {% else %}
-                    Original
-                {% endif %}
-              </td>
-              <td class="center">
-                {% if object.is_duplicate %}
-                    <i class="fa fa-check-square-o"></i>
-                {% else %}
-                    <i class="fa fa-square-o"></i>
-                {% endif %}
               </td>
             </tr>
           {% endfor %}
