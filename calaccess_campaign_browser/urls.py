@@ -13,7 +13,7 @@ urlpatterns = patterns(
     url(r'^$', RedirectView.as_view(url='/latest/', permanent=False)),
     url(
         r'^latest/$',
-        views.LatestView.as_view(),
+        views.LatestFilingView.as_view(),
         name='latest_list'
     ),
     url(

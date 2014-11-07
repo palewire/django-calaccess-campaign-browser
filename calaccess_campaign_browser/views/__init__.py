@@ -1,164 +1,30 @@
-import datetime
-from .search import get_query
-from django.views import generic
-from .base import CommitteeDataView
-from django.core.urlresolvers import reverse
-from django.shortcuts import redirect
-from calaccess_campaign_browser.models import (
-    Filer,
-    Committee,
-    Filing,
-    Expenditure,
-    Contribution
+from committees import (
+    CommitteeDetailView,
+    CommitteeContributionView,
+    CommitteeExpenditureView,
+    CommitteeFilingView,
 )
+from contributions import ContributionDetailView
+from expenditures import ExpenditureDetailView
+from filings import (
+    LatestFilingView,
+    FilerListView,
+    FilingDetailView,
+    FilerDetailView,
+)
+from search import SearchList
 
 
-class LatestView(generic.ListView):
-    template_name = 'calaccess_campaign_browser/latest.html'
-
-    def get_queryset(self, *args, **kwargs):
-        next_year = datetime.date.today() + datetime.timedelta(days=365)
-        return Filing.objects.exclude(
-            date_filed__gt=next_year
-        ).select_related("committee").order_by("-date_filed")[:500]
-
-
-class FilerListView(generic.ListView):
-    template_name = "filer_list"
-    allow_empty = True
-    paginate_by = 100
-
-    def get_queryset(self):
-        qs = Filer.objects.exclude(name="")
-        if ('q' in self.request.GET) and self.request.GET['q'].strip():
-            query = get_query(self.request.GET['q'], [
-                'name', 'filer_id_raw', 'xref_filer_id'
-            ])
-            qs = qs.filter(query)
-        if ('t' in self.request.GET) and self.request.GET['t'].strip():
-            qs = qs.filter(filer_type=self.request.GET['t'])
-        if ('p' in self.request.GET) and self.request.GET['p'].strip():
-            qs = qs.filter(party=self.request.GET['p'])
-        return qs
-
-    def get_context_data(self, **kwargs):
-        context = super(FilerListView, self).get_context_data(**kwargs)
-        if ('q' in self.request.GET) and self.request.GET['q'].strip():
-            context['query_string'] = self.request.GET['q']
-        if ('t' in self.request.GET) and self.request.GET['t'].strip():
-            context['type'] = self.request.GET['t']
-        if ('p' in self.request.GET) and self.request.GET['p'].strip():
-            context['party'] = self.request.GET['p']
-        context.update(dict(
-            base_url=reverse("filer_list"),
-            type_list=sorted(Filer.FILER_TYPE_CHOICES, key=lambda x: x[1]),
-            party_list=sorted(Filer.PARTY_CHOICES, key=lambda x: x[1]),
-        ))
-        return context
-
-
-class ContributionDetailView(generic.DetailView):
-    model = Contribution
-
-
-class ExpenditureDetailView(generic.DetailView):
-    model = Expenditure
-
-
-class FilingDetailView(generic.DetailView):
-    model = Filing
-
-
-class FilerDetailView(generic.DetailView):
-    model = Filer
-
-    def render_to_response(self, context):
-        if context['object'].committee_set.count() == 1:
-            return redirect(
-                context['object'].committee_set.all()[0].get_absolute_url()
-            )
-        return super(FilerDetailView, self).render_to_response(context)
-
-
-class CommitteeDetailView(generic.DetailView):
-    model = Committee
-
-    def get_context_data(self, **kwargs):
-        context = super(CommitteeDetailView, self).get_context_data(**kwargs)
-        context['committee'] = self.object
-
-        # Filings
-        filing_qs = Filing.real.by_committee(
-            self.object,
-        ).select_related("cycle", "period").order_by(
-            "-end_date", "filing_id_raw", "-amend_id"
-        )
-        context['filing_set_short'] = filing_qs[:25]
-        context['filing_set_count'] = filing_qs.count()
-
-        # Contributions
-        contribs_qs = Contribution.real.by_committee_to(self.object)
-        context['contribs_set_short'] = contribs_qs.order_by('-amount')[:25]
-        context['contribs_set_count'] = contribs_qs.count()
-
-        # Transfer to other committees
-        contribs_out = Contribution.real.by_committee_from(self.object)
-        context['contribs_out_list'] = contribs_out.order_by('-amount')[:25]
-        context['contribs_out_set_count'] = contribs_out.count()
-
-        # Expenditures
-        expends_qs = Expenditure.objects.filter(
-            committee=self.object,
-            dupe=False
-        )
-        context['expenditure_set_short'] = expends_qs.order_by('-amount')[:25]
-        context['expenditure_set_count'] = expends_qs.count()
-
-        # Close out
-        return context
-
-
-class CommitteeContributionView(CommitteeDataView):
-    model = Contribution
-    template_name = 'calaccess_campaign_browser/committee_\
-contribution_list.html'
-    context_object_name = 'committee_contributions'
-
-    def get_queryset(self):
-        """
-        Returns the contributions related to this committee.
-        """
-        committee = Committee.objects.get(pk=self.kwargs['pk'])
-        self.committee = committee
-        return Contribution.real.by_committee_to(
-            self.committee,
-        ).order_by("-date_received")
-
-
-class CommitteeExpenditureView(CommitteeDataView):
-    model = Expenditure
-    template_name = 'calaccess_campaign_browser/committee_\
-expenditure_list.html'
-    context_object_name = 'committee_expenditures'
-
-    def get_queryset(self):
-        """
-        Returns the expends related to this committee.
-        """
-        committee = Committee.objects.get(pk=self.kwargs['pk'])
-        self.committee = committee
-        return committee.expenditure_set.all().order_by('-cycle')
-
-
-class CommitteeFilingView(CommitteeDataView):
-    model = Filing
-    template_name = 'calaccess_campaign_browser/committee_filing_list.html'
-    context_object_name = 'committee_filings'
-
-    def get_queryset(self):
-        """
-        Returns the expends related to this committee.
-        """
-        committee = Committee.objects.get(pk=self.kwargs['pk'])
-        self.committee = committee
-        return Filing.real.by_committee(committee).order_by('-date_filed')
+__all__ = (
+    'CommitteeDetailView',
+    'CommitteeContributionView',
+    'CommitteeExpenditureView',
+    'CommitteeFilingView',
+    'ContributionDetailView',
+    'ExpenditureDetailView',
+    'LatestFilingView',
+    'FilerListView',
+    'FilingDetailView',
+    'FilerDetailView',
+    'SearchList',
+)
