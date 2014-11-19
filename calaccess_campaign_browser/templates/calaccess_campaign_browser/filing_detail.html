@@ -6,14 +6,47 @@
 {% block content %}
   <div class="row">
     <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
-        <h2>Filing No. {{ filing.filing_id_raw }} <small>{{ filing.form_id }}</small></h2>
+
+        <h2>Filing No. {{ filing.filing_id_raw }}</h2>
           <ol class="breadcrumb">
             <li><a href="{{ filing.committee.filer.get_absolute_url }}">Filer</a></li>
-            <li><a href="{{ filing.committee.get_absolute_url }}">{{ filing.committee.name }} ({{ filing.committee.filer_id_raw }})</a></li>
-            <li class="active">{{ filing.filing_id_raw }}</li>
+            <li><a href="{{ filing.committee.get_absolute_url }}">{{ filing.committee.name }}</a></li>
+            <li class="active"><a href="{% url 'filing_detail' filing.id %}">Overview</a></li>
           </ol>
     </div>
   </div>
+
+    <div class="row">
+        <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
+            <h3>Summary</h3>
+            <table class="table table-bordered table-hover">
+                <tr>
+                    <th>Form</th>
+                    <th>Date filed</th>
+                    <th>Date received</th>
+                    <th>Start date</th>
+                    <th>End date</th>
+                    <th>Amendment</th>
+                    <th>Duplicate</th>
+                    <th>CAL-ACCESS</th>
+                </tr>
+                <tr>
+                    <td>{{ filing.get_form_type_display }}</td>
+                    <td>{{ filing.date_filed|date:'Y-m-d' }}</td>
+                    <td>{{ filing.date_received|date:'Y-m-d' }}</td>
+                    <td>{{ filing.start_date|date:'Y-m-d' }}</td>
+                    <td>{{ filing.end_date|date:'Y-m-d' }}</td>
+                    <td>{{ filing.is_amendment }}</td>
+                    <td>{{ filing.is_duplicate }}</td>
+                    <td>
+                        <a target="_blank" href="{{ filing.get_calaccess_pdf_url }}">
+                            {{ filing.get_calaccess_pdf_url|truncatechars:40 }}
+                        </a>
+                    </td>
+                </tr>
+            </table>
+        </div>
+    </div>
 
   <div class="row">
     <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">

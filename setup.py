@@ -25,6 +25,7 @@ class TestCommand(Command):
             INSTALLED_APPS=('calaccess_campaign_browser',)
         )
         from django.core.management import call_command
+        django.setup()
         call_command('test', 'calaccess_campaign_browser')
 
 
