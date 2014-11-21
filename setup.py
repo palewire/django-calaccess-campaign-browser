@@ -45,7 +45,7 @@ drawn from the California Secretary of State’s CAL-ACCESS database. This is a 
         'django-calaccess-raw-data>=0.0.8',
         'django>=1.6',
         'csvkit>=0.6.1',
-        'python-dateutil==2.1',
+        'python-dateutil>=1.5',
         'MySQL-python>=1.2.5',
         'hurry.filesize>=0.9',
         'django-tastypie>=0.11.1',
