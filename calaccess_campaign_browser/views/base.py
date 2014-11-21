@@ -15,7 +15,7 @@ class DataPrepMixin(object):
         values = self.get_queryset().values_list(*field_names)
         data_list = []
         for i in values:
-            d = {field_names[index]: val for index, val in enumerate(i)}
+            d = dict((field_names[i], val) for i, val in enumerate(i))
             data_list.append(d)
 
         return (data_list, field_names)
