@@ -1,11 +1,21 @@
 [run]
 include =
-    campaign_finance/views.py
-    campaign_finance/models.py
-    campaign_finance/admin.py
-    campaign_finance/load.py
-    campaign_finance/management/commands/build_campaign_finance.py
-    campaign_finance/management/commands/export_campaign_finance.py
+    calaccess_campaign_browser/models.py
+    calaccess_campaign_browser/admin.py
+    calaccess_campaign_browser/api.py
+    calaccess_campaign_browser/apps.py
+    calaccess_campaign_browser/managers.py
+    calaccess_campaign_browser/urls.py
+    calaccess_campaign_browser/views
+    calaccess_campaign_browser/management/commands/buildcalaccesscampaignbrowser.py
+    calaccess_campaign_browser/management/commands/dropcalaccesscampaignbrowser.py
+    calaccess_campaign_browser/management/commands/exportcalaccesscampaignfinance.py
+    calaccess_campaign_browser/management/commands/flushcalaccesscampaignbrowser.py
+    calaccess_campaign_browser/management/commands/loadcalaccesscampaigncontributions.py
+    calaccess_campaign_browser/management/commands/loadcalaccesscampaignexpenditures.py
+    calaccess_campaign_browser/management/commands/loadcalaccesscampaignfilings.py
+    calaccess_campaign_browser/management/commands/loadcalaccesscampaignfilers.py
+    calaccess_campaign_browser/management/commands/loadcalaccesscampaignsummaries.py
 
 [report]
 exclude_lines =
