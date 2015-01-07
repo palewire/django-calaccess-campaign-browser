@@ -26,8 +26,6 @@ class Command(CalAccessCommand):
         self.log(" Late filings")
         self.transform_late_contributions_csv()
         self.load_late_contributions()
-        # Revert database to default "note" warning behavior
-        self.cursor.execute("""SET SQL_NOTES=@OLD_SQL_NOTES;""")
 
     def set_options(self, *args, **kwargs):
         self.data_dir = os.path.join(get_download_directory(), 'csv')
