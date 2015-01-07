@@ -1,6 +1,8 @@
 import os
 import csv
 import copy
+import MySQLdb
+import warnings
 import tempfile
 from django.db import connection
 from calaccess_raw.models import RcptCd, S497Cd
@@ -14,8 +16,10 @@ class Command(CalAccessCommand):
     def handle(self, *args, **options):
         self.header("Loading contributions")
         self.set_options(*args, **options)
-        # Ignore MySQL "note" warnings so this can be run with DEBUG=True
-        self.cursor.execute("""SET @OLD_SQL_NOTES=@@SQL_NOTES, SQL_NOTES=0;""")
+
+        # Ignore MySQL warnings so this can be run with DEBUG=True
+        warnings.filterwarnings("ignore", category=MySQLdb.Warning)
+
         self.log(" Quarterly filings")
         self.transform_quarterly_contributions_csv()
         self.load_quarterly_contributions()
