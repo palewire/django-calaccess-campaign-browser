@@ -19,8 +19,6 @@ Jump in.
 
 Clone the repository from `GitHub <https://github.com/california-civic-data-coalition/django-calaccess-campaign-browser>`_.
 
-Make sure you have the `django-calaccess-raw-data <https://github.com/california-civic-data-coalition/django-calaccess-raw-data>`_ installed otherwise NONE OF THIS WILL WORK.
-
 .. code-block:: bash
 
     $ git clone https://github.com/california-civic-data-coalition/django-calaccess-campaign-browser.git repo
