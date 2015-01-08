@@ -43,10 +43,10 @@ MIDDLEWARE_CLASSES = (
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.mysql',
-        'NAME': 'ccdc',
-        'USER': 'ccdc',
-        'PASSWORD': 'ccdcccdc',
-        'HOST': 'ccdc-42.cgwywxzrooap.us-west-2.rds.amazonaws.com',
+        'NAME': 'calaccess',
+        'USER': '',
+        'PASSWORD': '',
+        'HOST': '',
         'PORT': '3306',
         'OPTIONS': {
             'local_infile': 1,
