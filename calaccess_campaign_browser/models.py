@@ -707,12 +707,18 @@ class Election(BaseModel):
         max_length=50
     )
     year = models.IntegerField()
+    id_raw = models.IntegerField()
+
+    # This is to preserve the order of elections as specified on CalAccess,
+    # since multiple elections can occur in a given year, but CalAccess doesn't give
+    # a specific date.
+    sort_index = models.IntegerField()
 
     class Meta:
-        ordering = ('-year',)
+        ordering = ('-sort_index',)
 
     def __unicode__(self):
-        s = u'%s (%s)' % (self.get_name_display(), self.year)
+        s = u'%s (%s) [%s]' % (self.get_name_display(), self.year, self.id_raw)
         return s.strip()
 
 

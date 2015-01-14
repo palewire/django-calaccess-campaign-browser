@@ -23,7 +23,9 @@ class Command(BaseCommand):
 
             # Skip the first link, it is just "PRIOR ELECTIONS".
             print('Scraping...')
-            for link in links[1:]:
+            links = links[1:]
+            num_elections = len(links)
+            for idx, link in enumerate(links):
                 m = re.match(election_pattern, link['href'])
                 if not m:
                     raise CommandError
@@ -32,20 +34,21 @@ class Command(BaseCommand):
                 description = link.find_next_sibling('span').text.strip()
 
                 try:
-                    elections[description] = self.scrape_election_page(link["href"])
+                    elections[description] = self.scrape_election_page(link["href"], idx, num_elections)
 
                 # Try, try again
                 except HTTPError:
                     print('Got non-200 response, trying again...')
                     sleep(2.)
-                    elections[description] = self.scrape_election_page(link["href"])
+                    elections[description] = self.scrape_election_page(link["href"], idx, num_elections)
 
                 sleep(.5)
 
-            print('Creating models...')
+            print('Creating and/or updating models...')
             print('Found %s elections.' % len(elections.keys()))
             for name, election_dict in elections.items():
                 print('Election: %s' % name)
+                election_id = election_dict['id']
 
                 year = int(name[:4])
 
@@ -62,14 +65,20 @@ class Command(BaseCommand):
                 else:
                     type = 'OTHER'
 
-                election, created = Election.objects.get_or_create(year=year, name=type)
+                election, created = Election.objects.get_or_create(
+                        year=year,
+                        name=type,
+                        id_raw=election_id,
+                        sort_index=election_dict['index'])
+
                 if created:
                     print('\tCreated %s' % election)
                 else:
                     print('\tGot %s' % election)
 
-                for _, office_dict in election_dict.items():
+                for _, office_dict in election_dict['data'].items():
                     for office_name, candidates in office_dict.items():
+                        seat = None
                         if 'LIEUTENANT GOVERNOR' in office_name:
                             office_type = 'LIEUTENANT_GOVERNOR'
                         elif 'GOVERNOR' in office_name:
@@ -112,10 +121,11 @@ class Command(BaseCommand):
 
 
 
-    def scrape_election_page(self, rel_url):
+    def scrape_election_page(self, rel_url, idx, total_elections):
         url = 'http://cal-access.ss.ca.gov'+rel_url
         print('Scraping from %s' % url)
         response = requests.get(url)
+        election_id = url.replace('http://cal-access.ss.ca.gov/Campaign/Candidates/list.aspx?view=certified&electNav=', '')
         if response.status_code == 200:
             soup = BeautifulSoup(response.text)
             sections = {}
@@ -149,7 +159,15 @@ class Command(BaseCommand):
 
                     sections[section_name][title] = people
 
-            return sections
+            # The index value is used to preserve sorting of elections,
+            # since multiple elections may occur in a year.
+            # BeautifulSoup goes from top to bottom,
+            # but the top most election is the most recent so it should have the highest id.
+            return {
+                'id': int(election_id),
+                'data': sections,
+                'index': total_elections - idx
+            }
 
         else:
             raise HTTPError
