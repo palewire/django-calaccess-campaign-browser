@@ -51,7 +51,7 @@ class Command(BaseCommand):
         if response.status_code == 200:
             soup = BeautifulSoup(response.text)
             sections = {}
-            for section in soup.find('a', {'name': re.compile(r'[a-z]+')}):
+            for section in soup.findAll('a', {'name': re.compile(r'[a-z]+')}):
                 # Check that this data matches the structure we expect.
                 section_name_el = section.find('span', {'class': 'hdr14'})
                 if not section_name_el:
@@ -71,12 +71,12 @@ class Command(BaseCommand):
                     for p in office.findAll('a', {'class': 'sublink2'}):
                         people.append({
                             'name': p.text,
-                            'url':  p['href']
+                            'id':  p['href'].replace('/Campaign/Candidates/Detail.aspx?id=', '')
                         })
                     for p in office.findAll('span', {'class': 'txt7'}):
                         people.append({
                             'name': p.text,
-                            'url':  None
+                            'id':  None
                         })
 
                     sections[section_name][title] = people
