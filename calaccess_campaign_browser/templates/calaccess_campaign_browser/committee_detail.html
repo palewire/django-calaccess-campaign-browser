@@ -311,3 +311,18 @@
 {% endif %}
 
 {% endblock %}
+
+{% block javascript %}
+<script>
+  var committee          = {{ committee_json }};
+  committee.filings       = {{ filing_set_json }};
+  committee.expenditures  = {{ expenditure_set_json }};
+  committee.contributions = {{ contribs_set_json }};
+
+  committee.contributionsMade = {{ filing_set_json }};
+
+  // Psuedo Code
+  // var aDiv = document.querySelector('.someDiv');
+  // App.viz( committee, aDiv );
+</script>
+{% endblock %}

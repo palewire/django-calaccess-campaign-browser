@@ -1,5 +1,10 @@
+import json
+
 from django.views import generic
+from django.utils.safestring import SafeString
+from django.forms.models import model_to_dict
 from .base import CommitteeDataView
+from calaccess_campaign_browser.utils.lazyencoder import LazyEncoder
 from calaccess_campaign_browser.models import (
     Committee,
     Filing,
@@ -15,6 +20,10 @@ class CommitteeDetailView(generic.DetailView):
         context = super(CommitteeDetailView, self).get_context_data(**kwargs)
         context['committee'] = self.object
 
+        context['committee_json'] = SafeString(
+            json.dumps(model_to_dict(self.object), cls=LazyEncoder)
+        )
+
         # Filings
         filing_qs = Filing.real.by_committee(
             self.object,
@@ -24,15 +33,33 @@ class CommitteeDetailView(generic.DetailView):
         context['filing_set_short'] = filing_qs[:25]
         context['filing_set_count'] = filing_qs.count()
 
+        context['filing_set_json'] = SafeString(
+            json.dumps(list(filing_qs.values()), cls=LazyEncoder)
+        )
+
         # Contributions
         contribs_qs = Contribution.real.by_committee_to(self.object)
         context['contribs_set_short'] = contribs_qs.order_by('-amount')[:25]
         context['contribs_set_count'] = contribs_qs.count()
 
+        context['contribs_set_json'] = SafeString(
+            json.dumps(
+                list(contribs_qs.order_by('-amount').values()),
+                cls=LazyEncoder
+            )
+        )
+
         # Transfer to other committees
         contribs_out = Contribution.real.by_committee_from(self.object)
         context['contribs_out_list'] = contribs_out.order_by('-amount')[:25]
         context['contribs_out_set_count'] = contribs_out.count()
+
+        context['contribs_out_json'] = SafeString(
+            json.dumps(
+                list(contribs_out.order_by('-amount').values()),
+                cls=LazyEncoder
+            )
+        )
 
         # Expenditures
         expends_qs = Expenditure.objects.filter(
@@ -41,6 +68,13 @@ class CommitteeDetailView(generic.DetailView):
         )
         context['expenditure_set_short'] = expends_qs.order_by('-amount')[:25]
         context['expenditure_set_count'] = expends_qs.count()
+
+        context['expenditure_set_json'] = SafeString(
+            json.dumps(
+                list(expends_qs.order_by('-amount').values()),
+                cls=LazyEncoder
+            )
+        )
 
         # Close out
         return context
