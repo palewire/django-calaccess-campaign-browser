@@ -8,6 +8,9 @@ from calaccess_campaign_browser.models import (
     Cycle,
     FilingPeriod,
     Filing,
+    Election,
+    Office,
+    Candidate,
 )
 
 
@@ -150,6 +153,38 @@ class SummaryAdmin(BaseAdmin):
     )
 
 
+class ElectionAdmin(BaseAdmin):
+    list_display = (
+        "year", "name",
+    )
+    list_filter = (
+        "year",
+    )
+
+
+class OfficeAdmin(BaseAdmin):
+    list_display = (
+        "name", "seat",
+    )
+    list_filter = (
+        "name",
+    )
+    search_fields = (
+        "name",
+    )
+
+
+class CandidateAdmin(BaseAdmin):
+    list_display = (
+        "election", "office", "filer"
+    )
+    list_filter = (
+        "election",
+    )
+    search_fields = (
+        "filer",
+    )
+
 admin.site.register(Committee, CommitteeAdmin)
 admin.site.register(Filer, FilerAdmin)
 admin.site.register(Cycle, CycleAdmin)
@@ -158,3 +193,6 @@ admin.site.register(Filing, FilingAdmin)
 admin.site.register(Expenditure, ExpenditureAdmin)
 admin.site.register(Contribution, ContributionAdmin)
 admin.site.register(Summary, SummaryAdmin)
+admin.site.register(Election, ElectionAdmin)
+admin.site.register(Office, OfficeAdmin)
+admin.site.register(Candidate, CandidateAdmin)
