@@ -691,3 +691,44 @@ class Contribution(BaseModel):
 
     def get_absolute_url(self):
         return reverse('contribution_detail', args=[str(self.pk)])
+
+
+class Election(BaseModel):
+    NAME_CHOICES = (
+        ("GENERAL", "General"),
+        ("PRIMARY", "Primary"),
+        ("SPECIAL", "Special"),
+        ("SPECIAL_RUNOFF", "Special Runoff"),
+    )
+    name = models.CharField(
+        choices=NAME_CHOICES,
+        max_length=50
+    )
+    year = models.IntegerField()
+
+
+class Office(BaseModel):
+    OFFICE_CHOICES = (
+        ("GOVERNOR", "Governor"),
+        ("LIEUTENANT_GOVERNOR", "Lieutenant Governor"),
+        ("SECRETARY_OF_STATE", "Secretary of State"),
+        ("CONTROLLER", "Controller"),
+        ("TREASURER", "Treasurer"),
+        ("ATTORNEY_GENERAL", "Attorney General"),
+        ("SUPERINTENDENT_OF_PUBLIC_INSTRUCTION", "Superintendent of Public Instruction"),
+        ("INSURANCE_COMMISSIONER", "Insurance Commissioner"),
+        ("BOARD_OF_EQUALIZATION", "Board of Equalization"),
+        ("SENATE", "Senate"),
+        ("ASSEMBLY", "Assembly")
+    )
+    name = models.CharField(
+        choices=OFFICE_CHOICES,
+        max_length=50
+    )
+    seat = models.IntegerField(null=True)
+
+
+class Candidate(BaseModel):
+    election = models.ForeignKey(Election)
+    office = models.ForeignKey(Office)
+    filer = models.ForeignKey(Filer)
