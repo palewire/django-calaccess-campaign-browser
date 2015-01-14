@@ -33,8 +33,15 @@ class CommitteeDetailView(generic.DetailView):
         context['filing_set_short'] = filing_qs[:25]
         context['filing_set_count'] = filing_qs.count()
 
+
+        alist = []
+        for filing in filing_qs:
+            f = model_to_dict(filing)
+            f['summary'] = model_to_dict( filing.summary )
+            alist.append(f)
+
         context['filing_set_json'] = SafeString(
-            json.dumps(list(filing_qs.values()), cls=LazyEncoder)
+            json.dumps(alist, cls=LazyEncoder)
         )
 
         # Contributions
