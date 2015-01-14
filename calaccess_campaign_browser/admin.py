@@ -20,7 +20,7 @@ class BaseAdmin(admin.ModelAdmin):
     def get_readonly_fields(self, *args, **kwargs):
         return [f.name for f in self.model._meta.fields]
 
-
+@admin.register(Filing)
 class FilingAdmin(BaseAdmin):
     list_display = (
         "filing_id_raw",
@@ -41,6 +41,7 @@ class FilingAdmin(BaseAdmin):
     )
 
 
+@admin.register(Filer)
 class FilerAdmin(BaseAdmin):
     list_display = (
         "filer_id_raw",
@@ -64,6 +65,7 @@ class FilerAdmin(BaseAdmin):
     date_hierarchy = "effective_date"
 
 
+@admin.register(Committee)
 class CommitteeAdmin(BaseAdmin):
     list_display = (
         "filer_id_raw",
@@ -88,10 +90,12 @@ class CommitteeAdmin(BaseAdmin):
     date_hierarchy = "effective_date"
 
 
+@admin.register(Cycle)
 class CycleAdmin(BaseAdmin):
     list_display = ("name",)
 
 
+@admin.register(FilingPeriod)
 class FilingPeriodAdmin(BaseAdmin):
     list_display = (
         "period_id", "name", "start_date", "end_date", "deadline",
@@ -101,6 +105,7 @@ class FilingPeriodAdmin(BaseAdmin):
     )
 
 
+@admin.register(Contribution)
 class ContributionAdmin(BaseAdmin):
     list_display = (
         "id",
@@ -119,6 +124,7 @@ class ContributionAdmin(BaseAdmin):
     date_hierarchy = "date_received"
 
 
+@admin.register(Expenditure)
 class ExpenditureAdmin(BaseAdmin):
     list_display = (
         "id",
@@ -138,6 +144,7 @@ class ExpenditureAdmin(BaseAdmin):
     date_hierarchy = "expn_date"
 
 
+@admin.register(Summary)
 class SummaryAdmin(BaseAdmin):
     list_display = (
         "filing_id_raw",
@@ -153,6 +160,7 @@ class SummaryAdmin(BaseAdmin):
     )
 
 
+@admin.register(Election)
 class ElectionAdmin(BaseAdmin):
     list_display = (
         "year", "name",
@@ -162,6 +170,7 @@ class ElectionAdmin(BaseAdmin):
     )
 
 
+@admin.register(Office)
 class OfficeAdmin(BaseAdmin):
     list_display = (
         "name", "seat",
@@ -174,6 +183,7 @@ class OfficeAdmin(BaseAdmin):
     )
 
 
+@admin.register(Candidate)
 class CandidateAdmin(BaseAdmin):
     list_display = (
         "election", "office", "filer"
@@ -184,15 +194,3 @@ class CandidateAdmin(BaseAdmin):
     search_fields = (
         "filer",
     )
-
-admin.site.register(Committee, CommitteeAdmin)
-admin.site.register(Filer, FilerAdmin)
-admin.site.register(Cycle, CycleAdmin)
-admin.site.register(FilingPeriod, FilingPeriodAdmin)
-admin.site.register(Filing, FilingAdmin)
-admin.site.register(Expenditure, ExpenditureAdmin)
-admin.site.register(Contribution, ContributionAdmin)
-admin.site.register(Summary, SummaryAdmin)
-admin.site.register(Election, ElectionAdmin)
-admin.site.register(Office, OfficeAdmin)
-admin.site.register(Candidate, CandidateAdmin)
