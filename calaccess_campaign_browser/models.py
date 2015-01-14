@@ -697,14 +697,23 @@ class Election(BaseModel):
     NAME_CHOICES = (
         ("GENERAL", "General"),
         ("PRIMARY", "Primary"),
+        ("RECALL", "Recall"),
         ("SPECIAL", "Special"),
         ("SPECIAL_RUNOFF", "Special Runoff"),
+        ("OTHER", "Other"),
     )
     name = models.CharField(
         choices=NAME_CHOICES,
         max_length=50
     )
     year = models.IntegerField()
+
+    class Meta:
+        ordering = ('-year',)
+
+    def __unicode__(self):
+        s = u'%s (%s)' % (self.get_name_display(), self.year)
+        return s.strip()
 
 
 class Office(BaseModel):
@@ -719,16 +728,25 @@ class Office(BaseModel):
         ("INSURANCE_COMMISSIONER", "Insurance Commissioner"),
         ("BOARD_OF_EQUALIZATION", "Board of Equalization"),
         ("SENATE", "Senate"),
-        ("ASSEMBLY", "Assembly")
+        ("ASSEMBLY", "Assembly"),
+        ("OTHER", "Other"),
     )
     name = models.CharField(
         choices=OFFICE_CHOICES,
         max_length=50
     )
-    seat = models.IntegerField(null=True)
+    seat = models.IntegerField(null=True, default=None)
+
+    def __unicode__(self):
+        s = u'%s %s' % (self.get_name_display(), self.seat)
+        return s.strip()
 
 
 class Candidate(BaseModel):
     election = models.ForeignKey(Election)
     office = models.ForeignKey(Office)
     filer = models.ForeignKey(Filer)
+
+    def __unicode__(self):
+        s = u'%s : %s [%s]' % (self.filer, self.office, self.election)
+        return s.strip()
