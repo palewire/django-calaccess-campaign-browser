@@ -317,7 +317,9 @@
   var committee          = {{ committee_json }};
   committee.filings       = {{ filing_set_json }};
   committee.expenditures  = {{ expenditure_set_json }};
+  committee.expenditures_by_year = {{ expenditure_by_year|safe }};
   committee.contributions = {{ contribs_set_json }};
+  committee.contributions_by_year = {{contribs_by_year|safe }};
 
   committee.contributionsMade = {{ filing_set_json }};
 
