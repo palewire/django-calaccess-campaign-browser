@@ -743,9 +743,14 @@ class Office(BaseModel):
     )
     seat = models.IntegerField(null=True, default=None)
 
+    class Meta:
+        ordering = ('name', 'seat',)
+
     def __unicode__(self):
-        s = u'%s %s' % (self.get_name_display(), self.seat)
-        return s.strip()
+        s = u'%s' % (self.get_name_display(),)
+        if self.seat:
+            s = u'%s %s' % (s, self.seat)
+        return s
 
 
 class Candidate(BaseModel):
@@ -756,3 +761,12 @@ class Candidate(BaseModel):
     def __unicode__(self):
         s = u'%s : %s [%s]' % (self.filer, self.office, self.election)
         return s.strip()
+
+    @property
+    def election_year(self):
+        return self.election.year
+
+    @property
+    def election_name(self):
+        return self.election.get_name_display()
+

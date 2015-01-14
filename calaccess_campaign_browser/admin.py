@@ -186,11 +186,11 @@ class OfficeAdmin(BaseAdmin):
 @admin.register(Candidate)
 class CandidateAdmin(BaseAdmin):
     list_display = (
-        "election", "office", "filer"
+        "filer", "election_year", "election_name", "office"
     )
     list_filter = (
         "election",
     )
     search_fields = (
-        "filer",
+        "filer__name",
     )
