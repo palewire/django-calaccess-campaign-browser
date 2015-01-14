@@ -30,13 +30,13 @@ class Command(BaseCommand):
                 print(election_id)
                 print(description)
                 try:
-                    elections[description] = self.scrapeElectionPage(link["href"])
+                    elections[description] = self.scrape_election_page(link["href"])
 
                 # Try, try again
                 except HTTPError:
                     print('Got non-200 response, trying again...')
                     sleep(2.)
-                    elections[description] = self.scrapeElectionPage(link["href"])
+                    elections[description] = self.scrape_election_page(link["href"])
 
                 sleep(.5)
 
@@ -44,7 +44,7 @@ class Command(BaseCommand):
             with open('output.json', 'w') as out:
                 json.dump(elections, out, sort_keys=True, indent=4, separators=(',', ': '))
 
-    def scrapeElectionPage(self, rel_url):
+    def scrape_election_page(self, rel_url):
         url = 'http://cal-access.ss.ca.gov'+rel_url
         print(url)
         response = requests.get(url)
