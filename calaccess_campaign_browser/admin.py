@@ -11,6 +11,7 @@ from calaccess_campaign_browser.models import (
     Election,
     Office,
     Candidate,
+    Proposition,
 )
 
 
@@ -203,4 +204,13 @@ class CandidateAdmin(BaseAdmin):
     )
     search_fields = (
         "filer__name",
+    )
+
+@admin.register(Proposition)
+class PropositionAdmin(BaseAdmin):
+    list_display = (
+        "name", "filer_id_raw",
+    )
+    search_fields = (
+        "name",
     )
