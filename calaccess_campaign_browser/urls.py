@@ -72,6 +72,12 @@ urlpatterns = patterns(
         search.search_contribs_by_name,
         name='search-contribs-by-name'
     ),
+    url(
+        r'^parties/$',
+        views.PartyListView.as_view(),
+        name='party_list'
+    ),
+
     # API
     url(r'^api/', include(v1_api.urls)),
 )

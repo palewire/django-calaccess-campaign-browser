@@ -37,7 +37,12 @@ class CommitteeDetailView(generic.DetailView):
         alist = []
         for filing in filing_qs:
             f = model_to_dict(filing)
-            f['summary'] = model_to_dict( filing.summary )
+
+            try:
+                f['summary'] = model_to_dict( filing.summary )
+            except AttributeError:
+                f['summary'] = {}
+
             alist.append(f)
 
         context['filing_set_json'] = SafeString(
