@@ -729,6 +729,9 @@ class Election(BaseModel):
 
 
 class Office(BaseModel):
+    """
+    An office that is at stake in an election contest.
+    """
     OFFICE_CHOICES = (
         ("GOVERNOR", "Governor"),
         ("LIEUTENANT_GOVERNOR", "Lieutenant Governor"),
@@ -736,7 +739,10 @@ class Office(BaseModel):
         ("CONTROLLER", "Controller"),
         ("TREASURER", "Treasurer"),
         ("ATTORNEY_GENERAL", "Attorney General"),
-        ("SUPERINTENDENT_OF_PUBLIC_INSTRUCTION", "Superintendent of Public Instruction"),
+        (
+            "SUPERINTENDENT_OF_PUBLIC_INSTRUCTION",
+            "Superintendent of Public Instruction"
+        ),
         ("INSURANCE_COMMISSIONER", "Insurance Commissioner"),
         ("BOARD_OF_EQUALIZATION", "Board of Equalization"),
         ("SENATE", "Senate"),
@@ -760,13 +766,15 @@ class Office(BaseModel):
 
 
 class Candidate(BaseModel):
+    """
+    Links filers to the contests and elections where they are on the ballot.
+    """
     election = models.ForeignKey(Election)
     office = models.ForeignKey(Office)
     filer = models.ForeignKey(Filer)
 
     def __unicode__(self):
-        s = u'%s : %s [%s]' % (self.filer, self.office, self.election)
-        return s.strip()
+        return u'%s : %s [%s]' % (self.filer, self.office, self.election)
 
     @property
     def election_year(self):
