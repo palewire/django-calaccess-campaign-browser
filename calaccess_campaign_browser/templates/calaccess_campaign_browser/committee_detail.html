@@ -359,33 +359,4 @@
   // var aDiv = document.querySelector('.someDiv');
   // App.viz( committee, aDiv );
 </script>
-
-<script>
-  jQuery(document).ready(function($) {
-    $("table").stupidtable({
-        "currency":function(a,b){
-
-            var aNum = a.replace('$', '').replace(',', '');
-            var bNum = b.replace('$', '').replace(',', '')
-
-            return parseInt(aNum,10) - parseInt(bNum,10);
-          },
-        "date":function(a,b){
-          var year1 = parseInt(a.substring(0,4));
-          var month1 = parseInt(a.substring(7,5)) - 1;
-          var day1 = parseInt(a.substring(10,8));
-
-          var year2 = parseInt(b.substring(0,4));
-          var month2 = parseInt(b.substring(7,5)) - 1;
-          var day2 = parseInt(b.substring(10,8));
-
-          var date1 = new Date(year1, month1, day1);
-          var date2 = new Date(year2, month2, day2);
-
-          return date1 - date2;
-        }
-    });
-    
-  });
-</script>
 {% endblock %}
