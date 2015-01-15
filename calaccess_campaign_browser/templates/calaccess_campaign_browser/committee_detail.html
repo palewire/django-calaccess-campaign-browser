@@ -231,6 +231,75 @@
 </div>
 {% endif %} -->
 
+
+{% if contribs_set_top_contributors %}
+<div class="row">
+    <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
+        <h3>
+              <a href="{% url 'committee_contribution_list' committee.pk 1 %}">Top contributors</a>
+        </h3>
+        {% if contribs_set_top_contributors %}
+        <div class="col-lg-6 col-md-6 col-sm-12 col-xs-12">
+          <p>Top 10 contributors by total amount</p>
+          <table class="table table-bordered table-hover searchable-list">
+            <thead>
+              <tr>
+                  <th data-sort="string">Name</th>
+                  <th data-sort="currency" class="right">Total</th>
+                  <th data-sort="int" class="right">#Contributions</th>
+              </tr>
+            </thead>
+            <tbody>
+                {% for contribution in contribs_set_top_contributors %}
+                  <tr>                    
+                      <td>
+                          {{ contribution.contributor_full_name|capfirst }}
+                      </td> 
+                      <td class="right">
+                          ${{ contribution.contributor_total|intcomma }}
+                      </td>   
+                      <td class="right">
+                          {{ contribution.contribution_count }}
+                      </td>             
+                  </tr>
+                {% endfor %}
+            </tbody>
+          </table>
+        </div>
+        {% endif %}
+        {% if contribs_set_frequent_contributors %}
+        <div class="col-lg-6 col-md-6 col-sm-12 col-xs-12">
+          <p>Top 10 contributors by number of contributions</p>
+          <table class="table table-bordered table-hover searchable-list">
+            <thead>
+              <tr>
+                  <th data-sort="string">Name</th>
+                  <th data-sort="currency" class="right">Total</th>
+                  <th data-sort="int" class="right">#Contributions</th>
+              </tr>
+            </thead>
+            <tbody>
+                {% for contribution in contribs_set_frequent_contributors %}
+                  <tr>                    
+                      <td>
+                          {{ contribution.contributor_full_name|capfirst }}
+                      </td> 
+                      <td class="right">
+                          ${{ contribution.contributor_total|intcomma }}
+                      </td>   
+                      <td class="right">
+                          {{ contribution.contribution_count }}
+                      </td>             
+                  </tr>
+                {% endfor %}
+            </tbody>
+          </table>
+        </div>
+        {% endif %}
+    </div>
+</div>
+{% endif %}
+
 {% if contribs_set_short %}
 <div class="row">
     <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
@@ -283,6 +352,7 @@
     </div>
 </div>
 {% endif %}
+
 
 {% if contribs_out_list %}
 <div class="row">
@@ -382,6 +452,8 @@
 
   committee.contributionsMade = {{ filing_set_json }};
 
+  App.chartViz(committee.contributions_by_year, committee.expenditures_by_year);
+
   var dataTable = dc.dataTable("#dc-table-graph");
   var timeChart = dc.barChart("#dc-time-chart");
 
@@ -444,7 +516,6 @@ timeChart.width(880)
 
   dc.renderAll();
 
->>>>>>> Stashed changes
 </script>
 
 <script>

@@ -3,6 +3,7 @@ import json
 from django.views import generic
 from django.utils.safestring import SafeString
 from django.forms.models import model_to_dict
+from django.db.models import Count, Sum
 from .base import CommitteeDataView
 from calaccess_campaign_browser.utils.lazyencoder import LazyEncoder
 from calaccess_campaign_browser.models import (
@@ -49,6 +50,13 @@ class CommitteeDetailView(generic.DetailView):
         context['contribs_set_short'] = contribs_qs.order_by('-amount')[:25]
         context['contribs_set_count'] = contribs_qs.count()
 
+        context['contribs_set_top_contributors'] = contribs_qs.values(
+            'contributor_full_name').annotate(contributor_total = Sum('amount')
+            ).annotate(contribution_count = Count('amount')).order_by('-contributor_total')[:10]        
+
+        context['contribs_set_frequent_contributors'] = contribs_qs.values(
+            'contributor_full_name').annotate(contributor_total = Sum('amount')
+            ).annotate(contribution_count = Count('amount')).order_by('-contribution_count')[:10]     
         context['contribs_set_json'] = SafeString(
             json.dumps(
                 list(contribs_qs.order_by('-amount').values()),
