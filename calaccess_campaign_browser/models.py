@@ -710,7 +710,7 @@ class Election(BaseModel):
         max_length=50
     )
     year = models.IntegerField()
-    date = models.DateTimeField()
+    date = models.DateField(null=True,default=None)
 
     id_raw = models.IntegerField(
         verbose_name="UID (CAL-ACCESS)",
@@ -804,6 +804,9 @@ class Candidate(BaseModel):
     office = models.ForeignKey(Office)
     filer = models.ForeignKey(Filer)
 
+    class Meta:
+        ordering = ("election", "office", "filer")
+
     def __unicode__(self):
         return u'%s : %s [%s]' % (self.filer, self.office, self.election)
 
@@ -819,3 +822,7 @@ class Candidate(BaseModel):
 class Proposition(BaseModel):
     name = models.CharField(max_length=255, null=True)
     filer_id_raw = models.IntegerField(db_index=True)
+    election = models.ForeignKey(Election, null=True, default=None)
+
+    def __unicode__(self):
+        return u'%s (%s)' % (self.name, self.filer_id_raw)
