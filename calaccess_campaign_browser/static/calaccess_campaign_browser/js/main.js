@@ -7,9 +7,7 @@ App = {
         App.dataTables();
     },
     dataTables: function () {
-<<<<<<< HEAD
         $('table').dataTable();
-=======
         $("table").stupidtable({
 	        "currency":function(a,b){
 
@@ -33,7 +31,6 @@ App = {
 	          return date1 - date2;
 	        }
 	    });
->>>>>>> fe90971b529dde7969012d42505b288b4542f1fc
     },
     chartViz: function(contribs, expends) {
 
