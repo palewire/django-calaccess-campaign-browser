@@ -59,9 +59,17 @@ App = {
 
 		var chartScale = d3.scale.linear()
 		    .range([0, width*.8])
-		    .domain([0, d3.max(_.union(_.pluck(contribs,'total'),_.pluck(expends, 'total')))]);
+		    .domain([0 , d3.max(_.union(_.pluck(contribs,'total'),_.pluck(expends, 'total')))]); //todo: update to handle negative stack
 
 		var formatter = d3.format("0,000");
+
+		var getAmountForYear = function(dataset, currYear){
+			var record = _.find(dataset, function(x){ return x.year==currYear; });
+			if(record){
+				return record.total;
+			}
+			return 0;
+		}
 
 		var yeargroups = chartContainer.selectAll('div')
 			.data(years_data)
@@ -80,22 +88,22 @@ App = {
 
 		contribDivs.append('div')
 			.classed('bar',true)
-			.style('width',function(d){return chartScale(_.find(contribs, function(x){ return x.year==d; }).total)+'px';})
+			.style('width',function(d){return chartScale(getAmountForYear(contribs, d))+'px';})
 			.classed('series1',true);
 
 		contribDivs.append('span')
-			.text(function(d){return '$' + formatter(_.find(contribs, function(x){ return x.year==d; }).total);});
+			.text(function(d){return '$' + formatter(getAmountForYear(contribs, d));});
 
 		var expendDivs = barContainer.append('div')
 			.classed('expend',true);
 
 		expendDivs.append('div')
 			.classed('bar',true)
-			.style('width',function(d){return chartScale(_.find(expends, function(x){ return x.year==d; }).total)+'px';})
+			.style('width',function(d){return chartScale(getAmountForYear(expends, d))+'px';})
 			.classed('series2',true);
 
 		expendDivs.append('span')
-			.text(function(d){return '$' + formatter(_.find(expends, function(x){ return x.year==d; }).total);});
+			.text(function(d){return '$' + formatter(getAmountForYear(expends, d));});
 
     }
 };
