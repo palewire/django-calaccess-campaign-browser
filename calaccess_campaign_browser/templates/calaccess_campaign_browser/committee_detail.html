@@ -83,16 +83,10 @@
       <a class="toggle-btn" data-toggle="collapse" href="#cashflowData" aria-expanded="false" aria-controls="cashflowData">
             Show/hide data
       </a>
-    </div>   
-    <div id="moneyFlowViz" class="col-lg-12 col-md-12 col-sm-12 col-xs-12">    
     </div>
-    <ul class="legend right col-lg-6 col-md-6 col-sm-12 col-xs-12">
-        <li class="legenditem"><span class="series1"></span>Contribution</li>
-        <li class="legenditem"><span class="series2"></span>Expenditure</li>
-    </ul> 
-</div>
-<div id="cashflowData" class="collapse row">
-    <div class="col-lg-6 col-md-6 col-sm-12 col-xs-12">
+
+    <div id="cashflowData" class="collapse row">
+      <div class="col-lg-6 col-md-6 col-sm-12 col-xs-12">
         {% if committee.total_contributions_by_year %}
         <h4>Contributions by year</h4>
         <table class="table table-bordered table-hover">
@@ -112,28 +106,35 @@
         </tbody>
         </table>
         {% endif %}
+      </div>
+      <div class="col-lg-6 col-md-6 col-sm-12 col-xs-12">
+          {% if committee.total_expenditures_by_year %}
+          <h4>Expenditures by year</h4>
+          <table class="table table-bordered table-hover">
+          <thead>
+              <tr>
+                  <th data-sort="int">Year</th>
+                  <th  data-sort="currency" class="right">Total</th>
+              </tr>
+          </thead>
+          <tbody>
+              {% for year, total in committee.total_expenditures_by_year %}
+                  <tr>
+                      <td>{{ year }}</td>
+                      <td class="right">${{ total|floatformat:0|intcomma }}</td>
+                  </tr>
+              {% endfor %}
+          </tbody>
+          </table>
+          {% endif %}
+      </div>
     </div>
-    <div class="col-lg-6 col-md-6 col-sm-12 col-xs-12">
-        {% if committee.total_expenditures_by_year %}
-        <h4>Expenditures by year</h4>
-        <table class="table table-bordered table-hover">
-        <thead>
-            <tr>
-                <th data-sort="int">Year</th>
-                <th  data-sort="currency" class="right">Total</th>
-            </tr>
-        </thead>
-        <tbody>
-            {% for year, total in committee.total_expenditures_by_year %}
-                <tr>
-                    <td>{{ year }}</td>
-                    <td class="right">${{ total|floatformat:0|intcomma }}</td>
-                </tr>
-            {% endfor %}
-        </tbody>
-        </table>
-        {% endif %}
+    <div id="moneyFlowViz" class="col-lg-12 col-md-12 col-sm-12 col-xs-12">    
     </div>
+    <ul class="legend right col-lg-6 col-md-6 col-sm-12 col-xs-12">
+        <li class="legenditem"><span class="series1"></span>Contribution</li>
+        <li class="legenditem"><span class="series2"></span>Expenditure</li>
+    </ul> 
 </div>
 
 {% if filing_set_count %}
