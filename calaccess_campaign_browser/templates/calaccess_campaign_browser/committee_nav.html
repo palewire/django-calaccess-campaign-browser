@@ -1,8 +1,6 @@
 <div class="row">
     <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
 
-<h2>{{ committee }}</h2>
-
     <nav id="navbar-example" class="navbar navbar-default navbar-static" role="navigation">
         <div class="navbar-header">
           <button class="navbar-toggle" type="button" data-toggle="collapse" data-target=".bs-example-js-navbar-collapse">
@@ -14,7 +12,6 @@
         <ol class="breadcrumb">
           <li><a href="{% url 'filer_list' %}">Filers</a></li>
           <li><a href="{{ committee.filer.get_absolute_url }}">Committees</a></li>
-          <li class="active"><a href="{{ committee.get_absolute_url }}">Overview</a></li>
         </ol>
         </div>
         <div class="collapse navbar-collapse bs-example-js-navbar-collapse">
@@ -50,6 +47,9 @@
 
         </div><!-- /.nav-collapse -->
     </nav>
+
+
+<h2>{{ committee }}</h2>
 
 </div>
 </div>

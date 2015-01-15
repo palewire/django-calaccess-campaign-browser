@@ -6,6 +6,11 @@ table {
     font-size:13px;
     
 }
+
+th {
+    background-color: #fefefe;
+}
+
 td.right, th.right {
     text-align:right;
 }
