@@ -56,45 +56,50 @@
 </div>
 
 -->
-
-<h3>Cashflow</h3>
-
-<div class="row">
-    <div id="contribExpenditureViz" class="col-lg-12 col-md-12 col-sm-12 col-xs-12">    
-    </div>
-    <div class="col-lg-6 col-md-6 col-sm-12 col-xs-12">
-        <h4>Contributions</h4>
+<div class="row">        
+    <h3>Cashflow</h3>     
+    <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
         <table class="table table-bordered table-hover">
         <tbody>
-        <tr>
-            <td>Total</td>
-            <td class="right">${{ committee.total_contributions|default_if_none:0|floatformat:0|intcomma }}</td>
-        </tr>
+          <tr>
+              <td>Total Contributions</td>
+              <td class="right">${{ committee.total_contributions|default_if_none:0|floatformat:0|intcomma }}</td>
+          </tr>
+          <tr>
+              <td>Total Expenditures</td>
+              <td class="right">${{ committee.total_expenditures|default_if_none:0|floatformat:0|intcomma }}</td>
+          </tr>
+          <tr>
+              <td>Balance</td>
+              <td class="right totals">${{ committee.total_cashflow_balance|default_if_none:0|floatformat:0|intcomma }}</td>
+          </tr>
         </tbody>
         </table>
-    </div>
-    <div class="col-lg-6 col-md-6 col-sm-12 col-xs-12">
-        <h4>Expenditures</h4>
-        <table class="table table-bordered table-hover">
-        <tbody>
-        <tr>
-            <td>Total</td>
-            <td class="right">${{ committee.total_expenditures|default_if_none:0|floatformat:0|intcomma }}</td>
-        </tr>
-        </tbody>
-        </table>
-    </div>
+    </div>     
 </div>
-
 <div class="row">
+    <div class="graphheader">
+      <h4> Contributions and expenditure by year</h4>      
+      <a class="toggle-btn" data-toggle="collapse" href="#cashflowData" aria-expanded="false" aria-controls="cashflowData">
+            Show/hide data
+      </a>
+    </div>   
+    <div id="moneyFlowViz" class="col-lg-12 col-md-12 col-sm-12 col-xs-12">    
+    </div>
+    <ul class="legend right col-lg-6 col-md-6 col-sm-12 col-xs-12">
+        <li class="legenditem"><span class="series1"></span>Contribution</li>
+        <li class="legenditem"><span class="series2"></span>Expenditure</li>
+    </ul> 
+</div>
+<div id="cashflowData" class="collapse row">
     <div class="col-lg-6 col-md-6 col-sm-12 col-xs-12">
         {% if committee.total_contributions_by_year %}
-        <h4>By year</h4>
+        <h4>Contributions by year</h4>
         <table class="table table-bordered table-hover">
         <thead>
             <tr>
-                <th>Year</th>
-                <th class="right">Total</th>
+                <th data-sort="int">Year</th>
+                <th  data-sort="currency" class="right">Total</th>
             </tr>
         </thead>
         <tbody>
@@ -110,12 +115,12 @@
     </div>
     <div class="col-lg-6 col-md-6 col-sm-12 col-xs-12">
         {% if committee.total_expenditures_by_year %}
-        <h4>By year</h4>
+        <h4>Expenditures by year</h4>
         <table class="table table-bordered table-hover">
         <thead>
             <tr>
-                <th>Year</th>
-                <th class="right">Total</th>
+                <th data-sort="int">Year</th>
+                <th  data-sort="currency" class="right">Total</th>
             </tr>
         </thead>
         <tbody>
@@ -155,13 +160,13 @@
       <table class="table table-bordered table-hover">
         <thead>
             <tr>
-                <th>No.</th>
-                <th>Filed</th>
+                <th data-sort="int">No.</th>
+                <th data-sort="date">Filed</th>
                 <th>Form</th>
                 <th>Period</th>
-                <th class="right">Contributions</th>
-                <th class="right">Expenditures</th>
-                <th class="right">Debts</th>
+                <th data-sort="currency" class="right">Contributions</th>
+                <th data-sort="currency" class="right">Expenditures</th>
+                <th data-sort="currency" class="right">Debts</th>
                 <th class="center">PDF</th>
             </tr>
         </thead>
@@ -220,9 +225,9 @@
         <table class="table table-bordered table-hover">
           <thead>
             <tr>
-                <th>Date</th>
-                <th>Name</th>
-                <th class="right">Amount</th>
+                <th data-sort="date">Date</th>
+                <th data-sort="string">Name</th>
+                <th data-sort="currency" class="right">Amount</th>
             </tr>
           </thead>
           <tbody>
@@ -262,9 +267,9 @@
         <table class="table table-bordered table-hover">
           <thead>
             <tr>
-                <th>Date</th>
-                <th>Name</th>
-                <th class="right">Amount</th>
+                <th data-sort="date">Date</th>
+                <th data-sort="string">Name</th>
+                <th data-sort="currency" class="right">Amount</th>
             </tr>
           </thead>
           <tbody>
@@ -309,10 +314,10 @@
       <table class="table table-bordered table-hover"> <!-- table table-bordered table-hover -->
         <thead>
           <tr>
-              <th>Date</th>
-              <th>Name</th>
-              <th>Type</th>
-              <th class="right">Amount</th>
+                <th data-sort="date">Date</th>
+                <th data-sort="string">Name</th>
+                <th>Type</th>
+                <th data-sort="currency" class="right">Amount</th>
           </tr>
         </thead>
         <tbody>
@@ -348,10 +353,39 @@
   committee.contributionsMade = {{ filing_set_json }};
 
   // Charting for contributions and expenditure
-  // App.chartViz(committee.contributions_by_year, committee.expenditures_by_year);
+  App.chartViz(committee.contributions_by_year, committee.expenditures_by_year);
 
   // Psuedo Code
   // var aDiv = document.querySelector('.someDiv');
   // App.viz( committee, aDiv );
+</script>
+
+<script>
+  jQuery(document).ready(function($) {
+    $("table").stupidtable({
+        "currency":function(a,b){
+
+            var aNum = a.replace('$', '').replace(',', '');
+            var bNum = b.replace('$', '').replace(',', '')
+
+            return parseInt(aNum,10) - parseInt(bNum,10);
+          },
+        "date":function(a,b){
+          var year1 = parseInt(a.substring(0,4));
+          var month1 = parseInt(a.substring(7,5)) - 1;
+          var day1 = parseInt(a.substring(10,8));
+
+          var year2 = parseInt(b.substring(0,4));
+          var month2 = parseInt(b.substring(7,5)) - 1;
+          var day2 = parseInt(b.substring(10,8));
+
+          var date1 = new Date(year1, month1, day1);
+          var date2 = new Date(year2, month2, day2);
+
+          return date1 - date2;
+        }
+    });
+    
+  });
 </script>
 {% endblock %}
