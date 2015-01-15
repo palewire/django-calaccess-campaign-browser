@@ -64,7 +64,7 @@ class AllCapsNameMixin(BaseModel):
             'Usaf', 'Pac', 'Ca', 'Ad', 'Rcc', 'Cdp', 'Aclu',
             'Cbpa-Pac', 'Aka', 'Aflac',
         ]
-        for fl in force_lowercase:
+        for fl in force_uppercase:
             s = []
             for p in n.split(" "):
                 if p in force_uppercase:
