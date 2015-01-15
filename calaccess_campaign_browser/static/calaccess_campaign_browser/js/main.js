@@ -4,10 +4,32 @@ var App = App || {};
 
 App = {
     init: function () {
-        // App.dataTables();
+        App.dataTables();
     },
     dataTables: function () {
-        $('table').dataTable();
+        $("table").stupidtable({
+	        "currency":function(a,b){
+
+	            var aNum = a.replace('$', '').replace(/,/g, '');
+	            var bNum = b.replace('$', '').replace(/,/g, '')
+
+	            return parseInt(aNum,10) - parseInt(bNum,10);
+	          },
+	        "date":function(a,b){
+	          var year1 = parseInt(a.substring(0,4));
+	          var month1 = parseInt(a.substring(7,5)) - 1;
+	          var day1 = parseInt(a.substring(10,8));
+
+	          var year2 = parseInt(b.substring(0,4));
+	          var month2 = parseInt(b.substring(7,5)) - 1;
+	          var day2 = parseInt(b.substring(10,8));
+
+	          var date1 = new Date(year1, month1, day1);
+	          var date2 = new Date(year2, month2, day2);
+
+	          return date1 - date2;
+	        }
+	    });
     },
     chartViz: function(contribs, expends) {
 
