@@ -7,7 +7,7 @@ App = {
         App.dataTables();
     },
     dataTables: function () {
-        $('table').dataTable();
+        //$('table').dataTable();
         $("table").stupidtable({
 	        "currency":function(a,b){
 
