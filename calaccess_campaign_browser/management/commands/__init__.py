@@ -30,6 +30,8 @@ class ScrapeCommand(CalAccessCommand):
     base_url = 'http://cal-access.ss.ca.gov/'
 
     def handle(self, *args, **options):
+        self.verbose = True if int(options['verbosity']) > 1 else False
+
         results = self.build_results()
         self.process_results(results)
 

@@ -45,10 +45,11 @@ class Command(ScrapeCommand):
                 id_raw=election_id,
                 sort_index=election_dict['index'])
 
-            if created:
-                self.log('\tCreated %s' % election)
-            else:
-                self.log('\tGot %s' % election)
+            if self.verbose:
+                if created:
+                    self.log('\tCreated %s' % election)
+                else:
+                    self.log('\tGot %s' % election)
 
             for _, office_dict in election_dict['data'].items():
                 for office_name, candidates in office_dict.items():
@@ -88,7 +89,8 @@ class Command(ScrapeCommand):
                     continue
                 title = title_el.text
 
-                self.log('\tScraping office %s' % title)
+                if self.verbose:
+                    self.log('\tScraping office %s' % title)
                 people = []
                 for p in office.findAll('a', {'class': 'sublink2'}):
                     people.append({

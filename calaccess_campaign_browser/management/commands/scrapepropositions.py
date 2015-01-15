@@ -54,16 +54,18 @@ class Command(ScrapeCommand):
                 for prop in election_dict['props']:
                     proposition, created = Proposition.objects.get_or_create(name=prop['name'], filer_id_raw=prop['id'])
 
-                    if created:
-                        self.log('\tCreated %s' % proposition)
-                    else:
-                        self.log('\tGot %s' % proposition)
+                    if self.verbose:
+                        if created:
+                            self.log('\tCreated %s' % proposition)
+                        else:
+                            self.log('\tGot %s' % proposition)
 
                     proposition.election = election
                     proposition.save()
 
                     for committee in prop['committees']:
-                        self.log('\t\tCommittee %s' % committee['id'])
+                        if self.verbose:
+                            self.log('\t\tCommittee %s' % committee['id'])
 
                         # This filer_id could mean a lot of things, so try a few.
                         filer_id = committee['id']
@@ -84,7 +86,10 @@ class Command(ScrapeCommand):
                         )
 
     def scrape_props_page(self, rel_url):
-        self.header('Scraping from %s' % rel_url)
+        if self.verbose:
+            self.header('Scraping from %s' % rel_url)
+        else:
+            self.log('Scraping from %s' % rel_url)
         soup = self.make_request(rel_url)
         elections = {}
         for election in soup.findAll('table', {'id': re.compile(r'ListElections1__[a-z0-9]+')}):
@@ -93,7 +98,8 @@ class Command(ScrapeCommand):
             election_type = election_title.replace(election_date, '').strip()
             prop_links = election.findAll('a')
 
-            self.log('\tScraping election %s...' % election_title)
+            if self.verbose:
+                self.log('\tScraping election %s...' % election_title)
 
             election_type = parse_election_name(election_type)
 
@@ -105,13 +111,17 @@ class Command(ScrapeCommand):
 
     def scrape_prop_page(self, rel_url):
         rel_url = '/Campaign/Measures/' + rel_url
-        self.header('\tScraping from %s' % rel_url)
+
+        if self.verbose:
+            self.header('\tScraping from %s' % rel_url)
+
         soup = self.make_request(rel_url)
         prop_name = soup.find('span', id='measureName').text
         prop_id = re.match(r'.+id=(\d+)', rel_url).group(1)
         committees = []
 
-        self.log('\t\tScraping measure %s' % prop_name)
+        if self.verbose:
+            self.log('\t\tScraping measure %s' % prop_name)
 
         # Targeting elements by cellpadding is hacky but...
         for committee in soup.findAll('table', cellpadding='4'):
@@ -128,7 +138,8 @@ class Command(ScrapeCommand):
                 'support': support
             })
 
-            self.log('\t\t\t%s (%s) [%s]' % (name, id, support))
+            if self.verbose:
+                self.log('\t\t\t%s (%s) [%s]' % (name, id, support))
 
         return {
             'id': prop_id,
