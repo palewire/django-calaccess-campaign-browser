@@ -23,42 +23,10 @@
   </div>
 </div>
 
-<!-- old presentation as table
-
-<div class="row">
-    <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
-        <table class="table table-bordered table-hover">
-            <tr>
-                <th>Status</th>
-                <th>Effective date</th>
-                <th>Type</th>
-                <th>Party</th>
-                <th>ID</th>
-                <th>XREF ID</th>
-                <th>CAL-ACCESS</th>
-            </tr>
-            <tr>
-                <td>{{ committee.get_status_display }}</td>
-                <td>{{ committee.effective_date|date:"Y-m-d" }}</td>
-                <td>{{ committee.get_committee_type_display }}</td>
-                <td>{{ committee.get_party_display }}</td>
-                <td>{{ committee.filer_id_raw }}</td>
-                <td>{{ committee.xref_filer_id }}</td>
-
-                <td>
-                    <a target="_blank" href="{{ committee.get_calaccess_url }}">
-                        {{ committee.get_calaccess_url|truncatechars:40 }}
-                    </a>
-                </td>
-            </tr>
-        </table>
-    </div>
-</div>
-
--->
 <div class="row">        
     <h3>Cashflow</h3>     
-    <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
+    <div class="col-lg-6 col-md-6 col-sm-8 col-xs-12">
+
         <table class="table table-bordered table-hover">
         <tbody>
           <tr>
@@ -176,9 +144,6 @@
       </thead>
     </table>
 </div>
-</div>
-<div id="lists">
-  <div id="flight-list" class="list"></div>
 </div>
 <!-- <div class="row">
   <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
@@ -458,11 +423,12 @@
   var timeChart = dc.barChart("#dc-time-chart");
 
   var data = committee.filings;
-
+  var parseDate = d3.time.format("%Y-%m-%d").parse;
 
   data.forEach(function(d){
     d.num = d.filing_id_raw;
     d.dtg = d.date_filed;
+    d.date = parseDate(d.date_filed);
     d.ft = d.form_type;
     d.pd = d.start_date + " - " + d.end_date;
     d.contributions = d.summary.total_contributions;
@@ -472,28 +438,26 @@
   });
 
   var info = crossfilter(data);
-
-    var contrDimension = info.dimension(function(d){
-        return d.contributions;
-      });
-    var contrValueGroupCount = contrDimension.group()
-      .reduceCount(function(d) { return d; });
-
   var timeDimension = info.dimension(function(d){
-    return d.dtg;
+    return d.date;
   });
+  var minDate = timeDimension.bottom(1)[0].date;
+  var maxDate = timeDimension.top(1)[0].date;
+  var contrValueGroupCount = timeDimension.group()
+      .reduceSum(function(d) { return d.contributions; });
+
+  
 
 
 timeChart.width(880)
 .height(150)
-.margins({top: 10, right: 10, bottom: 20, left: 40})
-.dimension(contrDimension)
+.margins({top: 10, right: 10, bottom: 20, left: 50})
+.dimension(timeDimension)
 .group(contrValueGroupCount)
 .transitionDuration(500)
 .centerBar(true)
-.gap(65)
-.filter([3, 5])
-.x(d3.scale.linear().domain([-50000, 200000]))
+.gap(10)
+.x(d3.time.scale().domain([minDate,maxDate]))
 .elasticY(true)
 .xAxis().tickFormat();
 

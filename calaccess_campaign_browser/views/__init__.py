@@ -13,7 +13,7 @@ from filings import (
     FilerDetailView,
 )
 from search import SearchList
-
+from parties import PartyListView
 
 __all__ = (
     'CommitteeDetailView',
