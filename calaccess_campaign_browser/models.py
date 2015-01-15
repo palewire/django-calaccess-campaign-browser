@@ -694,6 +694,9 @@ class Contribution(BaseModel):
 
 
 class Election(BaseModel):
+    """
+    A grouping of election contests administered by the state.
+    """
     NAME_CHOICES = (
         ("GENERAL", "General"),
         ("PRIMARY", "Primary"),
@@ -707,12 +710,12 @@ class Election(BaseModel):
         max_length=50
     )
     year = models.IntegerField()
-    id_raw = models.IntegerField()
-
-    # This is to preserve the order of elections as specified on CalAccess,
-    # since multiple elections can occur in a given year, but CalAccess doesn't give
-    # a specific date.
-    sort_index = models.IntegerField()
+    id_raw = models.IntegerField(
+        help_text="The unique identifer from the CAL-ACCESS site"
+    )
+    sort_index = models.IntegerField(
+        help_text="The order of the election specified on the CAL-ACCESS site",
+    )
 
     class Meta:
         ordering = ('-sort_index',)
