@@ -721,8 +721,11 @@ class Election(BaseModel):
         ordering = ('-sort_index',)
 
     def __unicode__(self):
-        s = u'%s (%s) [%s]' % (self.get_name_display(), self.year, self.id_raw)
-        return s.strip()
+        return u'%s (%s) [%s]' % (
+            self.get_name_display(),
+            self.year,
+            self.id_raw
+        )
 
 
 class Office(BaseModel):
