@@ -1,6 +1,6 @@
 from django.core.management.base import BaseCommand, CommandError
 
-#Scraper imports
+# Scraper imports
 import re
 from time import sleep
 
@@ -9,18 +9,19 @@ from bs4 import BeautifulSoup
 from requests.exceptions import HTTPError
 from calaccess_campaign_browser.models import Election, Office, Candidate, Filer
 
-class Command(BaseCommand):
 
+class Command(BaseCommand):
     def handle(self, *args, **options):
-        help = 'scraper to get the list of candidates per election'
+        """
+        Scraper to get the list of candidates per election.
+        """
         election_pattern = re.compile('^.*electNav=(\d+)')
-        url =  \
-            'http://cal-access.ss.ca.gov/Campaign/Candidates/list.aspx?view=certified'
+        url = 'http://cal-access.ss.ca.gov/Campaign/Candidates/list.aspx?view=certified'
 
         response = requests.get(url)
         if response.status_code == 200:
             soup = BeautifulSoup(response.text)
-            links = soup.findAll('a', href = re.compile(r'^.*&electNav=\d+'))
+            links = soup.findAll('a', href=re.compile(r'^.*&electNav=\d+'))
             elections = {}
 
             # Skip the first link, it is just "PRIOR ELECTIONS".
@@ -33,16 +34,16 @@ class Command(BaseCommand):
                     raise CommandError
 
                 election_id = m.group(1)
-                description = link.find_next_sibling('span').text.strip()
+                title = link.find_next_sibling('span').text.strip()
 
                 try:
-                    elections[description] = self.scrape_election_page(link["href"], idx, num_elections)
+                    elections[title] = self.scrape_election_page(link["href"], idx, num_elections)
 
                 # Try, try again
                 except HTTPError:
                     print('Got non-200 response, trying again...')
                     sleep(2.)
-                    elections[description] = self.scrape_election_page(link["href"], idx, num_elections)
+                    elections[title] = self.scrape_election_page(link["href"], idx, num_elections)
 
                 sleep(.5)
 
@@ -68,10 +69,10 @@ class Command(BaseCommand):
                     type = 'OTHER'
 
                 election, created = Election.objects.get_or_create(
-                        year=year,
-                        name=type,
-                        id_raw=election_id,
-                        sort_index=election_dict['index'])
+                    year=year,
+                    name=type,
+                    id_raw=election_id,
+                    sort_index=election_dict['index'])
 
                 if created:
                     print('\tCreated %s' % election)
@@ -121,8 +122,6 @@ class Command(BaseCommand):
                             except Filer.DoesNotExist:
                                 pass
 
-
-
     def scrape_election_page(self, rel_url, idx, total_elections):
         url = 'http://cal-access.ss.ca.gov'+rel_url
         print('Scraping from %s' % url)
@@ -164,7 +163,8 @@ class Command(BaseCommand):
             # The index value is used to preserve sorting of elections,
             # since multiple elections may occur in a year.
             # BeautifulSoup goes from top to bottom,
-            # but the top most election is the most recent so it should have the highest id.
+            # but the top most election is the most recent so it should
+            # have the highest id.
             return {
                 'id': int(election_id),
                 'data': sections,

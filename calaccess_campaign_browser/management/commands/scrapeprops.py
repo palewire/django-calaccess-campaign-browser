@@ -1,6 +1,6 @@
 from django.core.management.base import BaseCommand, CommandError
 
-#Scraper imports
+# Scraper imports
 import re
 from time import sleep
 from datetime import datetime
@@ -10,12 +10,12 @@ from bs4 import BeautifulSoup
 from requests.exceptions import HTTPError
 from calaccess_campaign_browser.models import Filer, Election, Proposition, PropositionFiler
 
-class Command(BaseCommand):
 
+class Command(BaseCommand):
     def handle(self, *args, **options):
-        '''
+        """
         Scrape propositions and ballot measures.
-        '''
+        """
         prop_pattern = re.compile('^.*session=(\d+)')
 
         # Build the link list from this page because otherwise the other years
@@ -26,7 +26,7 @@ class Command(BaseCommand):
         response = requests.get(url)
         if response.status_code == 200:
             soup = BeautifulSoup(response.text)
-            links = soup.findAll('a', href = re.compile(r'^.*\?session=\d+'))
+            links = soup.findAll('a', href=re.compile(r'^.*\?session=\d+'))
             years = {}
 
             # Filter links for uniqueness.
@@ -43,7 +43,7 @@ class Command(BaseCommand):
                 try:
                     years[year] = self.scrape_props_page(link)
 
-                ## Try, try again
+                # Try, try again
                 except HTTPError:
                     print('Got non-200 response, trying again...')
                     sleep(2.)
@@ -52,8 +52,8 @@ class Command(BaseCommand):
                 sleep(.5)
 
             for year, elections in years.items():
-                # The years as extracted from the urls are actually not always right,
-                # so get it from the date.
+                # The years as extracted from the urls are actually not always
+                # right, so get it from the date.
                 for date, election_dict in elections.items():
                     date = datetime.strptime(date, '%B %d, %Y').date()
 
@@ -69,7 +69,8 @@ class Command(BaseCommand):
                     # Can't figure out to connect ambiguous elections, just set to None.
                     except Election.MultipleObjectsReturned:
                         election = None
-                        print('Multiple elections found for year %s and type %s, not sure which to pick. Not setting the date for this election...' % (date.year, election_dict['type']))
+                        print('Multiple elections found for year %s and type %s, not sure which to pick. \
+                                Not setting the date for this election...' % (date.year, election_dict['type']))
 
                     for prop in election_dict['props']:
                         proposition, created = Proposition.objects.get_or_create(name=prop['name'], filer_id_raw=prop['id'])
@@ -97,12 +98,11 @@ class Command(BaseCommand):
                                     pass
 
                             # Associate the filer with the prop.
-                            prop_filer = PropositionFiler.objects.get_or_create(
-                                    proposition=proposition,
-                                    filer=filer,
-                                    position='SUPPORT' if committee['support'] else 'OPPOSE'
+                            PropositionFiler.objects.get_or_create(
+                                proposition=proposition,
+                                filer=filer,
+                                position='SUPPORT' if committee['support'] else 'OPPOSE'
                             )
-
 
     def scrape_props_page(self, rel_url):
         url = 'http://cal-access.ss.ca.gov'+rel_url
@@ -156,15 +156,15 @@ class Command(BaseCommand):
 
             # Targeting elements by cellpadding is hacky but...
             for committee in soup.findAll('table', cellpadding='4'):
-                data = committee.findAll('span', {'class':'txt7'})
+                data = committee.findAll('span', {'class': 'txt7'})
 
-                url = committee.find('a', {'class':'sublink2'})
+                url = committee.find('a', {'class': 'sublink2'})
                 name = url.text
 
                 # This ID sometimes refers to xref_filer_id rather than filer_id_raw.
                 id = data[0].text
                 # This is one matches with filer_id_raw, always.
-                #id = re.match(r'.+id=(\d+)', url).group(1)
+                # id = re.match(r'.+id=(\d+)', url).group(1)
 
                 support = data[1].text.strip() == 'SUPPORT'
                 committees.append({
