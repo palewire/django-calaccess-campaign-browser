@@ -1,4 +1,5 @@
-from django.core.management.base import BaseCommand, CommandError
+from django.core.management.base import CommandError
+from calaccess_campaign_browser.management.commands import CalAccessCommand
 
 #Scraper imports
 import re
@@ -9,7 +10,7 @@ from bs4 import BeautifulSoup
 from requests.exceptions import HTTPError
 from calaccess_campaign_browser.models import Election, Office, Candidate, Filer
 
-class Command(BaseCommand):
+class Command(CalAccessCommand):
 
     def handle(self, *args, **options):
         help = 'scraper to get the list of candidates per election'
@@ -24,12 +25,13 @@ class Command(BaseCommand):
             elections = {}
 
             # Skip the first link, it is just "PRIOR ELECTIONS".
-            print('Scraping...')
+            self.header("Scraping election candidates")
             links = links[1:]
             num_elections = len(links)
             for idx, link in enumerate(links):
                 m = re.match(election_pattern, link['href'])
                 if not m:
+                    self.failure('Could not find election links')
                     raise CommandError
 
                 election_id = m.group(1)
@@ -40,16 +42,16 @@ class Command(BaseCommand):
 
                 # Try, try again
                 except HTTPError:
-                    print('Got non-200 response, trying again...')
+                    self.log('Got non-200 response, trying again...')
                     sleep(2.)
                     elections[description] = self.scrape_election_page(link["href"], idx, num_elections)
 
                 sleep(.5)
 
-            print('Creating and/or updating models...')
-            print('Found %s elections.' % len(elections.keys()))
+            self.header('Creating and/or updating models...')
+            self.log('Found %s elections.' % len(elections.keys()))
             for name, election_dict in elections.items():
-                print('Election: %s' % name)
+                self.log('Election: %s' % name)
                 election_id = election_dict['id']
 
                 year = int(name[:4])
@@ -74,9 +76,9 @@ class Command(BaseCommand):
                         sort_index=election_dict['index'])
 
                 if created:
-                    print('\tCreated %s' % election)
+                    self.log('\tCreated %s' % election)
                 else:
-                    print('\tGot %s' % election)
+                    self.log('\tGot %s' % election)
 
                 for _, office_dict in election_dict['data'].items():
                     for office_name, candidates in office_dict.items():
@@ -125,7 +127,7 @@ class Command(BaseCommand):
 
     def scrape_election_page(self, rel_url, idx, total_elections):
         url = 'http://cal-access.ss.ca.gov'+rel_url
-        print('Scraping from %s' % url)
+        self.log('Scraping from %s' % url)
         response = requests.get(url)
         election_id = url.replace('http://cal-access.ss.ca.gov/Campaign/Candidates/list.aspx?view=certified&electNav=', '')
         if response.status_code == 200:
@@ -172,4 +174,5 @@ class Command(BaseCommand):
             }
 
         else:
+            self.failure('Could not parse election page')
             raise HTTPError

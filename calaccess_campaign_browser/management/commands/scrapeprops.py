@@ -1,4 +1,5 @@
-from django.core.management.base import BaseCommand, CommandError
+from django.core.management.base import CommandError
+from calaccess_campaign_browser.management.commands import CalAccessCommand
 
 #Scraper imports
 import re
@@ -10,7 +11,7 @@ from bs4 import BeautifulSoup
 from requests.exceptions import HTTPError
 from calaccess_campaign_browser.models import Filer, Election, Proposition, PropositionFiler
 
-class Command(BaseCommand):
+class Command(CalAccessCommand):
 
     def handle(self, *args, **options):
         '''
@@ -32,7 +33,7 @@ class Command(BaseCommand):
             # Filter links for uniqueness.
             links = list(set([link['href'] for link in links]))
 
-            print('Scraping...')
+            self.header("Scraping propositions")
             for link in links:
                 m = re.match(prop_pattern, link)
                 if not m:
@@ -45,7 +46,7 @@ class Command(BaseCommand):
 
                 ## Try, try again
                 except HTTPError:
-                    print('Got non-200 response, trying again...')
+                    self.log('Got non-200 response, trying again...')
                     sleep(2.)
                     years[year] = self.scrape_props_page(link)
 
@@ -69,21 +70,21 @@ class Command(BaseCommand):
                     # Can't figure out to connect ambiguous elections, just set to None.
                     except Election.MultipleObjectsReturned:
                         election = None
-                        print('Multiple elections found for year %s and type %s, not sure which to pick. Not setting the date for this election...' % (date.year, election_dict['type']))
+                        self.log('Multiple elections found for year %s and type %s, not sure which to pick. Not setting the date for this election...' % (date.year, election_dict['type']))
 
                     for prop in election_dict['props']:
                         proposition, created = Proposition.objects.get_or_create(name=prop['name'], filer_id_raw=prop['id'])
 
                         if created:
-                            print('\tCreated %s' % proposition)
+                            self.log('\tCreated %s' % proposition)
                         else:
-                            print('\tGot %s' % proposition)
+                            self.log('\tGot %s' % proposition)
 
                         proposition.election = election
                         proposition.save()
 
                         for committee in prop['committees']:
-                            print('\t\tCommittee %s' % committee['id'])
+                            self.log('\t\tCommittee %s' % committee['id'])
 
                             # This filer_id could mean a lot of things, so try a few.
                             filer_id = committee['id']
@@ -93,7 +94,7 @@ class Command(BaseCommand):
                                 try:
                                     filer = Filer.objects.get(xref_filer_id=filer_id)
                                 except Filer.DoesNotExist:
-                                    print('\t\t\tCould not find existing filer for id %s' % filer_id)
+                                    self.log('\t\t\tCould not find existing filer for id %s' % filer_id)
                                     pass
 
                             # Associate the filer with the prop.
@@ -106,7 +107,7 @@ class Command(BaseCommand):
 
     def scrape_props_page(self, rel_url):
         url = 'http://cal-access.ss.ca.gov'+rel_url
-        print('Scraping from %s' % url)
+        self.log('Scraping from %s' % url)
         response = requests.get(url)
         if response.status_code == 200:
             soup = BeautifulSoup(response.text)
@@ -117,7 +118,7 @@ class Command(BaseCommand):
                 election_type = election_title.replace(election_date, '').strip()
                 prop_links = election.findAll('a')
 
-                print('\tScraping election %s...' % election_title)
+                self.log('\tScraping election %s...' % election_title)
 
                 # Translate to our election types.
                 if 'PRIMARY' in election_type:
@@ -139,20 +140,21 @@ class Command(BaseCommand):
                 }
             return elections
         else:
+            self.failure('Could not parse propositions page')
             raise HTTPError
 
     def scrape_prop_page(self, rel_url):
         url = 'http://cal-access.ss.ca.gov/Campaign/Measures/' + rel_url
-        print('\tScraping from %s' % url)
+        self.log('\tScraping from %s' % url)
         response = requests.get(url)
         if response.status_code == 200:
             soup = BeautifulSoup(response.text)
             prop_name = soup.find('span', id='measureName').text
-            print(rel_url)
+            self.log(rel_url)
             prop_id = re.match(r'.+id=(\d+)', rel_url).group(1)
             committees = []
 
-            print('\t\tScraping measure %s' % prop_name)
+            self.log('\t\tScraping measure %s' % prop_name)
 
             # Targeting elements by cellpadding is hacky but...
             for committee in soup.findAll('table', cellpadding='4'):
@@ -173,7 +175,7 @@ class Command(BaseCommand):
                     'support': support
                 })
 
-                print('\t\t\t%s (%s) [%s]' % (name, id, support))
+                self.log('\t\t\t%s (%s) [%s]' % (name, id, support))
 
             return {
                 'id': prop_id,
@@ -182,4 +184,5 @@ class Command(BaseCommand):
             }
 
         else:
+            self.failure('Could not parse proposition page')
             raise HTTPError
