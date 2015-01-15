@@ -708,6 +708,7 @@ class Election(BaseModel):
     )
     year = models.IntegerField()
     id_raw = models.IntegerField()
+    date = models.DateTimeField()
 
     # This is to preserve the order of elections as specified on CalAccess,
     # since multiple elections can occur in a given year, but CalAccess doesn't give
