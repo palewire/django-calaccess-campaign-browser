@@ -694,6 +694,9 @@ class Contribution(BaseModel):
 
 
 class Election(BaseModel):
+    """
+    A grouping of election contests administered by the state.
+    """
     NAME_CHOICES = (
         ("GENERAL", "General"),
         ("PRIMARY", "Primary"),
@@ -707,36 +710,61 @@ class Election(BaseModel):
         max_length=50
     )
     year = models.IntegerField()
-    id_raw = models.IntegerField()
     date = models.DateTimeField()
 
-    # This is to preserve the order of elections as specified on CalAccess,
-    # since multiple elections can occur in a given year, but CalAccess doesn't give
-    # a specific date.
-    sort_index = models.IntegerField()
+    id_raw = models.IntegerField(
+        verbose_name="UID (CAL-ACCESS)",
+        help_text="The unique identifer from the CAL-ACCESS site"
+    )
+    sort_index = models.IntegerField(
+        help_text="The order of the election specified on the CAL-ACCESS site",
+    )
 
     class Meta:
         ordering = ('-sort_index',)
 
     def __unicode__(self):
-        s = u'%s (%s) [%s]' % (self.get_name_display(), self.year, self.id_raw)
-        return s.strip()
+        return u'%s (%s) [%s]' % (
+            self.get_name_display(),
+            self.year,
+            self.id_raw
+        )
+
+    @property
+    def office_count(self):
+        """
+        The total number of offices with active races this election.
+        """
+        return self.candidate_set.values("office_id").distinct().count()
+
+    @property
+    def candidate_count(self):
+        """
+        The total number of candidates fundraising for this election.
+        """
+        return self.candidate_set.count()
 
 
 class Office(BaseModel):
+    """
+    An office that is at stake in an election contest.
+    """
     OFFICE_CHOICES = (
-        ("GOVERNOR", "Governor"),
-        ("LIEUTENANT_GOVERNOR", "Lieutenant Governor"),
-        ("SECRETARY_OF_STATE", "Secretary of State"),
-        ("CONTROLLER", "Controller"),
-        ("TREASURER", "Treasurer"),
-        ("ATTORNEY_GENERAL", "Attorney General"),
-        ("SUPERINTENDENT_OF_PUBLIC_INSTRUCTION", "Superintendent of Public Instruction"),
-        ("INSURANCE_COMMISSIONER", "Insurance Commissioner"),
-        ("BOARD_OF_EQUALIZATION", "Board of Equalization"),
-        ("SENATE", "Senate"),
         ("ASSEMBLY", "Assembly"),
+        ("ATTORNEY_GENERAL", "Attorney General"),
+        ("BOARD_OF_EQUALIZATION", "Board of Equalization"),
+        ("CONTROLLER", "Controller"),
+        ("GOVERNOR", "Governor"),
+        ("INSURANCE_COMMISSIONER", "Insurance Commissioner"),
+        ("LIEUTENANT_GOVERNOR", "Lieutenant Governor"),
         ("OTHER", "Other"),
+        ("SECRETARY_OF_STATE", "Secretary of State"),
+        ("SENATE", "Senate"),
+        (
+            "SUPERINTENDENT_OF_PUBLIC_INSTRUCTION",
+            "Superintendent of Public Instruction"
+        ),
+        ("TREASURER", "Treasurer"),
     )
     name = models.CharField(
         choices=OFFICE_CHOICES,
@@ -750,18 +778,34 @@ class Office(BaseModel):
     def __unicode__(self):
         s = u'%s' % (self.get_name_display(),)
         if self.seat:
-            s = u'%s %s' % (s, self.seat)
+            s = u'%s (%s)' % (s, self.seat)
         return s
+
+    @property
+    def election_count(self):
+        """
+        The total number of elections with active races this office.
+        """
+        return self.candidate_set.values("election_id").distinct().count()
+
+    @property
+    def candidate_count(self):
+        """
+        The total number of candidates who have fundraised for this office.
+        """
+        return self.candidate_set.count()
 
 
 class Candidate(BaseModel):
+    """
+    Links filers to the contests and elections where they are on the ballot.
+    """
     election = models.ForeignKey(Election)
     office = models.ForeignKey(Office)
     filer = models.ForeignKey(Filer)
 
     def __unicode__(self):
-        s = u'%s : %s [%s]' % (self.filer, self.office, self.election)
-        return s.strip()
+        return u'%s : %s [%s]' % (self.filer, self.office, self.election)
 
     @property
     def election_year(self):
