@@ -12,6 +12,7 @@ Sphinx==1.2.2
 argh==0.23.3
 argparse==1.2.1
 backports.ssl-match-hostname==3.4.0.2
+beautifulsoup4==4.3.2
 coverage==3.7.1
 csvkit==0.6.1
 dbf==0.95.012
