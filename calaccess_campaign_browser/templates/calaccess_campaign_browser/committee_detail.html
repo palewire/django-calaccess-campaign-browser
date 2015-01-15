@@ -155,8 +155,32 @@
     <p>{% if filing_set_count > 25 %}(Most recent 25){% endif %}</p>
   </div>
 </div>
-
+<div class="testviz">
 <div class="row">
+  <div class="span12" id="dc-time-chart">
+    <h4>Filings by Time</h4>
+  </div>
+  <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
+    <table class="table table-hover" id="dc-table-graph">
+      <thead>
+        <tr class="header">
+          <th>No.</th>
+          <th>Filed</th>
+          <th>Form</th>
+          <th>Period</th>
+          <th>Contributions</th>
+          <th>Expenditures</th>
+          <th>Debts</th>
+          <th>PDF</th>
+        </tr>
+      </thead>
+    </table>
+</div>
+</div>
+<div id="lists">
+  <div id="flight-list" class="list"></div>
+</div>
+<!-- <div class="row">
   <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
       <table class="table table-bordered table-hover searchable-list">
         <thead>
@@ -205,7 +229,7 @@
     {% endif %}
   </div>
 </div>
-{% endif %}
+{% endif %} -->
 
 {% if contribs_set_short %}
 <div class="row">
@@ -343,6 +367,11 @@
 {% endblock %}
 
 {% block javascript %}
+<script src="http://d3js.org/d3.v3.min.js" charset="utf-8"></script>
+<script src="../../static/calaccess_campaign_browser/js/crossfilter.js"></script>
+<script src="http://cdnjs.cloudflare.com/ajax/libs/dc/1.7.0/dc.js"></script>
+<link rel="stylesheet" type="text/css" href="http://cdnjs.cloudflare.com/ajax/libs/dc/1.7.0/dc.css
+">
 <script>
   var committee          = {{ committee_json }};
   committee.filings       = {{ filing_set_json }};
@@ -353,12 +382,69 @@
 
   committee.contributionsMade = {{ filing_set_json }};
 
-  // Charting for contributions and expenditure
-  App.chartViz(committee.contributions_by_year, committee.expenditures_by_year);
+  var dataTable = dc.dataTable("#dc-table-graph");
+  var timeChart = dc.barChart("#dc-time-chart");
 
-  // Psuedo Code
-  // var aDiv = document.querySelector('.someDiv');
-  // App.viz( committee, aDiv );
+  var data = committee.filings;
+
+
+  data.forEach(function(d){
+    d.num = d.filing_id_raw;
+    d.dtg = d.date_filed;
+    d.ft = d.form_type;
+    d.pd = d.start_date + " - " + d.end_date;
+    d.contributions = d.summary.total_contributions;
+    d.expenditures = d.summary.total_expenditures;
+    d.debts = d.summary.outstanding_debts;
+    console.log(d.contributions);
+  });
+
+  var info = crossfilter(data);
+
+    var contrDimension = info.dimension(function(d){
+        return d.contributions;
+      });
+    var contrValueGroupCount = contrDimension.group()
+      .reduceCount(function(d) { return d; });
+
+  var timeDimension = info.dimension(function(d){
+    return d.dtg;
+  });
+
+
+timeChart.width(880)
+.height(150)
+.margins({top: 10, right: 10, bottom: 20, left: 40})
+.dimension(contrDimension)
+.group(contrValueGroupCount)
+.transitionDuration(500)
+.centerBar(true)
+.gap(65)
+.filter([3, 5])
+.x(d3.scale.linear().domain([-50000, 200000]))
+.elasticY(true)
+.xAxis().tickFormat();
+
+
+
+  dataTable.dimension(timeDimension)
+            .group(function(d){return "Chart"})
+            .size(13)
+            .columns([
+              function(d){ return d.num; },
+              function(d){ return d.dtg; },
+              function(d){ return d.ft; },
+              function(d){ return d.pd; },
+              function(d){ return d.contributions; },
+              function(d){ return d.expenditures; },
+              function(d){ return d.debts; },
+              ])
+            .sortBy(function(d){ return d.dtg; })
+            .order(d3.ascending);
+
+  dc.renderAll();
+
+>>>>>>> Stashed changes
 </script>
 
 <script>
