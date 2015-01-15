@@ -1,5 +1,5 @@
 
-def parse_election_name(self, name):
+def parse_election_name(name):
     """
     Translates a raw election name into
     one of our canonical names.
@@ -18,7 +18,7 @@ def parse_election_name(self, name):
         return 'OTHER'
 
 
-def parse_office_name(self, name):
+def parse_office_name(name):
     """
     Translates a raw office name into one of
     our canonical names and a seat (if available).

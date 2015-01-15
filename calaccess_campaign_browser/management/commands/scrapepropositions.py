@@ -1,17 +1,15 @@
-from django.core.management.base import BaseCommand
-
 import re
 from time import sleep
 from datetime import datetime
-
+from calaccess_campaign_browser.management.commands import ScrapeCommand
 from calaccess_campaign_browser.models import Filer, Election, Proposition, PropositionFiler
+from .utils import parse_election_name
 
 
-class Command(BaseCommand):
+class Command(ScrapeCommand):
     """
     Scrape propositions and ballot measures.
     """
-
     def build_results(self):
         results = {}
 
@@ -23,7 +21,7 @@ class Command(BaseCommand):
         links = soup.findAll('a', href=re.compile(r'^.*\?session=\d+'))
         links = list(set([link['href'] for link in links]))
 
-        print('Scraping...')
+        self.header("Scraping propositions")
         for link in links:
             year = re.match(r'.+session=(\d+)', link).group(1)
             results[year] = self.scrape_props_page(link)
@@ -50,22 +48,22 @@ class Command(BaseCommand):
                 # Can't figure out to connect ambiguous elections, just set to None.
                 except Election.MultipleObjectsReturned:
                     election = None
-                    print('Multiple elections found for year %s and type %s, not sure which to pick. \
-                            Not setting the date for this election...' % (date.year, election_dict['type']))
+                    self.warn('Multiple elections found for year %s and type %s, not sure which to pick. \
+                    Not setting the date for this election...' % (date.year, election_dict['type']))
 
                 for prop in election_dict['props']:
                     proposition, created = Proposition.objects.get_or_create(name=prop['name'], filer_id_raw=prop['id'])
 
                     if created:
-                        print('\tCreated %s' % proposition)
+                        self.log('\tCreated %s' % proposition)
                     else:
-                        print('\tGot %s' % proposition)
+                        self.log('\tGot %s' % proposition)
 
                     proposition.election = election
                     proposition.save()
 
                     for committee in prop['committees']:
-                        print('\t\tCommittee %s' % committee['id'])
+                        self.log('\t\tCommittee %s' % committee['id'])
 
                         # This filer_id could mean a lot of things, so try a few.
                         filer_id = committee['id']
@@ -75,7 +73,7 @@ class Command(BaseCommand):
                             try:
                                 filer = Filer.objects.get(xref_filer_id=filer_id)
                             except Filer.DoesNotExist:
-                                print('\t\t\tCould not find existing filer for id %s' % filer_id)
+                                self.warn('\t\t\tCould not find existing filer for id %s' % filer_id)
                                 pass
 
                         # Associate the filer with the prop.
@@ -86,7 +84,7 @@ class Command(BaseCommand):
                         )
 
     def scrape_props_page(self, rel_url):
-        print('Scraping from %s' % rel_url)
+        self.header('Scraping from %s' % rel_url)
         soup = self.make_request(rel_url)
         elections = {}
         for election in soup.findAll('table', {'id': re.compile(r'ListElections1__[a-z0-9]+')}):
@@ -95,9 +93,9 @@ class Command(BaseCommand):
             election_type = election_title.replace(election_date, '').strip()
             prop_links = election.findAll('a')
 
-            print('\tScraping election %s...' % election_title)
+            self.log('\tScraping election %s...' % election_title)
 
-            election_type = Election.parse_name(election_type)
+            election_type = parse_election_name(election_type)
 
             elections[election_date] = {
                 'type': election_type,
@@ -106,14 +104,14 @@ class Command(BaseCommand):
         return elections
 
     def scrape_prop_page(self, rel_url):
-        print('Scraping from %s' % rel_url)
+        rel_url = '/Campaign/Measures/' + rel_url
+        self.header('\tScraping from %s' % rel_url)
         soup = self.make_request(rel_url)
         prop_name = soup.find('span', id='measureName').text
-        print(rel_url)
         prop_id = re.match(r'.+id=(\d+)', rel_url).group(1)
         committees = []
 
-        print('\t\tScraping measure %s' % prop_name)
+        self.log('\t\tScraping measure %s' % prop_name)
 
         # Targeting elements by cellpadding is hacky but...
         for committee in soup.findAll('table', cellpadding='4'):
@@ -130,7 +128,7 @@ class Command(BaseCommand):
                 'support': support
             })
 
-            print('\t\t\t%s (%s) [%s]' % (name, id, support))
+            self.log('\t\t\t%s (%s) [%s]' % (name, id, support))
 
         return {
             'id': prop_id,

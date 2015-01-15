@@ -169,6 +169,7 @@ class ElectionAdmin(BaseAdmin):
         "id_raw",
         "year",
         "name",
+        "date",
         "office_count",
         "candidate_count",
     )
@@ -215,6 +216,7 @@ class PropositionAdmin(BaseAdmin):
     search_fields = (
         "name",
     )
+    list_per_page = 200
 
 @admin.register(PropositionFiler)
 class PropositionFilerAdmin(BaseAdmin):
