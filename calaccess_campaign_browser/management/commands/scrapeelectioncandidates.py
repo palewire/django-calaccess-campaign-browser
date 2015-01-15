@@ -1,10 +1,12 @@
 from django.core.management.base import BaseCommand, CommandError
+
 #Scraper imports
-from bs4 import BeautifulSoup
-from time import sleep
-import requests
-from requests.exceptions import HTTPError
 import re
+from time import sleep
+
+import requests
+from bs4 import BeautifulSoup
+from requests.exceptions import HTTPError
 from calaccess_campaign_browser.models import Election, Office, Candidate, Filer
 
 class Command(BaseCommand):

@@ -710,7 +710,7 @@ class Election(BaseModel):
         max_length=50
     )
     year = models.IntegerField()
-    date = models.DateTimeField()
+    date = models.DateField(null=True,default=None)
 
     id_raw = models.IntegerField(
         verbose_name="UID (CAL-ACCESS)",
