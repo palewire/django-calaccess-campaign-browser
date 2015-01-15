@@ -819,3 +819,7 @@ class Candidate(BaseModel):
 class Proposition(BaseModel):
     name = models.CharField(max_length=255, null=True)
     filer_id_raw = models.IntegerField(db_index=True)
+    election = models.ForeignKey(Election, null=True, default=None)
+
+    def __unicode__(self):
+        return u'%s (%s)' % (self.name, self.filer_id_raw)

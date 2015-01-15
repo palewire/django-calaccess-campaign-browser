@@ -8,7 +8,7 @@ from datetime import datetime
 import requests
 from bs4 import BeautifulSoup
 from requests.exceptions import HTTPError
-from calaccess_campaign_browser.models import Election
+from calaccess_campaign_browser.models import Election, Proposition
 
 class Command(BaseCommand):
 
@@ -67,8 +67,6 @@ class Command(BaseCommand):
                     if date.year > datetime.now().year:
                         continue
 
-                    print(date.year)
-                    print(election_dict['type'])
                     try:
                         election = Election.objects.get(year=date.year, name=election_dict['type'])
                         election.date = date
@@ -76,12 +74,20 @@ class Command(BaseCommand):
 
                     # Can't figure out to connect ambiguous elections.
                     except Election.MultipleObjectsReturned:
-                        print('Multiple elections found for this year and type, not sure which to pick. Skipping...')
-                        pass
+                        election = None
+                        print('Multiple elections found for year %s and type %s, not sure which to pick. Not setting the date for this election...' % (date.year, election_dict['type']))
 
                     for prop in election_dict['props']:
-                        print(prop['id'])
+                        proposition, created = Proposition.objects.get_or_create(name=prop['name'], filer_id_raw=prop['id'])
 
+                        if created:
+                            print('\tCreated %s' % proposition)
+                        else:
+                            print('\tGot %s' % proposition)
+
+                        print('Adding election..')
+                        proposition.election = election
+                        proposition.save()
 
 
     def scrape_props_page(self, rel_url):
