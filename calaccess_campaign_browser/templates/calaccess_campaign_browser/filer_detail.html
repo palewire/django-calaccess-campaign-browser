@@ -45,6 +45,13 @@
               </td>
             </tr>
           {% endfor %}
+            <tr>
+              <td></td>
+              <td></td>
+              <td class="bold">Totals</td>
+              <td class="right bold">${{ contributions_total|default:0|floatformat:0|intcomma }}</td>
+              <td class="right bold">${{ expenditures_total|default:0|floatformat:0|intcomma }}</td>
+            </tr>
           </tbody>
         </table>
     </div>
