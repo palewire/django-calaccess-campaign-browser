@@ -804,6 +804,9 @@ class Candidate(BaseModel):
     office = models.ForeignKey(Office)
     filer = models.ForeignKey(Filer)
 
+    class Meta:
+        ordering = ("election", "office", "filer")
+
     def __unicode__(self):
         return u'%s : %s [%s]' % (self.filer, self.office, self.election)
 
