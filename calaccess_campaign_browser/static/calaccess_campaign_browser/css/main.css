@@ -121,6 +121,57 @@ a:hover{
     background-color: #ba0a35;
     border-color: #ba0a35;
 }
+
+/* Graph Styles */
+.yeartext, .barContainer, .contrib *, .expend * {
+    display: inline-block;
+}
+.contrib, .expend, .bar {
+    height: 2em;
+}
+.yeargroup {
+    height: 5em;
+}
+.yeartext {
+    height: 4.2em;
+    font-size: 1.2em;
+    padding-right: 10px;
+    vertical-align: middle;
+}
+.contrib span, .expend span {
+    vertical-align: bottom;
+    height: 2em;
+    padding-left: 10px;
+}
+ul.legend {
+    list-style: none;
+}
+ul.legend li {
+    display: inline-block;
+    padding: 15px;
+}
+.legenditem span{
+    width: 1.5em;
+    height: 1.5em;
+    display: inline-block;
+    margin-right: 5px;
+}
+.series1{
+    background-color: gray;
+}
+.series2{
+    background-color: lightgray;
+}
+.graphheader > *{
+    display: inline-block;
+    margin-right: 20px;
+}
+.toggle-btn{
+    background-color: #ba0a35;
+    color: #fff;
+    padding: 2px 4px;
+}
+
 @media only screen
 and (max-width : 992px) {
     .align-right{

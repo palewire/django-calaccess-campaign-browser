@@ -56,38 +56,42 @@
 </div>
 
 -->
-
-<h3>Cashflow</h3>
-
-<div class="row">
-    <div id="moneyFlowViz" class="col-lg-12 col-md-12 col-sm-12 col-xs-12">    
-    <h4>Money Flow</h4> 
-    </div>
-    <div class="col-lg-6 col-md-6 col-sm-12 col-xs-12">
-        <h4>Total Contributions</h4>
+<div class="row">        
+    <h3>Cashflow</h3>     
+    <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
         <table class="table table-bordered table-hover">
         <tbody>
-        <tr>
-            <td>Total</td>
-            <td class="right">${{ committee.total_contributions|default_if_none:0|floatformat:0|intcomma }}</td>
-        </tr>
+          <tr>
+              <td>Total Contributions</td>
+              <td class="right">${{ committee.total_contributions|default_if_none:0|floatformat:0|intcomma }}</td>
+          </tr>
+          <tr>
+              <td>Total Expenditures</td>
+              <td class="right">${{ committee.total_expenditures|default_if_none:0|floatformat:0|intcomma }}</td>
+          </tr>
+          <tr>
+              <td>Balance</td>
+              <td class="right totals">${{ committee.total_cashflow_balance|default_if_none:0|floatformat:0|intcomma }}</td>
+          </tr>
         </tbody>
         </table>
-    </div>
-    <div class="col-lg-6 col-md-6 col-sm-12 col-xs-12">
-        <h4>Total Expenditures</h4>
-        <table class="table table-bordered table-hover">
-        <tbody>
-        <tr>
-            <td>Total</td>
-            <td class="right">${{ committee.total_expenditures|default_if_none:0|floatformat:0|intcomma }}</td>
-        </tr>
-        </tbody>
-        </table>
-    </div>
+    </div>     
 </div>
-
 <div class="row">
+    <div class="graphheader">
+      <h4> Contributions and expenditure by year</h4>      
+      <a class="toggle-btn" data-toggle="collapse" href="#cashflowData" aria-expanded="false" aria-controls="cashflowData">
+            Show/hide data
+      </a>
+    </div>   
+    <div id="moneyFlowViz" class="col-lg-12 col-md-12 col-sm-12 col-xs-12">    
+    </div>
+    <ul class="legend right col-lg-6 col-md-6 col-sm-12 col-xs-12">
+        <li class="legenditem"><span class="series1"></span>Contribution</li>
+        <li class="legenditem"><span class="series2"></span>Expenditure</li>
+    </ul> 
+</div>
+<div id="cashflowData" class="collapse row">
     <div class="col-lg-6 col-md-6 col-sm-12 col-xs-12">
         {% if committee.total_contributions_by_year %}
         <h4>Contributions by year</h4>

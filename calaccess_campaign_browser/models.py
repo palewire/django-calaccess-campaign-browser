@@ -253,6 +253,11 @@ class Committee(AllCapsNameMixin):
                 d[f.period.start_date.year] = f.total_expenditures
         return sorted(d.items(), key=lambda x: x[0], reverse=True)
 
+    @property
+    def total_cashflow_balance(self):
+        return self.total_contributions - self.total_expenditures
+        
+
 
 class Cycle(BaseModel):
     name = models.IntegerField(db_index=True, primary_key=True)
