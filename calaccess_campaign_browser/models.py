@@ -731,7 +731,7 @@ class Election(BaseModel):
     @property
     def office_count(self):
         """
-        The total number of officies with active races this election.
+        The total number of offices with active races this election.
         """
         return self.candidate_set.values("office_id").distinct().count()
 
@@ -748,21 +748,21 @@ class Office(BaseModel):
     An office that is at stake in an election contest.
     """
     OFFICE_CHOICES = (
-        ("GOVERNOR", "Governor"),
-        ("LIEUTENANT_GOVERNOR", "Lieutenant Governor"),
-        ("SECRETARY_OF_STATE", "Secretary of State"),
-        ("CONTROLLER", "Controller"),
-        ("TREASURER", "Treasurer"),
+        ("ASSEMBLY", "Assembly"),
         ("ATTORNEY_GENERAL", "Attorney General"),
+        ("BOARD_OF_EQUALIZATION", "Board of Equalization"),
+        ("CONTROLLER", "Controller"),
+        ("GOVERNOR", "Governor"),
+        ("INSURANCE_COMMISSIONER", "Insurance Commissioner"),
+        ("LIEUTENANT_GOVERNOR", "Lieutenant Governor"),
+        ("OTHER", "Other"),
+        ("SECRETARY_OF_STATE", "Secretary of State"),
+        ("SENATE", "Senate"),
         (
             "SUPERINTENDENT_OF_PUBLIC_INSTRUCTION",
             "Superintendent of Public Instruction"
         ),
-        ("INSURANCE_COMMISSIONER", "Insurance Commissioner"),
-        ("BOARD_OF_EQUALIZATION", "Board of Equalization"),
-        ("SENATE", "Senate"),
-        ("ASSEMBLY", "Assembly"),
-        ("OTHER", "Other"),
+        ("TREASURER", "Treasurer"),
     )
     name = models.CharField(
         choices=OFFICE_CHOICES,
@@ -776,8 +776,22 @@ class Office(BaseModel):
     def __unicode__(self):
         s = u'%s' % (self.get_name_display(),)
         if self.seat:
-            s = u'%s %s' % (s, self.seat)
+            s = u'%s (%s)' % (s, self.seat)
         return s
+
+    @property
+    def election_count(self):
+        """
+        The total number of elections with active races this office.
+        """
+        return self.candidate_set.values("election_id").distinct().count()
+
+    @property
+    def candidate_count(self):
+        """
+        The total number of candidates who have fundraised for this office.
+        """
+        return self.candidate_set.count()
 
 
 class Candidate(BaseModel):

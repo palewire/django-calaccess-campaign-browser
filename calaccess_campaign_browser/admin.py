@@ -179,14 +179,18 @@ class ElectionAdmin(BaseAdmin):
 @admin.register(Office)
 class OfficeAdmin(BaseAdmin):
     list_display = (
-        "name", "seat",
+        "__unicode__",
+        "election_count",
+        "candidate_count",
     )
     list_filter = (
         "name",
     )
     search_fields = (
         "name",
+        "seat",
     )
+    list_per_page = 200
 
 
 @admin.register(Candidate)
