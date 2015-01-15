@@ -418,69 +418,7 @@
   committee.contributionsMade = {{ filing_set_json }};
 
   App.chartViz(committee.contributions_by_year, committee.expenditures_by_year);
-
-  var dataTable = dc.dataTable("#dc-table-graph");
-  var timeChart = dc.barChart("#dc-time-chart");
-
-  var data = committee.filings;
-
-  data.forEach(function(d){
-    d.num = d.filing_id_raw;
-    d.dtg = d.date_filed;
-    d.date = d3.time.format("%Y-%m-%d").parse(d.date_filed);
-    d.ft = d.form_type;
-    d.pd = d.start_date + " - " + d.end_date;
-    d.contributions = d.summary.total_contributions;
-    d.expenditures = d.summary.total_expenditures;
-    d.debts = d.summary.outstanding_debts;
-  });
-
-  var info = crossfilter(data);
-  var timeDimension = info.dimension(function(d){
-    return d.date;
-  });
-  var minDate = d3.time.day.offset(timeDimension.bottom(1)[0].date,-1);
-  var maxDate = d3.time.day.offset(timeDimension.top(1)[0].date,1);
-  var width = 880;
-  var margins = {top: 10, right: 10, bottom: 20, left: 80};
-  var contrValueGroupCount = timeDimension.group()
-      .reduceSum(function(d) { return d.contributions; });
-
-
-  var xScale = d3.time.scale()
-                 .domain([minDate,maxDate])
-                 .rangeRound([0, width - margins.left - margins.right]);
-
-  timeChart.width(width)
-  .height(150)
-  .margins(margins)
-  .dimension(timeDimension)
-  .group(contrValueGroupCount)
-  .transitionDuration(500)
-  .centerBar(true)
-  .x(xScale)
-  .elasticY(true)
-  .xAxis().tickFormat();
-
-
-
-  dataTable.dimension(timeDimension)
-            .group(function(d){return "Chart"})
-            .size(13)
-            .columns([
-              function(d){ return d.num; },
-              function(d){ return d.dtg; },
-              function(d){ return d.ft; },
-              function(d){ return d.pd; },
-              function(d){ return d.contributions; },
-              function(d){ return d.expenditures; },
-              function(d){ return d.debts; },
-              ])
-            .sortBy(function(d){ return d.dtg; })
-            .order(d3.ascending);
-
-  dc.renderAll();
-
+  App.contribViz(committee.filings);
 </script>
 
 <script>
