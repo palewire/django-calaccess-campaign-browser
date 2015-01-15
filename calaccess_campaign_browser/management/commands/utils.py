@@ -4,6 +4,7 @@ def parse_election_name(name):
     Translates a raw election name into
     one of our canonical names.
     """
+    name = name.upper()
     if 'PRIMARY' in name:
         return 'PRIMARY'
     elif 'GENERAL' in name:
@@ -24,6 +25,7 @@ def parse_office_name(name):
     our canonical names and a seat (if available).
     """
     seat = None
+    name = name.upper()
     if 'LIEUTENANT GOVERNOR' in name:
         office_type = 'LIEUTENANT_GOVERNOR'
     elif 'GOVERNOR' in name:
@@ -43,7 +45,7 @@ def parse_office_name(name):
     elif 'MEMBER BOARD OF EQUALIZATION' in name:
         office_type = 'BOARD_OF_EQUALIZATION'
         seat = name.split()[-1]
-    elif 'STATE SENATE' in name:
+    elif 'SENATE' in name:
         office_type = 'SENATE'
         seat = name.split()[-1]
     elif 'ASSEMBLY' in name:

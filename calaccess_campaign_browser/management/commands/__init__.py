@@ -37,17 +37,19 @@ class ScrapeCommand(CalAccessCommand):
 
     def url_for(self, rel_url):
         # Strip leading slash, if it exists.
-        if rel_url[0] == '/':
+        if rel_url and rel_url[0] == '/':
             rel_url = rel_url[1:]
         return self.base_url + rel_url
 
-    def make_request(self, rel_url, retries=1):
+    def make_request(self, url='', retries=1, abs=False):
         """
         Convenience method for making a request
         to a url relative to the `base_url`,
         with built-in support for retries.
+        Specify `abs=True` if passing an absolute url.
         """
-        url = self.url_for(rel_url)
+        if not abs:
+            url = self.url_for(url)
 
         tries = 0
         while tries < retries:
