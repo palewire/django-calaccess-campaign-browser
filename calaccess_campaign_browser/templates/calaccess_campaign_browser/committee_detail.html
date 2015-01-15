@@ -42,7 +42,7 @@
     <h4>test</h4>    
     </div>
     <div class="col-lg-6 col-md-6 col-sm-12 col-xs-12">
-        <h4>Contributions</h4>
+        <h4>Total Contributions</h4>
         <table class="table table-bordered table-hover">
         <tbody>
         <tr>
@@ -53,7 +53,7 @@
         </table>
     </div>
     <div class="col-lg-6 col-md-6 col-sm-12 col-xs-12">
-        <h4>Expenditures</h4>
+        <h4>Total Expenditures</h4>
         <table class="table table-bordered table-hover">
         <tbody>
         <tr>
@@ -68,12 +68,12 @@
 <div class="row">
     <div class="col-lg-6 col-md-6 col-sm-12 col-xs-12">
         {% if committee.total_contributions_by_year %}
-        <h4>By year</h4>
-        <table class="table table-bordered table-hover">
+        <h4>Contributions by year</h4>
+        <table id="contributions-by-year" class="table table-bordered table-hover">
         <thead>
             <tr>
-                <th>Year</th>
-                <th class="right">Total</th>
+                <th data-sort="int">Year</th>
+                <th data-sort="currency" class="right">Total</th>
             </tr>
         </thead>
         <tbody>
@@ -89,12 +89,12 @@
     </div>
     <div class="col-lg-6 col-md-6 col-sm-12 col-xs-12">
         {% if committee.total_expenditures_by_year %}
-        <h4>By year</h4>
+        <h4>Expenditures by year</h4>
         <table class="table table-bordered table-hover">
         <thead>
             <tr>
-                <th>Year</th>
-                <th class="right">Total</th>
+                <th data-sort="int">Year</th>
+                <th data-sort="currency" class="right">Total</th>
             </tr>
         </thead>
         <tbody>
@@ -134,13 +134,13 @@
       <table class="table table-bordered table-hover">
         <thead>
             <tr>
-                <th>No.</th>
+                <th data-sort="int">No.</th>
                 <th>Filed</th>
                 <th>Form</th>
                 <th>Period</th>
-                <th class="right">Contributions</th>
-                <th class="right">Expenditures</th>
-                <th class="right">Debts</th>
+                <th data-sort="currency" class="right">Contributions</th>
+                <th data-sort="currency" class="right">Expenditures</th>
+                <th data-sort="currency" class="right">Debts</th>
                 <th class="center">PDF</th>
             </tr>
         </thead>
@@ -199,9 +199,9 @@
         <table class="table table-bordered table-hover">
           <thead>
             <tr>
-                <th>Date</th>
-                <th>Name</th>
-                <th class="right">Amount</th>
+                <th >Date</th>
+                <th data-sort="string" >Name</th>
+                <th data-sort="currency" class="right">Amount</th>
             </tr>
           </thead>
           <tbody>
@@ -241,9 +241,9 @@
         <table class="table table-bordered table-hover">
           <thead>
             <tr>
-                <th>Date</th>
-                <th>Name</th>
-                <th class="right">Amount</th>
+                <th >Date</th>
+                <th data-sort="string" >Name</th>
+                <th data-sort="currency" class="right">Amount</th>
             </tr>
           </thead>
           <tbody>
@@ -288,10 +288,10 @@
       <table class="table table-bordered table-hover"> <!-- table table-bordered table-hover -->
         <thead>
           <tr>
-              <th>Date</th>
-              <th>Name</th>
+              <th >Date</th>
+              <th data-sort="string" >Name</th>
               <th>Type</th>
-              <th class="right">Amount</th>
+              <th data-sort="currency" class="right">Amount</th>
           </tr>
         </thead>
         <tbody>
@@ -333,4 +333,30 @@
   // var aDiv = document.querySelector('.someDiv');
   // App.viz( committee, aDiv );
 </script>
+
+
+<script>
+  jQuery(document).ready(function($) {
+    $("table").stupidtable({
+        "currency":function(a,b){
+
+          var aNum = a.replace('$', '');
+          var bNum = b.replace('$', '')
+
+          return parseInt(aNum,10) - parseInt(bNum,10);
+        },
+        "date":function(a,b){
+
+          var aNum = a.replace('$', '');
+          var bNum = b.replace('$', '')
+
+          return parseInt(aNum,10) - parseInt(bNum,10);
+        }
+    });
+    
+  });
+</script>
+
 {% endblock %}
+
+
