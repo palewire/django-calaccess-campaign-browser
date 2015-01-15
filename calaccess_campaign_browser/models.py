@@ -823,6 +823,20 @@ class Proposition(BaseModel):
     name = models.CharField(max_length=255, null=True)
     filer_id_raw = models.IntegerField(db_index=True)
     election = models.ForeignKey(Election, null=True, default=None)
+    filers = models.ManyToManyField(Filer,through='PropositionFiler')
 
     def __unicode__(self):
         return u'%s (%s)' % (self.name, self.filer_id_raw)
+
+
+class PropositionFiler(BaseModel):
+    POSITION_CHOICES = (
+        ('SUPPORT', 'Support'),
+        ('OPPOSE', 'Oppose'),
+    )
+    proposition = models.ForeignKey(Proposition)
+    filer = models.ForeignKey(Filer)
+    position = models.CharField(
+        choices=POSITION_CHOICES,
+        max_length=50
+    )

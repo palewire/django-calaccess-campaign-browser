@@ -8,7 +8,7 @@ from datetime import datetime
 import requests
 from bs4 import BeautifulSoup
 from requests.exceptions import HTTPError
-from calaccess_campaign_browser.models import Election, Proposition
+from calaccess_campaign_browser.models import Filer, Election, Proposition, PropositionFiler
 
 class Command(BaseCommand):
 
@@ -33,29 +33,23 @@ class Command(BaseCommand):
             links = list(set([link['href'] for link in links]))
 
             print('Scraping...')
-            #for link in links:
-                #m = re.match(prop_pattern, link)
-                #if not m:
-                    #raise CommandError
+            for link in links:
+                m = re.match(prop_pattern, link)
+                if not m:
+                    raise CommandError
 
-                #year = link.replace('/Campaign/Measures/list.aspx?session=', '')
+                year = link.replace('/Campaign/Measures/list.aspx?session=', '')
 
-                #try:
-                    #years[year] = self.scrape_props_page(link)
+                try:
+                    years[year] = self.scrape_props_page(link)
 
-                ### Try, try again
-                #except HTTPError:
-                    #print('Got non-200 response, trying again...')
-                    #sleep(2.)
-                    #years[year] = self.scrape_props_page(link)
+                ## Try, try again
+                except HTTPError:
+                    print('Got non-200 response, trying again...')
+                    sleep(2.)
+                    years[year] = self.scrape_props_page(link)
 
-                #sleep(.5)
-
-            import json
-            #with open('props.json', 'w') as f:
-                #json.dump(years, f)
-            with open('props.json', 'r') as f:
-                years = json.load(f)
+                sleep(.5)
 
             for year, elections in years.items():
                 # The years as extracted from the urls are actually not always right,
@@ -72,7 +66,7 @@ class Command(BaseCommand):
                         election.date = date
                         election.save()
 
-                    # Can't figure out to connect ambiguous elections.
+                    # Can't figure out to connect ambiguous elections, just set to None.
                     except Election.MultipleObjectsReturned:
                         election = None
                         print('Multiple elections found for year %s and type %s, not sure which to pick. Not setting the date for this election...' % (date.year, election_dict['type']))
@@ -85,9 +79,29 @@ class Command(BaseCommand):
                         else:
                             print('\tGot %s' % proposition)
 
-                        print('Adding election..')
                         proposition.election = election
                         proposition.save()
+
+                        for committee in prop['committees']:
+                            print('\t\tCommittee %s' % committee['id'])
+
+                            # This filer_id could mean a lot of things, so try a few.
+                            filer_id = committee['id']
+                            try:
+                                filer = Filer.objects.get(filer_id_raw=filer_id)
+                            except Filer.DoesNotExist:
+                                try:
+                                    filer = Filer.objects.get(xref_filer_id=filer_id)
+                                except Filer.DoesNotExist:
+                                    print('\t\t\tCould not find existing filer for id %s' % filer_id)
+                                    pass
+
+                            # Associate the filer with the prop.
+                            prop_filer = PropositionFiler.objects.get_or_create(
+                                    proposition=proposition,
+                                    filer=filer,
+                                    position='SUPPORT' if committee['support'] else 'OPPOSE'
+                            )
 
 
     def scrape_props_page(self, rel_url):
@@ -105,6 +119,7 @@ class Command(BaseCommand):
 
                 print('\tScraping election %s...' % election_title)
 
+                # Translate to our election types.
                 if 'PRIMARY' in election_type:
                     election_type = 'PRIMARY'
                 elif 'GENERAL' in election_type:
@@ -143,8 +158,14 @@ class Command(BaseCommand):
             for committee in soup.findAll('table', cellpadding='4'):
                 data = committee.findAll('span', {'class':'txt7'})
 
-                name = committee.find('a', {'class':'sublink2'}).text
+                url = committee.find('a', {'class':'sublink2'})
+                name = url.text
+
+                # This ID sometimes refers to xref_filer_id rather than filer_id_raw.
                 id = data[0].text
+                # This is one matches with filer_id_raw, always.
+                #id = re.match(r'.+id=(\d+)', url).group(1)
+
                 support = data[1].text.strip() == 'SUPPORT'
                 committees.append({
                     'name': name,
