@@ -7,26 +7,44 @@
 
 {% include "calaccess_campaign_browser/committee_nav.html" %}
 
+
+<div class="row">
+  <div class="col-lg-4 col-md-4 col-sm-4 col-xs-12">
+    <p><strong>Status:</strong> {{ committee.get_status_display }}</p>
+    <p><strong>Effective Date:</strong> {{ committee.effective_date|date:"Y-m-d" }}</p>
+  </div>
+  <div class="col-lg-4 col-md-4 col-sm-4 col-xs-12">
+    <p><strong>Type:</strong> {{ committee.get_committee_type_display }}</p>
+    <p><strong>Party:</strong> {{ committee.get_party_display }}</p>
+  </div>
+  <div class="col-lg-4 col-md-4 col-sm-4 col-xs-12">
+    <p><strong>ID:</strong> {{ committee.filer_id_raw }}</p>
+    <p><strong>Source:</strong> <a target="_blank" href="{{ committee.get_calaccess_url }}">Cal-Access</a></p>
+  </div>
+</div>
+
+<!-- old presentation as table
+
 <div class="row">
     <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
-        <h3>Summary</h3>
         <table class="table table-bordered table-hover">
             <tr>
-                <th>ID</th>
-                <th>XREF ID</th>
-                <th>Effective date</th>
                 <th>Status</th>
+                <th>Effective date</th>
                 <th>Type</th>
                 <th>Party</th>
+                <th>ID</th>
+                <th>XREF ID</th>
                 <th>CAL-ACCESS</th>
             </tr>
             <tr>
-                <td>{{ committee.filer_id_raw }}</td>
-                <td>{{ committee.xref_filer_id }}</td>
-                <td>{{ committee.effective_date|date:"Y-m-d" }}</td>
                 <td>{{ committee.get_status_display }}</td>
+                <td>{{ committee.effective_date|date:"Y-m-d" }}</td>
                 <td>{{ committee.get_committee_type_display }}</td>
                 <td>{{ committee.get_party_display }}</td>
+                <td>{{ committee.filer_id_raw }}</td>
+                <td>{{ committee.xref_filer_id }}</td>
+
                 <td>
                     <a target="_blank" href="{{ committee.get_calaccess_url }}">
                         {{ committee.get_calaccess_url|truncatechars:40 }}
@@ -37,12 +55,16 @@
     </div>
 </div>
 
+-->
+
+<h3>Cashflow</h3>
+
 <div class="row">
     <div id="moneyFlowViz" class="col-lg-12 col-md-12 col-sm-12 col-xs-12">    
-    <h4>Money Flow</h4>    
+    <h4>Money Flow</h4> 
     </div>
     <div class="col-lg-6 col-md-6 col-sm-12 col-xs-12">
-        <h4>Contributions</h4>
+        <h4>Total Contributions</h4>
         <table class="table table-bordered table-hover">
         <tbody>
         <tr>
@@ -53,7 +75,7 @@
         </table>
     </div>
     <div class="col-lg-6 col-md-6 col-sm-12 col-xs-12">
-        <h4>Expenditures</h4>
+        <h4>Total Expenditures</h4>
         <table class="table table-bordered table-hover">
         <tbody>
         <tr>
@@ -68,12 +90,12 @@
 <div class="row">
     <div class="col-lg-6 col-md-6 col-sm-12 col-xs-12">
         {% if committee.total_contributions_by_year %}
-        <h4>By year</h4>
+        <h4>Contributions by year</h4>
         <table class="table table-bordered table-hover">
         <thead>
             <tr>
-                <th>Year</th>
-                <th class="right">Total</th>
+                <th data-sort="int">Year</th>
+                <th  data-sort="currency" class="right">Total</th>
             </tr>
         </thead>
         <tbody>
@@ -89,12 +111,12 @@
     </div>
     <div class="col-lg-6 col-md-6 col-sm-12 col-xs-12">
         {% if committee.total_expenditures_by_year %}
-        <h4>By year</h4>
+        <h4>Expenditures by year</h4>
         <table class="table table-bordered table-hover">
         <thead>
             <tr>
-                <th>Year</th>
-                <th class="right">Total</th>
+                <th data-sort="int">Year</th>
+                <th  data-sort="currency" class="right">Total</th>
             </tr>
         </thead>
         <tbody>
@@ -134,13 +156,13 @@
       <table class="table table-bordered table-hover">
         <thead>
             <tr>
-                <th>No.</th>
-                <th>Filed</th>
+                <th data-sort="int">No.</th>
+                <th data-sort="date">Filed</th>
                 <th>Form</th>
                 <th>Period</th>
-                <th class="right">Contributions</th>
-                <th class="right">Expenditures</th>
-                <th class="right">Debts</th>
+                <th data-sort="currency" class="right">Contributions</th>
+                <th data-sort="currency" class="right">Expenditures</th>
+                <th data-sort="currency" class="right">Debts</th>
                 <th class="center">PDF</th>
             </tr>
         </thead>
@@ -199,9 +221,9 @@
         <table class="table table-bordered table-hover">
           <thead>
             <tr>
-                <th>Date</th>
-                <th>Name</th>
-                <th class="right">Amount</th>
+                <th data-sort="date">Date</th>
+                <th data-sort="string">Name</th>
+                <th data-sort="currency" class="right">Amount</th>
             </tr>
           </thead>
           <tbody>
@@ -241,9 +263,9 @@
         <table class="table table-bordered table-hover">
           <thead>
             <tr>
-                <th>Date</th>
-                <th>Name</th>
-                <th class="right">Amount</th>
+                <th data-sort="date">Date</th>
+                <th data-sort="string">Name</th>
+                <th data-sort="currency" class="right">Amount</th>
             </tr>
           </thead>
           <tbody>
@@ -288,10 +310,10 @@
       <table class="table table-bordered table-hover"> <!-- table table-bordered table-hover -->
         <thead>
           <tr>
-              <th>Date</th>
-              <th>Name</th>
-              <th>Type</th>
-              <th class="right">Amount</th>
+                <th data-sort="date">Date</th>
+                <th data-sort="string">Name</th>
+                <th>Type</th>
+                <th data-sort="currency" class="right">Amount</th>
           </tr>
         </thead>
         <tbody>
@@ -332,5 +354,34 @@
   // Psuedo Code
   // var aDiv = document.querySelector('.someDiv');
   // App.viz( committee, aDiv );
+</script>
+
+<script>
+  jQuery(document).ready(function($) {
+    $("table").stupidtable({
+        "currency":function(a,b){
+
+            var aNum = a.replace('$', '').replace(',', '');
+            var bNum = b.replace('$', '').replace(',', '')
+
+            return parseInt(aNum,10) - parseInt(bNum,10);
+          },
+        "date":function(a,b){
+          var year1 = parseInt(a.substring(0,4));
+          var month1 = parseInt(a.substring(7,5)) - 1;
+          var day1 = parseInt(a.substring(10,8));
+
+          var year2 = parseInt(b.substring(0,4));
+          var month2 = parseInt(b.substring(7,5)) - 1;
+          var day2 = parseInt(b.substring(10,8));
+
+          var date1 = new Date(year1, month1, day1);
+          var date2 = new Date(year2, month2, day2);
+
+          return date1 - date2;
+        }
+    });
+    
+  });
 </script>
 {% endblock %}
