@@ -2,5 +2,198 @@
 {% load humanize %}
 
 {% block content %}
-partytime
+<h2>Political Parties</h2>
+
+<div class="row">
+    <div class="graphheader">
+      <h4> Party Cashflow In The 2014 Cycle</h4>      
+      <a class="toggle-btn" data-toggle="collapse" href="#cashflowData" aria-expanded="false" aria-controls="cashflowData">
+            Show/hide data
+      </a>
+    </div>
+
+    <div id="cashflowData" class="collapse row">
+      <div class="col-lg-6 col-md-6 col-sm-12 col-xs-12">
+        {% if party.total_contributions_by_year %}
+        <h4>Contributions by year</h4>
+        <table class="table table-bordered table-hover">
+        <thead>
+            <tr>
+                <th data-sort="int">Year</th>
+                <th  data-sort="currency" class="right">Total</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for year, total in party.total_contributions_by_year %}
+                <tr>
+                    <td>{{ party }}</td>
+                    <td class="right">${{ total|floatformat:0|intcomma }}</td>
+                </tr>
+            {% endfor %}
+        </tbody>
+        </table>
+        {% endif %}
+      </div>
+      <div class="col-lg-6 col-md-6 col-sm-12 col-xs-12">
+          {% if party.total_expenditures_by_year %}
+          <h4>Expenditures by year</h4>
+          <table class="table table-bordered table-hover">
+          <thead>
+              <tr>
+                  <th data-sort="int">Year</th>
+                  <th  data-sort="currency" class="right">Total</th>
+              </tr>
+          </thead>
+          <tbody>
+              {% for year, total in party.total_expenditures_by_year %}
+                  <tr>
+                      <td>{{ party }}</td>
+                      <td class="right">${{ total|floatformat:0|intcomma }}</td>
+                  </tr>
+              {% endfor %}
+          </tbody>
+          </table>
+          {% endif %}
+      </div>
+    </div>
+    <div id="moneyFlowViz" class="col-lg-12 col-md-12 col-sm-12 col-xs-12">    
+    </div>
+    <ul class="legend right col-lg-6 col-md-6 col-sm-12 col-xs-12">
+        <li class="legenditem"><span class="series1"></span>Contribution</li>
+        <li class="legenditem"><span class="series2"></span>Expenditure</li>
+    </ul> 
+</div>
+
+
+
+
+<div class="row">     
+<h3>Big Spenders<h3>
+    <div class="col-lg-6 col-md-6 col-sm-8 col-xs-12">
+
+        <table class="table table-bordered table-hover">
+        <tbody>
+          <tr>
+              <td>&nbsp;</td>
+              <td>Candidate</td>
+              <td>Total Expenditures</td>
+              <td>Party</td>
+          </tr>
+          <tr>
+              <td class="right">#</td>
+              <td class="right">---</td>
+              <td class="right">$</td>
+              <td class="right">---</td>
+          </tr>
+        </tbody>
+        </table>
+    </div>     
+</div>
+
+
+<div class="row">        
+<h3>$ Hoarders</h3>
+    <div class="col-lg-6 col-md-6 col-sm-8 col-xs-12">
+
+        <table class="table table-bordered table-hover">
+        <tbody>
+          <tr>
+              <td>&nbsp;</td>
+              <td>Candidate</td>
+              <td>Total Expenditures</td>
+              <td>Party</td>
+          </tr>
+          <tr>
+              <td class="right">#</td>
+              <td class="right">---</td>
+              <td class="right">$</td>
+              <td class="right">---</td>
+          </tr>
+        </tbody>
+        </table>
+    </div>     
+</div>
+
 {% endblock %}
+
+
+<script>
+  var committee          = {{ committee_json }};
+  committee.filings       = {{ filing_set_json }};
+  committee.expenditures  = {{ expenditure_set_json }};
+  committee.expenditures_by_year = {{ expenditure_by_year|safe }};
+  committee.contributions = {{ contribs_set_json }};
+  committee.contributions_by_year = {{contribs_by_year|safe }};
+
+  committee.contributionsMade = {{ filing_set_json }};
+
+  App.chartViz(committee.contributions_by_year, committee.expenditures_by_year);
+
+  var dataTable = dc.dataTable("#dc-table-graph");
+  var timeChart = dc.barChart("#dc-time-chart");
+
+  var data = committee.filings;
+  var parseDate = d3.time.format("%Y-%m-%d").parse;
+
+  data.forEach(function(d){
+    d.num = d.filing_id_raw;
+    d.dtg = d.date_filed;
+    d.date = parseDate(d.date_filed);
+    d.ft = d.form_type;
+    d.pd = d.start_date + " - " + d.end_date;
+    d.contributions = d.summary.total_contributions;
+    d.expenditures = d.summary.total_expenditures;
+    d.debts = d.summary.outstanding_debts;
+    console.log(d.contributions);
+  });
+
+  var info = crossfilter(data);
+  var timeDimension = info.dimension(function(d){
+    return d.date;
+  });
+  var minDate = timeDimension.bottom(1)[0].date;
+  var maxDate = timeDimension.top(1)[0].date;
+  var contrValueGroupCount = timeDimension.group()
+      .reduceSum(function(d) { return d.contributions; });
+
+  
+
+
+timeChart.width(880)
+.height(150)
+.margins({top: 10, right: 10, bottom: 20, left: 50})
+.dimension(timeDimension)
+.group(contrValueGroupCount)
+.transitionDuration(500)
+.centerBar(true)
+.gap(10)
+.x(d3.time.scale().domain([minDate,maxDate]))
+.elasticY(true)
+.xAxis().tickFormat();
+
+
+
+  dataTable.dimension(timeDimension)
+            .group(function(d){return "Chart"})
+            .size(13)
+            .columns([
+              function(d){ return d.num; },
+              function(d){ return d.dtg; },
+              function(d){ return d.ft; },
+              function(d){ return d.pd; },
+              function(d){ return d.contributions; },
+              function(d){ return d.expenditures; },
+              function(d){ return d.debts; },
+              ])
+            .sortBy(function(d){ return d.dtg; })
+            .order(d3.ascending);
+
+  dc.renderAll();
+
+</script>
+
+<script>
+  jQuery(document).ready(function($) {
+    $('.searchable-list').sieve();    
+  });
+</script>
