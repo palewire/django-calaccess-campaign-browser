@@ -711,6 +711,7 @@ class Election(BaseModel):
     )
     year = models.IntegerField()
     id_raw = models.IntegerField(
+        verbose_name="UID (CAL-ACCESS)",
         help_text="The unique identifer from the CAL-ACCESS site"
     )
     sort_index = models.IntegerField(
@@ -726,6 +727,20 @@ class Election(BaseModel):
             self.year,
             self.id_raw
         )
+
+    @property
+    def office_count(self):
+        """
+        The total number of officies with active races this election.
+        """
+        return self.candidate_set.values("office_id").distinct().count()
+
+    @property
+    def candidate_count(self):
+        """
+        The total number of candidates fundraising for this election.
+        """
+        return self.candidate_set.count()
 
 
 class Office(BaseModel):

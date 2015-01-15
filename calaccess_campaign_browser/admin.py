@@ -20,6 +20,7 @@ class BaseAdmin(admin.ModelAdmin):
     def get_readonly_fields(self, *args, **kwargs):
         return [f.name for f in self.model._meta.fields]
 
+
 @admin.register(Filing)
 class FilingAdmin(BaseAdmin):
     list_display = (
@@ -163,10 +164,15 @@ class SummaryAdmin(BaseAdmin):
 @admin.register(Election)
 class ElectionAdmin(BaseAdmin):
     list_display = (
-        "year", "name",
+        "id_raw",
+        "year",
+        "name",
+        "office_count",
+        "candidate_count",
     )
     list_filter = (
         "year",
+        "name",
     )
 
 
