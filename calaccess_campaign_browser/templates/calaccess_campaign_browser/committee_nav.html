@@ -10,8 +10,13 @@
             <span class="icon-bar"></span>
           </button>
         <ol class="breadcrumb">
-          <li><a href="{% url 'filer_list' %}">Filers</a></li>
-          <li><a href="{{ committee.filer.get_absolute_url }}">Committees</a></li>
+          <li><a href="{% url 'filer_list' %}">All filers</a></li>
+        {% if committee.filer.committee_set.count == 1 %}
+          <li class="active">Committee</li>
+        {% else %}
+          <li><a href="{{ committee.filer.get_absolute_url }}">{{ committee.filer.name }}</a></li>
+          <li class="active">Committee</li>
+        {% endif %}
         </ol>
         </div>
         <div class="collapse navbar-collapse bs-example-js-navbar-collapse">
