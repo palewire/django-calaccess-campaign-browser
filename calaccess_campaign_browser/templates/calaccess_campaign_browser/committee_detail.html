@@ -38,6 +38,9 @@
 </div>
 
 <div class="row">
+    <div id="contribExpenditureViz" class="col-lg-12 col-md-12 col-sm-12 col-xs-12">    
+    <h4>test</h4>    
+    </div>
     <div class="col-lg-6 col-md-6 col-sm-12 col-xs-12">
         <h4>Contributions</h4>
         <table class="table table-bordered table-hover">
@@ -322,6 +325,9 @@
   committee.contributions_by_year = {{contribs_by_year|safe }};
 
   committee.contributionsMade = {{ filing_set_json }};
+
+  // Charting for contributions and expenditure
+  // App.chartViz(committee.contributions_by_year, committee.expenditures_by_year);
 
   // Psuedo Code
   // var aDiv = document.querySelector('.someDiv');

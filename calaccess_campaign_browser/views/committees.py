@@ -56,7 +56,12 @@ class CommitteeDetailView(generic.DetailView):
             )
         )
 
-        context['contribs_by_year'] = json.dumps([[year, str(total)] for year, total in self.object.total_contributions_by_year])
+        context['contribs_by_year'] = json.dumps([
+            {
+                'year': year,
+                'total': str(total),
+            } for year, total in self.object.total_contributions_by_year
+        ])
 
         # Transfer to other committees
         contribs_out = Contribution.real.by_committee_from(self.object)
@@ -85,7 +90,12 @@ class CommitteeDetailView(generic.DetailView):
             )
         )
 
-        context['expenditure_by_year'] = json.dumps([[year, str(total)] for year, total in self.object.total_expenditures_by_year])
+        context['expenditure_by_year'] = json.dumps([
+            {
+                'year': year,
+                'total': str(total),
+            } for year, total in self.object.total_expenditures_by_year
+        ])
 
         # Close out
         return context
