@@ -8,6 +8,11 @@ from calaccess_campaign_browser.models import (
     Cycle,
     FilingPeriod,
     Filing,
+    Election,
+    Office,
+    Candidate,
+    Proposition,
+    PropositionFiler,
 )
 
 
@@ -18,6 +23,7 @@ class BaseAdmin(admin.ModelAdmin):
         return [f.name for f in self.model._meta.fields]
 
 
+@admin.register(Filing)
 class FilingAdmin(BaseAdmin):
     list_display = (
         "filing_id_raw",
@@ -38,6 +44,7 @@ class FilingAdmin(BaseAdmin):
     )
 
 
+@admin.register(Filer)
 class FilerAdmin(BaseAdmin):
     list_display = (
         "filer_id_raw",
@@ -61,6 +68,7 @@ class FilerAdmin(BaseAdmin):
     date_hierarchy = "effective_date"
 
 
+@admin.register(Committee)
 class CommitteeAdmin(BaseAdmin):
     list_display = (
         "filer_id_raw",
@@ -85,10 +93,12 @@ class CommitteeAdmin(BaseAdmin):
     date_hierarchy = "effective_date"
 
 
+@admin.register(Cycle)
 class CycleAdmin(BaseAdmin):
     list_display = ("name",)
 
 
+@admin.register(FilingPeriod)
 class FilingPeriodAdmin(BaseAdmin):
     list_display = (
         "period_id", "name", "start_date", "end_date", "deadline",
@@ -98,6 +108,7 @@ class FilingPeriodAdmin(BaseAdmin):
     )
 
 
+@admin.register(Contribution)
 class ContributionAdmin(BaseAdmin):
     list_display = (
         "id",
@@ -116,6 +127,7 @@ class ContributionAdmin(BaseAdmin):
     date_hierarchy = "date_received"
 
 
+@admin.register(Expenditure)
 class ExpenditureAdmin(BaseAdmin):
     list_display = (
         "id",
@@ -135,6 +147,7 @@ class ExpenditureAdmin(BaseAdmin):
     date_hierarchy = "expn_date"
 
 
+@admin.register(Summary)
 class SummaryAdmin(BaseAdmin):
     list_display = (
         "filing_id_raw",
@@ -150,11 +163,61 @@ class SummaryAdmin(BaseAdmin):
     )
 
 
-admin.site.register(Committee, CommitteeAdmin)
-admin.site.register(Filer, FilerAdmin)
-admin.site.register(Cycle, CycleAdmin)
-admin.site.register(FilingPeriod, FilingPeriodAdmin)
-admin.site.register(Filing, FilingAdmin)
-admin.site.register(Expenditure, ExpenditureAdmin)
-admin.site.register(Contribution, ContributionAdmin)
-admin.site.register(Summary, SummaryAdmin)
+@admin.register(Election)
+class ElectionAdmin(BaseAdmin):
+    list_display = (
+        "id_raw",
+        "year",
+        "name",
+        "office_count",
+        "candidate_count",
+    )
+    list_filter = (
+        "year",
+        "name",
+    )
+
+
+@admin.register(Office)
+class OfficeAdmin(BaseAdmin):
+    list_display = (
+        "__unicode__",
+        "election_count",
+        "candidate_count",
+    )
+    list_filter = (
+        "name",
+    )
+    search_fields = (
+        "name",
+        "seat",
+    )
+    list_per_page = 200
+
+
+@admin.register(Candidate)
+class CandidateAdmin(BaseAdmin):
+    list_display = (
+        "filer", "election_year", "election_name", "office"
+    )
+    list_filter = (
+        "election",
+    )
+    search_fields = (
+        "filer__name",
+    )
+
+@admin.register(Proposition)
+class PropositionAdmin(BaseAdmin):
+    list_display = (
+        "name", "filer_id_raw", "election",
+    )
+    search_fields = (
+        "name",
+    )
+
+@admin.register(PropositionFiler)
+class PropositionFilerAdmin(BaseAdmin):
+    list_display = (
+        "proposition", "filer", "position",
+    )
