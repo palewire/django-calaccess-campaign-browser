@@ -10,8 +10,8 @@ App = {
         $("table").stupidtable({
 	        "currency":function(a,b){
 
-	            var aNum = a.replace('$', '').replace(',', '');
-	            var bNum = b.replace('$', '').replace(',', '')
+	            var aNum = a.replace('$', '').replace(/,/g, '');
+	            var bNum = b.replace('$', '').replace(/,/g, '')
 
 	            return parseInt(aNum,10) - parseInt(bNum,10);
 	          },
