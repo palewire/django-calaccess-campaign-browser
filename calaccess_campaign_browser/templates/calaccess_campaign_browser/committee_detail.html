@@ -222,7 +222,7 @@
             <tr>
                 <th data-sort="date">Date</th>
                 <th data-sort="string">Name</th>
-                <th data-sort="int" class="right">Amount</th>
+                <th data-sort="currency" class="right">Amount</th>
             </tr>
           </thead>
           <tbody>
@@ -264,7 +264,7 @@
             <tr>
                 <th data-sort="date">Date</th>
                 <th data-sort="string">Name</th>
-                <th data-sort="int" class="right">Amount</th>
+                <th data-sort="currency" class="right">Amount</th>
             </tr>
           </thead>
           <tbody>
@@ -312,7 +312,7 @@
                 <th data-sort="date">Date</th>
                 <th data-sort="string">Name</th>
                 <th>Type</th>
-                <th data-sort="int" class="right">Amount</th>
+                <th data-sort="currency" class="right">Amount</th>
           </tr>
         </thead>
         <tbody>
@@ -360,8 +360,8 @@
     $("table").stupidtable({
         "currency":function(a,b){
 
-            var aNum = a.replace('$', '');
-            var bNum = b.replace('$', '')
+            var aNum = a.replace('$', '').replace(',', '');
+            var bNum = b.replace('$', '').replace(',', '')
 
             return parseInt(aNum,10) - parseInt(bNum,10);
           },
