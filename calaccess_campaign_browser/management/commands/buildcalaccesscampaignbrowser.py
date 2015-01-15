@@ -11,5 +11,7 @@ class Command(CalAccessCommand):
         call_command("loadcalaccesscampaignfilings")
         call_command("loadcalaccesscampaignsummaries")
         call_command("loadcalaccesscampaigncontributions")
+        call_command("scrapeelectioncandidates")
+        call_command("scrapeprops")
         # call_command("loadcalaccesscampaignexpenditures")
         self.success("Done!")
