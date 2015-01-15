@@ -215,6 +215,7 @@ class PropositionAdmin(BaseAdmin):
     search_fields = (
         "name",
     )
+    list_per_page = 200
 
 @admin.register(PropositionFiler)
 class PropositionFilerAdmin(BaseAdmin):
