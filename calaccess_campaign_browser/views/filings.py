@@ -57,6 +57,13 @@ class FilingDetailView(generic.DetailView):
 class FilerDetailView(generic.DetailView):
     model = Filer
 
+    def get_context_data(self, **kwargs):
+        context = super(FilerDetailView, self).get_context_data(**kwargs)
+        context['contributions_total'] = sum([i.total_contributions for i in self.object.committee_set.all()])
+        context['expenditures_total'] = sum([i.total_expenditures for i in self.object.committee_set.all()])
+
+        return context
+
     def render_to_response(self, context):
         if context['object'].committee_set.count() == 1:
             return redirect(

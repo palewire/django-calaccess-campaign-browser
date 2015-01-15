@@ -4,8 +4,10 @@
 }
 table {
     font-size:13px;
-    
+
 }
+
+.bold { font-weight: bold; }
 
 th {
     background-color: #fefefe;
