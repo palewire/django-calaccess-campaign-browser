@@ -4,7 +4,7 @@
   <div class="row">
       <ul class="nav nav-pills red-border col-lg-12 col-md-12 col-sm-12 col-xs-12">
         <li>
-            <img height='38px' src="{% static "calaccess_campaign_browser/images/bear-no-red-line.png" %}" alt="">
+            <a class="logo" href="{% url 'latest_list' %}"><img height='38px' src="{% static "calaccess_campaign_browser/images/bear-no-red-line.png" %}" alt=""></a>
         </li>
         <li><a href="{% url 'latest_list' %}"><i class="fa fa-newspaper-o"></i> Latest</a></li>
         <li><a href="{% url 'filer_list' %}"><i class="fa fa-user"></i> Filers</a></li>

@@ -90,6 +90,13 @@ ol {
     border-radius:0px;
     color:#000;
 }
+.nav .logo {
+	display:inline;
+	padding-top:0;
+}
+.nav .logo:hover, .nav .logo:active, .nav .logo:focus {
+	background:#fff;
+}
 .nav>li>a:hover {
     color:#fff;
     background-color:#ba0a35;
