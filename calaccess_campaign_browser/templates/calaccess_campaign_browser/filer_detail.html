@@ -8,8 +8,8 @@
   <div class="row" style="margin-bottom:15px;">
     <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
         <ol class="breadcrumb">
-          <li><a href="{% url 'filer_list' %}">Filer</a></li>
-          <li class="active"><a href="{% url 'filer_detail' object.id %}">Committees</a></li>
+          <li><a href="{% url 'filer_list' %}">All filers</a></li>
+          <li class="active">Filer committees</a></li>
         </ol>
         <h2>{{ filer }}</h2>
 
@@ -46,6 +46,13 @@
               </td>
             </tr>
           {% endfor %}
+            <tr>
+              <td></td>
+              <td></td>
+              <td class="bold">Totals</td>
+              <td class="right bold">${{ contributions_total|default:0|floatformat:0|intcomma }}</td>
+              <td class="right bold">${{ expenditures_total|default:0|floatformat:0|intcomma }}</td>
+            </tr>
           </tbody>
         </table>
     </div>

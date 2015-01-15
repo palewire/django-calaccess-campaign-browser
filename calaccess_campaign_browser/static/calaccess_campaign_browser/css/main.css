@@ -4,8 +4,10 @@
 }
 table {
     font-size:13px;
-    
+
 }
+
+.bold { font-weight: bold; }
 
 th {
     background-color: #fefefe;
@@ -89,6 +91,13 @@ ol {
     padding: 10px 15px 8px 15px;
     border-radius:0px;
     color:#000;
+}
+.nav .logo {
+	display:inline;
+	padding-top:0;
+}
+.nav .logo:hover, .nav .logo:active, .nav .logo:focus {
+	background:#fff;
 }
 .nav>li>a:hover {
     color:#fff;
