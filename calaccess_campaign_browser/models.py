@@ -815,3 +815,7 @@ class Candidate(BaseModel):
     def election_name(self):
         return self.election.get_name_display()
 
+
+class Proposition(BaseModel):
+    name = models.CharField(max_length=255, null=True)
+    filer_id_raw = models.IntegerField(db_index=True)
