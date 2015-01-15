@@ -10,6 +10,9 @@ table {
 th {
     background-color: #fefefe;
 }
+th[data-sort="int"]:hover, th[data-sort="currency"]:hover, th[data-sort="date"]:hover, th[data-sort="string"]:hover {
+    cursor:pointer;
+}
 
 td.right, th.right {
     text-align:right;
