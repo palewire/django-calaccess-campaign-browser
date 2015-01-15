@@ -169,6 +169,7 @@ class ElectionAdmin(BaseAdmin):
         "id_raw",
         "year",
         "name",
+        "date",
         "office_count",
         "candidate_count",
     )
