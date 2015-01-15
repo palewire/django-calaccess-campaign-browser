@@ -108,11 +108,13 @@ App = {
 
     },
     contribViz: function (filings) {
-        var dataTable = dc.dataTable("#dc-table-graph");
+      var dataTable = dc.dataTable("#dc-table-graph");
       var timeChart = dc.barChart("#dc-time-chart");
 
       var data = filings;
-
+      if (data.length < 3) {
+        $("#dc-time-chart").hide()
+      }
       data.forEach(function(d){
         d.num = d.filing_id_raw;
         d.dtg = d.date_filed;
