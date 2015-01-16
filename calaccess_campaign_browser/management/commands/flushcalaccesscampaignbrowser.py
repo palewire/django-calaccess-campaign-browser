@@ -22,6 +22,11 @@ class Command(CalAccessCommand):
             models.Committee,
             models.Contribution,
             models.Expenditure,
+            models.Election,
+            models.Office,
+            models.Candidate,
+            models.Proposition,
+            models.PropositionFiler,
         ]
         sql = """TRUNCATE `%s`;"""
         for m in model_list:
