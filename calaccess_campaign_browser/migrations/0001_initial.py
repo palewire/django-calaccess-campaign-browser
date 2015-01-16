@@ -11,16 +11,6 @@ class Migration(migrations.Migration):
 
     operations = [
         migrations.CreateModel(
-            name='Candidate',
-            fields=[
-                ('id', models.AutoField(verbose_name='ID', serialize=False, auto_created=True, primary_key=True)),
-            ],
-            options={
-                'abstract': False,
-            },
-            bases=(models.Model,),
-        ),
-        migrations.CreateModel(
             name='Committee',
             fields=[
                 ('id', models.AutoField(verbose_name='ID', serialize=False, auto_created=True, primary_key=True)),
@@ -96,18 +86,6 @@ class Migration(migrations.Migration):
             ],
             options={
                 'ordering': ('-name',),
-            },
-            bases=(models.Model,),
-        ),
-        migrations.CreateModel(
-            name='Election',
-            fields=[
-                ('id', models.AutoField(verbose_name='ID', serialize=False, auto_created=True, primary_key=True)),
-                ('name', models.CharField(max_length=50, choices=[(b'GENERAL', b'General'), (b'PRIMARY', b'Primary'), (b'RECALL', b'Recall'), (b'SPECIAL', b'Special'), (b'SPECIAL_RUNOFF', b'Special Runoff'), (b'OTHER', b'Other')])),
-                ('year', models.IntegerField()),
-            ],
-            options={
-                'ordering': ('-year',),
             },
             bases=(models.Model,),
         ),
@@ -206,18 +184,6 @@ class Migration(migrations.Migration):
             bases=(models.Model,),
         ),
         migrations.CreateModel(
-            name='Office',
-            fields=[
-                ('id', models.AutoField(verbose_name='ID', serialize=False, auto_created=True, primary_key=True)),
-                ('name', models.CharField(max_length=50, choices=[(b'GOVERNOR', b'Governor'), (b'LIEUTENANT_GOVERNOR', b'Lieutenant Governor'), (b'SECRETARY_OF_STATE', b'Secretary of State'), (b'CONTROLLER', b'Controller'), (b'TREASURER', b'Treasurer'), (b'ATTORNEY_GENERAL', b'Attorney General'), (b'SUPERINTENDENT_OF_PUBLIC_INSTRUCTION', b'Superintendent of Public Instruction'), (b'INSURANCE_COMMISSIONER', b'Insurance Commissioner'), (b'BOARD_OF_EQUALIZATION', b'Board of Equalization'), (b'SENATE', b'Senate'), (b'ASSEMBLY', b'Assembly'), (b'OTHER', b'Other')])),
-                ('seat', models.IntegerField(default=None, null=True)),
-            ],
-            options={
-                'abstract': False,
-            },
-            bases=(models.Model,),
-        ),
-        migrations.CreateModel(
             name='Summary',
             fields=[
                 ('id', models.AutoField(verbose_name='ID', serialize=False, auto_created=True, primary_key=True)),
@@ -267,24 +233,6 @@ class Migration(migrations.Migration):
             model_name='committee',
             name='filer',
             field=models.ForeignKey(to='calaccess_campaign_browser.Filer'),
-            preserve_default=True,
-        ),
-        migrations.AddField(
-            model_name='candidate',
-            name='election',
-            field=models.ForeignKey(to='calaccess_campaign_browser.Election'),
-            preserve_default=True,
-        ),
-        migrations.AddField(
-            model_name='candidate',
-            name='filer',
-            field=models.ForeignKey(to='calaccess_campaign_browser.Filer'),
-            preserve_default=True,
-        ),
-        migrations.AddField(
-            model_name='candidate',
-            name='office',
-            field=models.ForeignKey(to='calaccess_campaign_browser.Office'),
             preserve_default=True,
         ),
     ]
