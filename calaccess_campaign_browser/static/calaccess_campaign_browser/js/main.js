@@ -134,7 +134,7 @@ App = {
       var maxDate = d3.time.day.offset(timeDimension.top(1)[0].date,1);
       var width = 880;
       var margins = {top: 10, right: 10, bottom: 20, left: 80};
-      var contrValueGroupCount = timeDimension.group()
+      var contrValueGroupSum = timeDimension.group()
           .reduceSum(function(d) { return d.contributions; });
 
 
@@ -146,7 +146,7 @@ App = {
       .height(150)
       .margins(margins)
       .dimension(timeDimension)
-      .group(contrValueGroupCount)
+      .group(contrValueGroupSum)
       .transitionDuration(500)
       .centerBar(true)
       .x(xScale)
@@ -156,16 +156,16 @@ App = {
 
 
       dataTable.dimension(timeDimension)
-                .group(function(d){return "Chart"})
-                .size(13)
-                .columns([
+               .group(function(d){return "List of contributions"})
+               .size(13)
+               .columns([
                   function(d){ return d.num; },
                   function(d){ return d.dtg; },
                   function(d){ return d.ft; },
                   function(d){ return d.pd; },
                   function(d){ return d.contributions; },
                   function(d){ return d.expenditures; },
-                  function(d){ return d.debts; },
+                  function(d){ return d.debts; }
                   ])
                 .sortBy(function(d){ return d.dtg; })
                 .order(d3.ascending);
