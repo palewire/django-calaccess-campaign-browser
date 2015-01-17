@@ -208,6 +208,7 @@ class CandidateAdmin(BaseAdmin):
         "filer__name",
     )
 
+
 @admin.register(Proposition)
 class PropositionAdmin(BaseAdmin):
     list_display = (
@@ -217,6 +218,7 @@ class PropositionAdmin(BaseAdmin):
         "name",
     )
     list_per_page = 200
+
 
 @admin.register(PropositionFiler)
 class PropositionFilerAdmin(BaseAdmin):

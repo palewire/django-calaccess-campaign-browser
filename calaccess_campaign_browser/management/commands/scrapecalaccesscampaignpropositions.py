@@ -2,7 +2,12 @@ import re
 from time import sleep
 from datetime import datetime
 from calaccess_campaign_browser.management.commands import ScrapeCommand
-from calaccess_campaign_browser.models import Filer, Election, Proposition, PropositionFiler
+from calaccess_campaign_browser.models import (
+    Filer,
+    Election,
+    Proposition,
+    PropositionFiler
+)
 from .utils import parse_election_name
 
 
@@ -44,18 +49,25 @@ the CAL-ACCESS site"
                     continue
 
                 try:
-                    election = Election.objects.get(year=date.year, name=election_dict['type'])
+                    election = Election.objects.get(
+                        year=date.year,
+                        name=election_dict['type']
+                    )
                     election.date = date
                     election.save()
 
-                # Can't figure out to connect ambiguous elections, just set to None.
+                # Can't figure out to connect ambiguous elections, so None.
                 except Election.MultipleObjectsReturned:
                     election = None
-                    self.warn('Multiple elections found for year %s and type %s, not sure which to pick. \
-                    Not setting the date for this election...' % (date.year, election_dict['type']))
+                    self.warn('Multiple elections found for year %s and \
+type %s, not sure which to pick. Not setting the date for this \
+election...' % (date.year, election_dict['type']))
 
                 for prop in election_dict['props']:
-                    proposition, created = Proposition.objects.get_or_create(name=prop['name'], filer_id_raw=prop['id'])
+                    proposition, created = Proposition.objects.get_or_create(
+                        name=prop['name'],
+                        filer_id_raw=prop['id']
+                    )
 
                     if self.verbose:
                         if created:
@@ -70,22 +82,29 @@ the CAL-ACCESS site"
                         if self.verbose:
                             self.log('\t\tCommittee %s' % committee['id'])
 
-                        # This filer_id could mean a lot of things, so try a few.
+                        # This filer_id could mean a lot of things, so try
                         filer_id = committee['id']
                         try:
                             filer = Filer.objects.get(filer_id_raw=filer_id)
                         except Filer.DoesNotExist:
                             try:
-                                filer = Filer.objects.get(xref_filer_id=filer_id)
+                                filer = Filer.objects.get(
+                                    xref_filer_id=filer_id
+                                )
                             except Filer.DoesNotExist:
-                                self.warn('\t\t\tCould not find existing filer for id %s' % filer_id)
+                                self.warn(' Could not find existing filer for \
+id %s' % filer_id)
                                 pass
 
-                        # Associate the filer with the prop.
+                        # Associate the filer with the prop
+                        if committee['support']:
+                            position = 'SUPPORT'
+                        else:
+                            position = 'OPPOSE'
                         PropositionFiler.objects.get_or_create(
                             proposition=proposition,
                             filer=filer,
-                            position='SUPPORT' if committee['support'] else 'OPPOSE'
+                            position=position
                         )
 
     def scrape_props_page(self, rel_url):
@@ -95,9 +114,14 @@ the CAL-ACCESS site"
             self.log('Scraping from %s' % rel_url)
         soup = self.make_request(rel_url)
         elections = {}
-        for election in soup.findAll('table', {'id': re.compile(r'ListElections1__[a-z0-9]+')}):
+        for election in soup.findAll(
+            'table', {'id': re.compile(r'ListElections1__[a-z0-9]+')}
+        ):
             election_title = election.select('caption span')[0].text
-            election_date = re.match(r'[A-Z]+ \d{1,2}, \d{4}', election_title).group(0)
+            election_date = re.match(
+                r'[A-Z]+ \d{1,2}, \d{4}',
+                election_title
+            ).group(0)
             election_type = election_title.replace(election_date, '').strip()
             prop_links = election.findAll('a')
 
@@ -108,7 +132,9 @@ the CAL-ACCESS site"
 
             elections[election_date] = {
                 'type': election_type,
-                'props': [self.scrape_prop_page(link['href']) for link in prop_links]
+                'props': [
+                    self.scrape_prop_page(link['href']) for link in prop_links
+                ]
             }
         return elections
 
@@ -132,7 +158,7 @@ the CAL-ACCESS site"
 
             url = committee.find('a', {'class': 'sublink2'})
             name = url.text
-            # This ID sometimes refers to xref_filer_id rather than filer_id_raw.
+            # ID sometimes refers to xref_filer_id rather than filer_id_raw
             id = data[0].text
             support = data[1].text.strip() == 'SUPPORT'
             committees.append({
