@@ -4,6 +4,7 @@ A Django app to refine, review and investigate campaign finance data drawn from 
 
 **This is a work in progress. Its analysis should be considered as provisional until it is further tested and debugged.**
 
+[![Docs status](https://readthedocs.org/projects/django-calaccess-campaign-browser/badge/)
 [![Build Status](https://travis-ci.org/california-civic-data-coalition/django-calaccess-campaign-browser.png?branch=master)](https://travis-ci.org/california-civic-data-coalition/django-calaccess-campaign-browser)
 [![PyPI version](https://badge.fury.io/py/django-calaccess-campaign-browser.png)](http://badge.fury.io/py/django-calaccess-campaign-browser)
 [![Coverage Status](https://coveralls.io/repos/california-civic-data-coalition/django-calaccess-campaign-browser/badge.png?branch=master)](https://coveralls.io/r/california-civic-data-coalition/django-calaccess-campaign-browser?branch=master)
