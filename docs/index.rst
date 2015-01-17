@@ -47,7 +47,7 @@ Read more
 Events
 ------
 
-Development has been advanced a series of sprints sponsored by `Knight-Mozilla OpenNews <http://opennews.org/>`_.
+Development has been advanced by a series of sprints supported by `Knight-Mozilla OpenNews <http://opennews.org/>`_.
 
 * August 13-15, 2014, at `Mozilla's offices in San Francisco <https://www.mozilla.org/en-US/contact/spaces/san-francisco/>`_
 * January 14-15, 2015, at `USC's Wallis Annenberg Hall <http://wallisannenberghall.uscannenberg.org/>`_
