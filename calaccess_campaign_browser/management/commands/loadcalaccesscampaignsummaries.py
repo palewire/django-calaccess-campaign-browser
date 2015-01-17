@@ -1,5 +1,7 @@
 import os
 import csv
+import MySQLdb
+import warnings
 from django.db import connection
 from calaccess_raw import get_download_directory
 from django.utils.datastructures import SortedDict
@@ -24,6 +26,8 @@ class Command(CalAccessCommand):
 
     def load_csv(self):
         self.log(" Loading transformed CSV")
+        # Ignore MySQL warnings so this can be run with DEBUG=True
+        warnings.filterwarnings("ignore", category=MySQLdb.Warning)
         c = connection.cursor()
         sql = """
             LOAD DATA LOCAL INFILE '%s'

@@ -1,3 +1,5 @@
+import MySQLdb
+import warnings
 from django.db import connection
 from optparse import make_option
 from calaccess_campaign_browser.models import Filing, FilingPeriod
@@ -24,6 +26,8 @@ class Command(CalAccessCommand):
         Loads raw filings into consolidated tables
         """
         self.header("Loading filings")
+        # Ignore MySQL warnings so this can be run with DEBUG=True
+        warnings.filterwarnings("ignore", category=MySQLdb.Warning)
         if options['flush']:
             self.flush()
         self.load_periods()

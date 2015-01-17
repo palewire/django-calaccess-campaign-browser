@@ -1,3 +1,5 @@
+import MySQLdb
+import warnings
 from django.db import connection
 from calaccess_campaign_browser import models
 from calaccess_campaign_browser.management.commands import CalAccessCommand
@@ -9,9 +11,10 @@ class Command(CalAccessCommand):
     def handle(self, *args, **options):
         self.header("Loading filers and committees")
 
-        # Ignore MySQL "note" warnings so this can be run with DEBUG=True
+        # Ignore MySQL warnings so this can be run with DEBUG=True
+        warnings.filterwarnings("ignore", category=MySQLdb.Warning)
+
         self.conn = connection.cursor()
-        self.conn.execute("""SET @OLD_SQL_NOTES=@@SQL_NOTES, SQL_NOTES=0;""")
 
         self.drop_temp_tables()
         self.create_temp_tables()
@@ -23,9 +26,6 @@ class Command(CalAccessCommand):
         self.load_pac_filers()
         self.load_pac_committees()
         self.drop_temp_tables()
-
-        # Revert database to default "note" warning behavior
-        self.conn.execute("""SET SQL_NOTES=@OLD_SQL_NOTES;""")
 
     def load_cycles(self):
         self.log(" Loading cycles")
