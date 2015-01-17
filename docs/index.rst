@@ -35,8 +35,8 @@ Open-source resources
 * Testing: `travis-ci.org/california-civic-data-coalition/django-calaccess-campaign-browser <https://travis-ci.org/california-civic-data-coalition/django-calaccess-campaign-browser>`_
 * Coverage: `coveralls.io/r/california-civic-data-coalition/django-calaccess-campaign-browser <https://coveralls.io/r/california-civic-data-coalition/django-calaccess-campaign-browser>`_
 
-Read more about this project
-----------------------------
+Read more
+---------
 
 * `'CAL-ACCESS Dreaming' <https://docs.google.com/presentation/d/1YfdiZdSIDk_Jys5yBBRdddYtE-LXbwVoAPbb0ysmuCc/pub?start=false&loop=false&delayms=3000>`_, the kickoff presentation from the initial code convening (Aug. 13, 2014)
 * `'Introducing the California Civic Data Coalition' <http://www.californiacivicdata.org/2014/09/24/hello-world/>`_, a blog post annoucing the first public code release (Sept. 24, 2014)
