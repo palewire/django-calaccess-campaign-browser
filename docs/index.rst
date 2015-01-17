@@ -5,7 +5,7 @@ A Django app to refine and investigate campaign finance data drawn from the
 California Secretary of State's CAL-ACCESS database.
 
 Intended as a second layer atop `django-calaccess-raw-data <https://github.com/california-civic-data-coalition/django-calaccess-raw-data>`_
-that transforms the source data, loads it into simplified models to serve as a platform
+that transforms the source data and loads it into simplified models that serve as a platform
 for investigative analysis.
 
 .. image:: /_static/application-layers.png
@@ -29,15 +29,27 @@ Documentation
 Other resources
 ---------------
 
-* Code repository: `https://github.com/california-civic-data-coalition/django-calaccess-campaign-browser <https://github.com/california-civic-data-coalition/django-calaccess-campaign-browser>`_
-* Issues: `https://github.com/california-civic-data-coalition/django-calaccess-campaign-browser/issues <https://github.com/california-civic-data-coalition/django-calaccess-campaign-browser/issues>`_
-* Packaging: `https://pypi.python.org/pypi/django-calaccess-campaign-browser <https://pypi.python.org/pypi/django-calaccess-campaign-browser>`_
-* Testing: `https://travis-ci.org/california-civic-data-coalition/django-calaccess-campaign-browser <https://travis-ci.org/california-civic-data-coalition/django-calaccess-campaign-browser>`_
-* Coverage: `https://coveralls.io/r/california-civic-data-coalition/django-calaccess-campaign-browser <https://coveralls.io/r/california-civic-data-coalition/django-calaccess-campaign-browser>`_
+* Code repository: `github.com/california-civic-data-coalition/django-calaccess-campaign-browser <https://github.com/california-civic-data-coalition/django-calaccess-campaign-browser>`_
+* Issues: `github.com/california-civic-data-coalition/django-calaccess-campaign-browser/issues <https://github.com/california-civic-data-coalition/django-calaccess-campaign-browser/issues>`_
+* Packaging: `pypi.python.org/pypi/django-calaccess-campaign-browser <https://pypi.python.org/pypi/django-calaccess-campaign-browser>`_
+* Testing: `travis-ci.org/california-civic-data-coalition/django-calaccess-campaign-browser <https://travis-ci.org/california-civic-data-coalition/django-calaccess-campaign-browser>`_
+* Coverage: `coveralls.io/r/california-civic-data-coalition/django-calaccess-campaign-browser <https://coveralls.io/r/california-civic-data-coalition/django-calaccess-campaign-browser>`_
 
-Sponsor
--------
+Sponsors
+--------
+
+.. image:: /_static/latimes-logo.gif
+   :height: 45px
+   :target: http://www.github.com/datadesk/
+
+.. image:: /_static/cir-logo.png
+   :height: 45px
+   :target: http://cironline.org/
+
+.. image:: /_static/stanford-logo.png
+   :height: 45px
+   :target: http://journalism.stanford.edu/
 
 .. image:: /_static/opennews-logo.png
-
-`Released for OpenNews Code Convening, August 2014 <http://opennews.org/code.html>`_ 
+   :height: 45px
+   :target: http://opennews.org/code.html
