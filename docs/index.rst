@@ -29,7 +29,7 @@ Documentation
 Other resources
 ---------------
 
-* Code repository: `github.com/california-civic-data-coalition/django-calaccess-campaign-browser <https://github.com/california-civic-data-coalition/django-calaccess-campaign-browser>`_
+* Code: `github.com/california-civic-data-coalition/django-calaccess-campaign-browser <https://github.com/california-civic-data-coalition/django-calaccess-campaign-browser>`_
 * Issues: `github.com/california-civic-data-coalition/django-calaccess-campaign-browser/issues <https://github.com/california-civic-data-coalition/django-calaccess-campaign-browser/issues>`_
 * Packaging: `pypi.python.org/pypi/django-calaccess-campaign-browser <https://pypi.python.org/pypi/django-calaccess-campaign-browser>`_
 * Testing: `travis-ci.org/california-civic-data-coalition/django-calaccess-campaign-browser <https://travis-ci.org/california-civic-data-coalition/django-calaccess-campaign-browser>`_
