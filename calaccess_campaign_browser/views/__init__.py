@@ -26,5 +26,6 @@ __all__ = (
     'FilerListView',
     'FilingDetailView',
     'FilerDetailView',
+    'PartyListView',
     'SearchList',
 )

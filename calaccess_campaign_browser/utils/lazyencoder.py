@@ -1,7 +1,7 @@
-import json
 from django.utils.functional import Promise
 from django.utils.encoding import force_text
 from django.core.serializers.json import DjangoJSONEncoder
+
 
 class LazyEncoder(DjangoJSONEncoder):
     def default(self, obj):

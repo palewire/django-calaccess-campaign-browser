@@ -1,9 +1,9 @@
 import re
-from time import sleep
 from datetime import datetime
 from calaccess_campaign_browser.management.commands import ScrapeCommand
 from calaccess_campaign_browser.models import Election
 from .utils import parse_office_name
+
 
 class Command(ScrapeCommand):
     help = "Scrape election dates from the Secretary of State's site"
