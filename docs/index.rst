@@ -44,6 +44,14 @@ Read more
 * `'Light everywhere: The California Civic Data Coalition wants to make public datasets easier to crunch' <http://www.niemanlab.org/2014/10/light-everywhere-the-california-civic-data-coalition-wants-to-make-public-datasets-easier-to-crunch/>`_, a story about the creators by Nieman Journalism Lab (Oct. 20, 2014)
 * `'Once a crusader against big money, Gov. Brown is collecting millions' <http://www.latimes.com/local/politics/la-me-pol-brown-money-20141031-story.html#page=1>`_, a Los Angeles Times story that utilized this application (Oct. 31, 2014)
 
+Events
+------
+
+Development has been advanced a series of sprints sponsored by `Knight-Mozilla OpenNews <http://opennews.org/>`_.
+
+* August 13-15, 2014, at `Mozilla's offices in San Francisco <https://www.mozilla.org/en-US/contact/spaces/san-francisco/>`_
+* January 14-15, 2015, at `USC's Wallis Annenberg Hall <http://wallisannenberghall.uscannenberg.org/>`_
+
 Sponsors
 --------
 
