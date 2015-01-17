@@ -56,19 +56,19 @@ Sponsors
 --------
 
 .. image:: /_static/ccdc-logo.png
-   :height: 80px
+   :height: 70px
    :target: http://www.californiacivicdata.org/
 
 .. image:: /_static/los-angeles-times-logo.png
-   :height: 80px
+   :height: 70px
    :target: http://www.github.com/datadesk/
 
 .. image:: /_static/cir-logo.png
-   :height: 80px
+   :height: 70px
    :target: http://cironline.org/
 
 .. image:: /_static/stanford-logo.png
-   :height: 80px
+   :height: 70px
    :target: http://journalism.stanford.edu/
 
 .. image:: /_static/opennews-logo.png
