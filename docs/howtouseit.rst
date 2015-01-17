@@ -74,10 +74,10 @@ In your project ``urls.py`` file, add this app's URLs:
 .. code-block:: python
 
    urlpatterns = patterns('',
-       url(r'^browser/', include('calaccess_campaign_browser.urls')),
+       url(r'^', include('calaccess_campaign_browser.urls')),
    )
 
-Start the development server and visit ``http://127.0.0.1:8000/browser/`` to
+Start the development server and visit ``http://127.0.0.1:8000/`` to
 inspect the data.
 
 .. code-block:: bash
