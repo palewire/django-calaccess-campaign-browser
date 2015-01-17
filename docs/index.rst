@@ -41,6 +41,7 @@ Read more about this project
 * `'CAL-ACCESS Dreaming' <https://docs.google.com/presentation/d/1YfdiZdSIDk_Jys5yBBRdddYtE-LXbwVoAPbb0ysmuCc/pub?start=false&loop=false&delayms=3000>`_, the kickoff presentation from the initial code convening (Aug. 13, 2014)
 * `'Introducing the California Civic Data Coalition' <http://www.californiacivicdata.org/2014/09/24/hello-world/>`_, a blog post annoucing the first public code release (Sept. 24, 2014)
 * `'Package data like software, and the stories will flow like wine' <http://www.californiacivicdata.org/2014/09/24/pluggable-data/>`_, a polemic explaining this project's software design philosophy (Sept. 24, 2014)
+* `'Light everywhere: The California Civic Data Coalition wants to make public datasets easier to crunch' <http://www.niemanlab.org/2014/10/light-everywhere-the-california-civic-data-coalition-wants-to-make-public-datasets-easier-to-crunch/>`_, a story about the creators by Nieman Journalism Lab (Oct. 20, 2014)
 * `'Once a crusader against big money, Gov. Brown is collecting millions' <http://www.latimes.com/local/politics/la-me-pol-brown-money-20141031-story.html#page=1>`_, a Los Angeles Times story that utilized this application (Oct. 31, 2014)
 
 Sponsors
