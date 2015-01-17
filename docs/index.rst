@@ -2,7 +2,7 @@ django-calaccess-campaign-browser
 =================================
 
 A Django app to refine and investigate campaign finance data drawn from the
-California Secretary of State's CAL-ACCESS database.
+California Secretary of State's `CAL-ACCESS <http://cal-access.ss.ca.gov/default.aspx>`_ database.
 
 Intended as a second layer atop `django-calaccess-raw-data <https://github.com/california-civic-data-coalition/django-calaccess-raw-data>`_
 that transforms the source data and loads it into simplified models that serve as a platform
