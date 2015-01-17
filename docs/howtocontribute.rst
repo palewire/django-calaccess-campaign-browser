@@ -37,7 +37,7 @@ Then create a new database named ``campaign_browser``.
 
 .. code-block:: bash
 
-    mysqladmin -h localhost -u root -p create campaign_browser
+    mysqladmin -h localhost -u root -p create calaccess
 
 If you have a different username, substitute it above. You'll be prompted for that user's mysql password.
 
@@ -49,9 +49,9 @@ might look something like this.
     DATABASES = {
         'default': {
             'ENGINE': 'django.db.backends.mysql',
-            'NAME': 'campaign_browser',
-            'USER': 'yourusername', # <-- This
-            'PASSWORD': 'yourpassword', # <-- And this
+            'NAME': 'calaccess',
+            'USER': 'yourusername',
+            'PASSWORD': 'yourpassword',
             'HOST': 'localhost',
             'PORT': '3306',
             'OPTIONS': {
@@ -84,13 +84,3 @@ And fire up the Django test server to use the browser
 
     $ python example/manage.py collectstatic
     $ python example/manage.py runserver
-
-Reset the universe
-------------------
-Since this app is in active development, tables will change and they will change *often*. Until migration history is added (Shooting for version 1.0), use the *rip and reload* approach.
-
-If you get a template error, ala "(1054, "Unknown column 'calaccess_campaign_browser_filing.date_received' in 'field list'")", you can either add the column yourself or just blow and reload:
-
-.. code-block:: bash
-    $ python example/manage.py sqlclear calaccess_campaign_browser | mysql -u someuser your_calaccess_db -p
-
