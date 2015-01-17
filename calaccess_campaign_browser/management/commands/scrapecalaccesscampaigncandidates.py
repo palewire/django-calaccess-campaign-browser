@@ -9,6 +9,8 @@ class Command(ScrapeCommand):
     """
     Scraper to get the list of candidates per election.
     """
+    help = "Scrape links between filers and elections from the CAL-ACCESS site"
+
     def build_results(self):
         results = {}
         soup = self.make_request('Campaign/Candidates/list.aspx?view=certified')

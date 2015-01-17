@@ -6,9 +6,7 @@ from calaccess_campaign_browser.models import Election
 from .utils import parse_office_name
 
 class Command(ScrapeCommand):
-    """
-    Scraper to get the dates for special elections.
-    """
+    help = "Scrape election dates from the Secretary of State's site"
     base_url = 'http://www.sos.ca.gov/elections/prior-elections/special-elections/'
 
     def build_results(self):

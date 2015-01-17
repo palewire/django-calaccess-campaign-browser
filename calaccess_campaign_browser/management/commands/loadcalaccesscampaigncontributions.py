@@ -12,6 +12,7 @@ from calaccess_campaign_browser.models import Contribution, Filing, Committee
 
 
 class Command(CalAccessCommand):
+    help = "Load refined campaign contributions from CAL-ACCESS raw data"
 
     def handle(self, *args, **options):
         self.header("Loading contributions")

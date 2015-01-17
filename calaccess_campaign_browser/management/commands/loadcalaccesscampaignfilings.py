@@ -16,6 +16,7 @@ custom_options = (
 
 
 class Command(CalAccessCommand):
+    help = "Load refined CAL-ACCESS campaign filings"
     option_list = CalAccessCommand.option_list + custom_options
 
     def handle(self, *args, **options):

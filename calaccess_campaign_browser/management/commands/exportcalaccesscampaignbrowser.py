@@ -39,7 +39,7 @@ custom_options = (
 
 
 class Command(BaseCommand):
-    help = 'Export parsed data as csv files.'
+    help = 'Export refined CAL-ACCESS campaign browser data as CSV files'
     option_list = BaseCommand.option_list + custom_options
 
     def set_options(self, *args, **kwargs):

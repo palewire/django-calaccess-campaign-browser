@@ -4,7 +4,7 @@ from calaccess_campaign_browser.management.commands import CalAccessCommand
 
 
 class Command(CalAccessCommand):
-    help = "Load refined and reformatted campaign filers and committees"
+    help = "Load refined CAL-ACCESS campaign filers and committees"
 
     def handle(self, *args, **options):
         self.header("Loading filers and committees")

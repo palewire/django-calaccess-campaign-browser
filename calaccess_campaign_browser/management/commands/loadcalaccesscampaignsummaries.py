@@ -8,6 +8,7 @@ from calaccess_campaign_browser.management.commands import CalAccessCommand
 
 
 class Command(CalAccessCommand):
+    help = "Load refined CAL-ACCESS campaign filing summaries"
 
     def handle(self, *args, **options):
         self.header("Loading summary totals")

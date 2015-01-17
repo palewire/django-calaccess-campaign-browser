@@ -10,6 +10,9 @@ class Command(ScrapeCommand):
     """
     Scrape propositions and ballot measures.
     """
+    help = "Scrape links between filers and propositions from \
+the CAL-ACCESS site"
+
     def build_results(self):
         results = {}
 

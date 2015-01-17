@@ -3,6 +3,7 @@ from calaccess_campaign_browser.management.commands import CalAccessCommand
 
 
 class Command(CalAccessCommand):
+    help = "Load refined campaign expenditures from CAL-ACCESS raw data"
 
     def handle(self, *args, **options):
         self.header("Loading expenditures")
