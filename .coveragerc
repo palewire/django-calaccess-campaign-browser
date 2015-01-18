@@ -1,21 +1,31 @@
 [run]
 include =
-    calaccess_campaign_browser/models.py
     calaccess_campaign_browser/admin.py
     calaccess_campaign_browser/api.py
     calaccess_campaign_browser/apps.py
     calaccess_campaign_browser/managers.py
+    calaccess_campaign_browser/models.py
     calaccess_campaign_browser/urls.py
-    calaccess_campaign_browser/views
+    calaccess_campaign_browser/views/base.py
+    calaccess_campaign_browser/views/committees.py
+    calaccess_campaign_browser/views/contributions.py
+    calaccess_campaign_browser/views/expenditures.py
+    calaccess_campaign_browser/views/filings.py
+    calaccess_campaign_browser/views/__init__.py
+    calaccess_campaign_browser/views/parties.py
+    calaccess_campaign_browser/views/search.py
     calaccess_campaign_browser/management/commands/buildcalaccesscampaignbrowser.py
     calaccess_campaign_browser/management/commands/dropcalaccesscampaignbrowser.py
-    calaccess_campaign_browser/management/commands/exportcalaccesscampaignfinance.py
+    calaccess_campaign_browser/management/commands/exportcalaccesscampaignbrowser.py
     calaccess_campaign_browser/management/commands/flushcalaccesscampaignbrowser.py
     calaccess_campaign_browser/management/commands/loadcalaccesscampaigncontributions.py
     calaccess_campaign_browser/management/commands/loadcalaccesscampaignexpenditures.py
     calaccess_campaign_browser/management/commands/loadcalaccesscampaignfilings.py
     calaccess_campaign_browser/management/commands/loadcalaccesscampaignfilers.py
     calaccess_campaign_browser/management/commands/loadcalaccesscampaignsummaries.py
+    calaccess_campaign_browser/management/commands/scrapecalaccesscampaigncandidates.py
+    calaccess_campaign_browser/management/commands/scrapecalaccesscampaignelectiondates.py
+    calaccess_campaign_browser/management/commands/scrapecalaccesscampaignpropositions.py
 
 [report]
 exclude_lines =
