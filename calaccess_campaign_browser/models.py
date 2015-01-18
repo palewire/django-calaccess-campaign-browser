@@ -256,7 +256,6 @@ class Committee(AllCapsNameMixin):
     @property
     def total_cashflow_balance(self):
         return self.total_contributions - self.total_expenditures
-        
 
 
 class Cycle(BaseModel):
@@ -715,7 +714,7 @@ class Election(BaseModel):
         max_length=50
     )
     year = models.IntegerField()
-    date = models.DateField(null=True,default=None)
+    date = models.DateField(null=True, default=None)
 
     id_raw = models.IntegerField(
         verbose_name="UID (CAL-ACCESS)",
@@ -828,7 +827,7 @@ class Proposition(BaseModel):
     name = models.CharField(max_length=255, null=True)
     filer_id_raw = models.IntegerField(db_index=True)
     election = models.ForeignKey(Election, null=True, default=None)
-    filers = models.ManyToManyField(Filer,through='PropositionFiler')
+    filers = models.ManyToManyField(Filer, through='PropositionFiler')
 
     def __unicode__(self):
         return u'%s (%s)' % (self.name, self.filer_id_raw)

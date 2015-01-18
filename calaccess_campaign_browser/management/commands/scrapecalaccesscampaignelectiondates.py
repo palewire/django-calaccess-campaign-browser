@@ -7,7 +7,8 @@ from .utils import parse_office_name
 
 class Command(ScrapeCommand):
     help = "Scrape election dates from the Secretary of State's site"
-    base_url = 'http://www.sos.ca.gov/elections/prior-elections/special-elections/'
+    base_url = 'http://www.sos.ca.gov/elections/prior-elections\
+/special-elections/'
 
     def build_results(self):
         results = {}
@@ -18,7 +19,8 @@ class Command(ScrapeCommand):
         # match up election descriptions to their raw ids.
         # That way we can disambiguate special elections in the same year.
         soup = self.make_request(
-            'http://cal-access.ss.ca.gov/Campaign/Candidates/list.aspx?view=certified',
+            'http://cal-access.ss.ca.gov/Campaign/\
+Candidates/list.aspx?view=certified',
             abs=True
         )
 
@@ -30,7 +32,6 @@ class Command(ScrapeCommand):
             title = link.find_next_sibling('span').text.strip()
             election_id = re.match(r'.+electNav=(\d+)', link['href']).group(1)
             election_id_map[title] = int(election_id)
-
 
         # Now we can parse the actual dates.
         soup = self.make_request()
@@ -59,7 +60,7 @@ class Command(ScrapeCommand):
                     # Figure out which id matches this election.
                     office, target_seat = parse_office_name(office_name)
                     if target_seat:
-                        # Convert to int so we don't have to deal with '4' != '04'.
+                        # Convert to int to avoid '4' != '04'.
                         target_seat = int(target_seat)
                     for election in election_id_map.keys():
                         data = re.match(r'(\d{4}).+(\d{2})', election)
@@ -70,14 +71,16 @@ class Command(ScrapeCommand):
                         year = int(data.group(1))
                         seat = int(data.group(2))
                         if office in election and name in election and \
-                            seat == target_seat and year == date.year:
+                                seat == target_seat and year == date.year:
                             id_raw = election_id_map[election]
                             results[id_raw] = date
                             if self.verbose:
-                                self.log('Found election matching %s %s %s %s : %s' % (office, name, target_seat, date.year, election))
+                                self.log('Found election matching \
+%s %s %s %s : %s' % (office, name target_seat, date.year, election))
                             break
                     else:
-                        self.warn('Couldn\'t find an election matching %s' % office_name)
+                        self.warn('Couldn\'t find an election \
+matching %s' % office_name)
                         continue
 
         return results
@@ -92,4 +95,6 @@ class Command(ScrapeCommand):
                 election.date = date
                 election.save()
             except Election.DoesNotExist:
-                self.warn('Couldn\'t find an election matching id_raw=%s' % id_raw)
+                self.warn(
+                    'Couldn\'t find an election matching id_raw=%s' % id_raw
+                )

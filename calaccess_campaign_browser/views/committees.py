@@ -34,13 +34,12 @@ class CommitteeDetailView(generic.DetailView):
         context['filing_set_short'] = filing_qs[:25]
         context['filing_set_count'] = filing_qs.count()
 
-
         alist = []
         for filing in filing_qs:
             f = model_to_dict(filing)
 
             try:
-                f['summary'] = model_to_dict( filing.summary )
+                f['summary'] = model_to_dict(filing.summary)
             except AttributeError:
                 f['summary'] = {}
 
@@ -56,12 +55,20 @@ class CommitteeDetailView(generic.DetailView):
         context['contribs_set_count'] = contribs_qs.count()
 
         context['contribs_set_top_contributors'] = contribs_qs.values(
-            'contributor_full_name').annotate(contributor_total = Sum('amount')
-            ).annotate(contribution_count = Count('amount')).order_by('-contributor_total')[:10]        
+            'contributor_full_name'
+        ).annotate(
+            contributor_total=Sum('amount')
+        ).annotate(
+            contribution_count=Count('amount')
+        ).order_by('-contributor_total')[:10]
 
         context['contribs_set_frequent_contributors'] = contribs_qs.values(
-            'contributor_full_name').annotate(contributor_total = Sum('amount')
-            ).annotate(contribution_count = Count('amount')).order_by('-contribution_count')[:10]     
+            'contributor_full_name'
+        ).annotate(
+            contributor_total=Sum('amount')
+        ).annotate(
+            contribution_count=Count('amount')
+        ).order_by('-contribution_count')[:10]
         context['contribs_set_json'] = SafeString(
             json.dumps(
                 list(contribs_qs.order_by('-amount').values()),

@@ -1,7 +1,12 @@
 import re
 from time import sleep
 from calaccess_campaign_browser.management.commands import ScrapeCommand
-from calaccess_campaign_browser.models import Election, Office, Candidate, Filer
+from calaccess_campaign_browser.models import (
+    Election,
+    Office,
+    Candidate,
+    Filer
+)
 from .utils import parse_election_name, parse_office_name
 
 
@@ -13,7 +18,9 @@ class Command(ScrapeCommand):
 
     def build_results(self):
         results = {}
-        soup = self.make_request('Campaign/Candidates/list.aspx?view=certified')
+        soup = self.make_request(
+            'Campaign/Candidates/list.aspx?view=certified'
+        )
 
         # Skip the first link, it is just "PRIOR ELECTIONS".
         links = soup.findAll('a', href=re.compile(r'^.*&electNav=\d+'))
@@ -57,15 +64,24 @@ class Command(ScrapeCommand):
                 for office_name, candidates in office_dict.items():
                     office_type, seat = parse_office_name(office_name)
 
-                    office, created = Office.objects.get_or_create(name=office_type, seat=seat)
+                    office, created = Office.objects.get_or_create(
+                        name=office_type,
+                        seat=seat
+                    )
 
                     for candidate in candidates:
                         if not candidate['id']:
                             continue
 
                         try:
-                            filer = Filer.objects.get(filer_id_raw=int(candidate['id']))
-                            candidate, created = Candidate.objects.get_or_create(election=election, office=office, filer=filer)
+                            filer = Filer.objects.get(
+                                filer_id_raw=int(candidate['id'])
+                            )
+                            candidate, c = Candidate.objects.get_or_create(
+                                election=election,
+                                office=office,
+                                filer=filer
+                            )
                         except Filer.DoesNotExist:
                             pass
 
@@ -92,7 +108,7 @@ class Command(ScrapeCommand):
                 title = title_el.text
 
                 if self.verbose:
-                    self.log('\tScraping office %s' % title)
+                    self.log('Scraping office %s' % title)
                 people = []
                 for p in office.findAll('a', {'class': 'sublink2'}):
                     people.append({
