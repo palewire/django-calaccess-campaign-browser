@@ -76,7 +76,8 @@ Candidates/list.aspx?view=certified',
                             results[id_raw] = date
                             if self.verbose:
                                 self.log('Found election matching \
-%s %s %s %s : %s' % (office, name target_seat, date.year, election))
+%s %s %s %s : %s' % (office, name, target_seat, date.year, election)
+                                )
                             break
                     else:
                         self.warn('Couldn\'t find an election \
