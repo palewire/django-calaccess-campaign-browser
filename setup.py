@@ -22,7 +22,8 @@ class TestCommand(Command):
                     'ENGINE': 'django.db.backends.sqlite3'
                 }
             },
-            INSTALLED_APPS=('calaccess_campaign_browser',)
+            INSTALLED_APPS=('calaccess_campaign_browser',),
+            MIDDLEWARE_CLASSES=()
         )
         from django.core.management import call_command
         import django

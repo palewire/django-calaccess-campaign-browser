@@ -8,7 +8,7 @@ env:
 matrix:
   exclude:
     - python: "2.6"
-      env: "DJANGO_VERSION=1.7.1"
+      env: "DJANGO_VERSION=1.7.3"
 install:
  - pip install pep8 pyflakes coverage python-coveralls
  - pip install -q Django==$DJANGO_VERSION
