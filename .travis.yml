@@ -10,6 +10,6 @@ install:
 script:
  - pep8 calaccess_campaign_browser
  - pyflakes calaccess_campaign_browser
- - coverage run setup.py test
+ - coverage run example/manage.py test calaccess_campaign_browser
 after_success:
  - coveralls
