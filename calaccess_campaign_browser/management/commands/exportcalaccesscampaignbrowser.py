@@ -100,7 +100,6 @@ summary_header = OrderedDict([
 ])
 
 
-
 class Command(BaseCommand):
     help = 'Export refined CAL-ACCESS campaign browser data as CSV files'
     option_list = BaseCommand.option_list + custom_options
@@ -118,7 +117,6 @@ class Command(BaseCommand):
             self.export_to_csv('expenditures', expenditures_header)
         if options['summary']:
             self.export_to_csv('summary', summary_header)
-
 
     def export_to_csv(self, outfile_name, header_translation):
         print 'working on %s' % outfile_name
@@ -146,7 +144,8 @@ class Command(BaseCommand):
                 pass
 
             else:
-                print "You did not specify 'contributions, 'expenditures' or 'summary'. Exiting"
+                print("You did not specify 'contributions, \
+                    'expenditures' or 'summary'. Exiting")
                 raise
 
         # Summary specific
@@ -156,4 +155,4 @@ class Command(BaseCommand):
 
         outfile.close()
 
-        print 'Exported %s' % outfile_name
+        print('Exported %s' % outfile_name)
