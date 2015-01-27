@@ -53,6 +53,7 @@ drawn from the California Secretary of State’s CAL-ACCESS database. This is a 
         'hurry.filesize>=0.9',
         'django-tastypie>=0.11.1',
         'beautifulsoup4>=4.3.2',
+        'pypyodbc==1.3.3',
     ),
     cmdclass={'test': TestCommand,}
 )
