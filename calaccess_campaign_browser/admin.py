@@ -164,8 +164,6 @@ class SummaryAdmin(BaseAdmin):
     list_display = (
         "filing_id_raw",
         "amend_id",
-        #"committee",
-        #"filing",
         "total_contributions",
         "total_expenditures",
     )

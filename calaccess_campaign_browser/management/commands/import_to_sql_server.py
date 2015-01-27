@@ -1,16 +1,76 @@
 import os
 import csv
 from optparse import make_option
+from collections import OrderedDict
 
 import pypyodbc
 
 from django.conf import settings
 from django.core.management.base import BaseCommand
-from calaccess_campaign_browser.management.commands.exportcalaccesscampaignfinance import (
-    expenditures_header,
-    contributions_header,
-    summary_header
-)
+
+contributions_header = OrderedDict([
+    ('amount', 'amount'),
+    ('filing_id', 'filing_id'),
+    ('committee__name', 'committee_name'),
+    ('cycle_id', 'cycle'),
+    ('date_received', 'date_received'),
+    ('contributor_first_name', 'contributor_first_name'),
+    ('contributor_last_name', 'contributor_last_name'),
+    ('contributor_full_name', 'contributor_full_name'),
+    ('contributor_occupation', 'contributor_occupation'),
+    ('contributor_employer', 'contributor_employer'),
+    ('contributor_address_1', 'contributor_address_1'),
+    ('contributor_address_2', 'contributor_address_2'),
+    ('contributor_city', 'contributor_city'),
+    ('contributor_state', 'contributor_state'),
+    ('contributor_zipcode', 'contributor_zipcode'),
+])
+
+expenditures_header = OrderedDict([
+    ('amount', 'amount'),
+    ('filing_id', 'filing_id'),
+    ('committee__name', 'committee_name'),
+    ('cycle_id', 'cycle'),
+    ('expn_date', 'date_received'),
+    ('payee_namf', 'payee_first_name'),
+    ('payee_naml', 'payee_last_name'),
+    ('name', 'payee_full_name'),
+    ('payee_namt', 'payee_occupation'),
+    ('raw_org_name', 'payee_employer'),
+    ('payee_adr1', 'payee_address_1'),
+    ('payee_adr2', 'payee_address_2'),
+    ('payee_city', 'payee_city'),
+    ('payee_st', 'payee_state'),
+    ('payee_zip4', 'payee_zipcode'),
+])
+
+summary_header = OrderedDict([
+    # ('committee__filer__name', 'filer'),
+    # ('committee__filer__filer_id', 'filer_id'),
+    # ('committee__name', 'committee'),
+    # ('committee__filer_id_raw', 'committee_id'),
+    # ('cycle__name', 'cycle'),
+    ('ending_cash_balance', 'ending_cash_balance'),
+    ('filing_id_raw', 'filing_id'),
+    ('amend_id', 'amend_id'),
+    # ('filing__start_date', 'filing_start_date'),
+    # ('filing__end_date', 'filing_end_date'),
+    ('itemized_expenditures', 'itemized_expenditures'),
+    (
+        'itemized_monetary_contributions',
+        'itemized_monetary_contributions'
+    ),
+    ('non_monetary_contributions', 'non_monetary_contributions'),
+    ('outstanding_debts', 'outstanding_debts'),
+    ('total_contributions', 'total_contributions'),
+    ('total_expenditures', 'total_expenditures'),
+    ('total_monetary_contributions', 'total_monetary_contributions'),
+    ('unitemized_expenditures', 'unitemized_expenditures'),
+    (
+        'unitemized_monetary_contributions',
+        'unitemized_monetary_contributions'
+    ),
+])
 
 custom_options = (
     make_option(
@@ -105,17 +165,15 @@ class Command(BaseCommand):
 
             self.load_tables('expenditures')
 
-
-
     def construct_tables(self, table_name, query):
-        drop_path = "IF object_id('dbo.new_%s') IS NOT NULL DROP TABLE new_%s" % (table_name, table_name)
+        drop_path = "IF object_id('dbo.new_%s') \
+        IS NOT NULL DROP TABLE new_%s" % (table_name, table_name)
 
         self.cursor.execute(drop_path)
 
         self.cursor.execute(query)
 
         self.cursor.commit()
-
 
     def load_tables(self, table_name):
         self.cursor.execute('DELETE FROM new_%s' % table_name)
@@ -124,7 +182,9 @@ class Command(BaseCommand):
         infile = open(path)
 
         csv_reader = csv.reader(infile, delimiter=',')
-        csv_headers = csv_reader.next()
+
+        csv_reader.next() # skip headers
+
         for line in csv_reader:
             line = [l.replace("'", "''") for l in line]
 
@@ -137,12 +197,20 @@ class Command(BaseCommand):
 
             insert_sql = '''
                 INSERT INTO new_%s(%s)
-                VALUES ('%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s')
-            ''' % (table_name, headers, line[0].strip(), line[1].strip(), line[2].strip(), line[3].strip(), line[4].strip(), line[5].strip(), line[6].strip(), line[7].strip(), line[8].strip(), line[9].strip(), line[10].strip(), line[11].strip(), line[12].strip(), line[13].strip(), line[14].strip())
+                VALUES ('%s', '%s', '%s', '%s', '%s', \
+                    '%s', '%s', '%s', '%s', '%s', '%s', \
+                    '%s', '%s', '%s', '%s')
+            '''.format(
+                table_name, headers, line[0].strip(), line[1].strip(),
+                line[2].strip(), line[3].strip(), line[4].strip(),
+                line[5].strip(), line[6].strip(), line[7].strip(),
+                line[8].strip(), line[9].strip(), line[10].strip(),
+                line[11].strip(), line[12].strip(), line[13].strip(),
+                line[14].strip()
+            )
 
             self.cursor.execute(insert_sql)
             print csv_reader.line_num
-
 
         infile.close()
         self.cursor.commit()
