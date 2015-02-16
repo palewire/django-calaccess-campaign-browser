@@ -24,8 +24,8 @@ class CommitteeDetailView(generic.DetailView):
             "-amend_id"
         )
         context['filing_set'] = filing_qs
-        context['filing_set_short'] = filing_qs[:25]
         context['filing_set_count'] = filing_qs.count()
+        context['filing_set_short'] = filing_qs[:25]
 
         # Contributions
         contribs_qs = Contribution.real.by_committee_to(self.object)
@@ -48,31 +48,10 @@ class CommitteeDetailView(generic.DetailView):
             contribution_count=Count('amount')
         ).order_by('-contribution_count')[:10]
 
-        # context['contribs_set_json'] = SafeString(
-        #     json.dumps(
-        #         list(contribs_qs.order_by('-amount').values()),
-        #         cls=LazyEncoder
-        #     )
-        # )
-
-        # context['contribs_by_year'] = json.dumps([
-        #     {
-        #         'year': year,
-        #         'total': str(total),
-        #     } for year, total in self.object.total_contributions_by_year
-        # ])
-
         # Transfer to other committees
         contribs_out = Contribution.real.by_committee_from(self.object)
-        context['contribs_out_list'] = contribs_out.order_by('-amount')[:25]
+        context['contribs_out_set'] = contribs_out.order_by('-amount')[:25]
         context['contribs_out_set_count'] = contribs_out.count()
-
-        # context['contribs_out_json'] = SafeString(
-        #     json.dumps(
-        #         list(contribs_out.order_by('-amount').values()),
-        #         cls=LazyEncoder
-        #     )
-        # )
 
         # Close out
         return context

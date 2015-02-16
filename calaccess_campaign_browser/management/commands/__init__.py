@@ -1,3 +1,7 @@
+import requests
+from time import sleep
+from bs4 import BeautifulSoup
+from requests.exceptions import HTTPError
 from django.utils.termcolors import colorize
 from django.core.management.base import BaseCommand
 
@@ -18,12 +22,6 @@ class CalAccessCommand(BaseCommand):
 
     def warn(self, string):
         self.stdout.write(colorize(string, fg="yellow"))
-
-
-import requests
-from time import sleep
-from bs4 import BeautifulSoup
-from requests.exceptions import HTTPError
 
 
 class ScrapeCommand(CalAccessCommand):
