@@ -10,44 +10,44 @@
 
 <div class="row">
   <div class="col-lg-4 col-md-4 col-sm-4 col-xs-12">
-    <p><strong>Status:</strong> {{ committee.get_status_display }}</p>
-    <p><strong>Effective Date:</strong> {{ committee.effective_date|date:"Y-m-d" }}</p>
+    <p><strong>Status:</strong> {{ object.get_status_display }}</p>
+    <p><strong>Effective Date:</strong> {{ object.effective_date|date:"Y-m-d" }}</p>
   </div>
   <div class="col-lg-4 col-md-4 col-sm-4 col-xs-12">
-    <p><strong>Type:</strong> {{ committee.get_committee_type_display }}</p>
-    <p><strong>Party:</strong> {{ committee.get_party_display }}</p>
+    <p><strong>Type:</strong> {{ object.get_committee_type_display }}</p>
+    <p><strong>Party:</strong> {{ object.get_party_display }}</p>
   </div>
   <div class="col-lg-4 col-md-4 col-sm-4 col-xs-12">
-    <p><strong>ID:</strong> {{ committee.filer_id_raw }}</p>
-    <p><strong>Source:</strong> <a target="_blank" href="{{ committee.get_calaccess_url }}">Cal-Access</a></p>
+    <p><strong>ID:</strong> {{ object.filer_id_raw }}</p>
+    <p><strong>Source:</strong> <a target="_blank" href="{{ object.get_calaccess_url }}">Cal-Access</a></p>
   </div>
 </div>
 
-<div class="row">        
-    <h3>Cashflow</h3>     
+<div class="row">
+    <h3>Cashflow</h3>
     <div class="col-lg-12 col-md-12 col-sm-8 col-xs-12">
 
         <table class="table table-bordered table-hover">
         <tbody>
           <tr>
               <td>Total Contributions</td>
-              <td class="right">${{ committee.total_contributions|default_if_none:0|floatformat:0|intcomma }}</td>
+              <td class="right">${{ object.total_contributions|default_if_none:0|floatformat:0|intcomma }}</td>
           </tr>
           <tr>
               <td>Total Expenditures</td>
-              <td class="right">${{ committee.total_expenditures|default_if_none:0|floatformat:0|intcomma }}</td>
+              <td class="right">${{ object.total_expenditures|default_if_none:0|floatformat:0|intcomma }}</td>
           </tr>
           <tr>
               <td>Balance</td>
-              <td class="right totals">${{ committee.total_cashflow_balance|default_if_none:0|floatformat:0|intcomma }}</td>
+              <td class="right totals">${{ object.total_cashflow_balance|default_if_none:0|floatformat:0|intcomma }}</td>
           </tr>
         </tbody>
         </table>
-    </div>     
+    </div>
 </div>
 <div class="row">
     <div class="graphheader">
-      <h4> Contributions and expenditure by year</h4>      
+      <h4> Contributions and expenditure by year</h4>
       <a class="toggle-btn" data-toggle="collapse" href="#cashflowData" aria-expanded="false" aria-controls="cashflowData">
             Show/hide data
       </a>
@@ -97,12 +97,12 @@
           {% endif %}
       </div>
     </div>
-    <div id="moneyFlowViz" class="col-lg-12 col-md-12 col-sm-12 col-xs-12">    
+    <div id="moneyFlowViz" class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
     </div>
     <ul class="legend right col-lg-6 col-md-6 col-sm-12 col-xs-12">
         <li class="legenditem"><span class="series1"></span>Contribution</li>
         <li class="legenditem"><span class="series2"></span>Expenditure</li>
-    </ul> 
+    </ul>
 </div>
 
 {% if filing_set_count %}
@@ -216,16 +216,16 @@
             </thead>
             <tbody>
                 {% for contribution in contribs_set_top_contributors %}
-                  <tr>                    
+                  <tr>
                       <td>
                           {{ contribution.contributor_full_name|capfirst }}
-                      </td> 
+                      </td>
                       <td class="right">
                           ${{ contribution.contributor_total|intcomma }}
-                      </td>   
+                      </td>
                       <td class="right">
                           {{ contribution.contribution_count }}
-                      </td>             
+                      </td>
                   </tr>
                 {% endfor %}
             </tbody>
@@ -245,16 +245,16 @@
             </thead>
             <tbody>
                 {% for contribution in contribs_set_frequent_contributors %}
-                  <tr>                    
+                  <tr>
                       <td>
                           {{ contribution.contributor_full_name|capfirst }}
-                      </td> 
+                      </td>
                       <td class="right">
                           ${{ contribution.contributor_total|intcomma }}
-                      </td>   
+                      </td>
                       <td class="right">
                           {{ contribution.contribution_count }}
-                      </td>             
+                      </td>
                   </tr>
                 {% endfor %}
             </tbody>
@@ -423,7 +423,7 @@
 
 <script>
   jQuery(document).ready(function($) {
-    $('.searchable-list').sieve();    
+    $('.searchable-list').sieve();
   });
 </script>
 {% endblock %}
