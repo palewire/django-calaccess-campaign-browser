@@ -8,7 +8,6 @@ from calaccess_campaign_browser.models import (
     Proposition,
     PropositionFiler
 )
-from .utils import parse_election_name
 
 
 class Command(ScrapeCommand):

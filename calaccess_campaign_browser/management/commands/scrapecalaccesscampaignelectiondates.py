@@ -1,8 +1,7 @@
 import re
 from datetime import datetime
-from calaccess_campaign_browser.management.commands import ScrapeCommand
 from calaccess_campaign_browser.models import Election
-from .utils import parse_office_name
+from calaccess_campaign_browser.management.commands import ScrapeCommand
 
 
 class Command(ScrapeCommand):
