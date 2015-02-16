@@ -1,12 +1,43 @@
 {% extends 'calaccess_campaign_browser/base.html' %}
-{% load humanize %}
+{% load humanize calaccesscampaignbrowser %}
 
-{% block title %}{{ committee }} - Committee - {{ block.super }}{% endblock %}
+{% block title %}{{ object }} - Committee - {{ block.super }}{% endblock %}
+
+{% block javascript %}
+<script src="http://d3js.org/d3.v3.min.js" charset="utf-8"></script>
+<script src="../../static/calaccess_campaign_browser/js/crossfilter.js"></script>
+<script src="http://cdnjs.cloudflare.com/ajax/libs/dc/1.7.0/dc.js"></script>
+<link rel="stylesheet"
+      type="text/css"
+      href="http://cdnjs.cloudflare.com/ajax/libs/dc/1.7.0/dc.css">
+
+<script type="text/javascript">
+  var committee = {{ object.to_json|safe }};
+  committee.filings = [{% for obj in filing_set %}
+    {{ obj.to_json|safe }}{% if not forloop.last %},{% endif %}{% endfor %}
+  ];
+  /*
+  committee.contributions = {{ contribs_set_json }};
+  committee.contributions_by_year = {{contribs_by_year|safe }};
+  committee.contributionsMade = {{ filing_set_json }};
+  App.chartViz(committee.contributions_by_year, committee.expenditures_by_year);
+  */
+
+  {% include "calaccess_campaign_browser/committee_detail.js" %}
+
+  App.contribViz(committee.filings);
+</script>
+
+<script type="text/javascript">
+  jQuery(document).ready(function($) {
+    $('.searchable-list').sieve();
+  });
+</script>
+{% endblock %}
 
 {% block content %}
 
 {% include "calaccess_campaign_browser/committee_nav.html" %}
-
 
 <div class="row">
   <div class="col-lg-4 col-md-4 col-sm-4 col-xs-12">
@@ -26,7 +57,6 @@
 <div class="row">
     <h3>Cashflow</h3>
     <div class="col-lg-12 col-md-12 col-sm-8 col-xs-12">
-
         <table class="table table-bordered table-hover">
         <tbody>
           <tr>
@@ -45,6 +75,7 @@
         </table>
     </div>
 </div>
+
 <div class="row">
     <div class="graphheader">
       <h4> Contributions and expenditure by year</h4>
@@ -52,7 +83,6 @@
             Show/hide data
       </a>
     </div>
-
     <div id="cashflowData" class="collapse row">
       <div class="col-lg-6 col-md-6 col-sm-12 col-xs-12">
         {% if committee.total_contributions_by_year %}
@@ -109,41 +139,32 @@
 <div class="row">
   <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
     <h3>
-          <a href="{% url 'committee_filing_list' committee.pk 1 %}">Filings</a>
-          <div class="btn-group">
-              <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown">
-                Download data <span class="caret"></span>
-              </button>
-              <ul class="dropdown-menu" role="menu">
-                <li><a href="{% url 'committee_filing_list' committee.pk 1 %}?format=csv">Download CSV</a></li>
-                <li><a href="{% url 'committee_filing_list' committee.pk 1 %}?format=json">Download JSON</a></li>
-              </ul>
-          </div>
+          <a href="{% url 'committee_filing_list' object.pk 1 %}">Filings</a>
     </h3>
-    <p>{% if filing_set_count > 25 %}(Most recent 25){% endif %}</p>
+    <p>{% if filing_set_count > 25 %}Most recent{% endif %}</p>
   </div>
 </div>
 <div class="testviz">
-<div class="row">
-  <div class="span12" id="dc-time-chart">
-    <h4>Filings by Time</h4>
+  <div class="row">
+    <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12" id="dc-time-chart">
+      <h4>Filter by filing date</h4>
+    </div>
+    <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
+      <table class="table table-hover" id="dc-table-graph">
+        <thead>
+          <tr class="header">
+            <th>No.</th>
+            <th>Filed</th>
+            <th>Form</th>
+            <th>Period</th>
+            <th>Contributions</th>
+            <th>Expenditures</th>
+            <th>Debts</th>
+            <th>PDF</th>
+          </tr>
+        </thead>
+      </table>
   </div>
-  <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
-    <table class="table table-hover" id="dc-table-graph">
-      <thead>
-        <tr class="header">
-          <th>No.</th>
-          <th>Filed</th>
-          <th>Form</th>
-          <th>Period</th>
-          <th>Contributions</th>
-          <th>Expenditures</th>
-          <th>Debts</th>
-          <th>PDF</th>
-        </tr>
-      </thead>
-    </table>
-</div>
 </div>
 <!-- <div class="row">
   <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
@@ -353,77 +374,4 @@
     </div>
 </div>
 {% endif %}
-
-{% if expenditure_set_short %}
-<div class="row">
-<div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
-  <h3>
-        <a href="{% url 'committee_expenditure_list' committee.pk 1 %}">Expenditures </a>
-        <div class="btn-group">
-            <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown">
-              Download data <span class="caret"></span>
-            </button>
-            <ul class="dropdown-menu" role="menu">
-              <li><a href="{% url 'committee_expenditure_list' committee.pk 1 %}?format=csv">Download CSV</a></li>
-              <li><a href="{% url 'committee_expenditure_list' committee.pk 1 %}?format=json">Download JSON</a></li>
-            </ul>
-        </div>
-  </h3>
-  <p>Top 25 expenditures by amount</p>
-    <div class="table-responsive">
-      <table class="table table-bordered table-hover searchable-list"> <!-- table table-bordered table-hover -->
-        <thead>
-          <tr>
-                <th data-sort="date">Date</th>
-                <th data-sort="string">Name</th>
-                <th>Type</th>
-                <th data-sort="currency" class="right">Amount</th>
-          </tr>
-        </thead>
-        <tbody>
-            {% for expenditure in expenditure_set_short %}
-              <tr>
-                  <td>{{ expenditure.expn_date|date:"Y-m-d" }}</td>
-                  <td>{{ expenditure.name }}</td>
-                  <td>{{ expenditure.get_expn_code_display|capfirst }}</td>
-                  <td class="right">${{ expenditure.amount|intcomma }}</td>
-              </tr>
-            {% endfor %}
-        </tbody>
-      </table>
-    </div>
-    {% if expenditure_set_count > 25 %}
-        <p class="view-more"><a href="{% url 'committee_expenditure_list' committee.pk 1 %}">View more... </a></p>
-    {% endif %}
-</div>
-</div>
-{% endif %}
-
-{% endblock %}
-
-{% block javascript %}
-<script src="http://d3js.org/d3.v3.min.js" charset="utf-8"></script>
-<script src="../../static/calaccess_campaign_browser/js/crossfilter.js"></script>
-<script src="http://cdnjs.cloudflare.com/ajax/libs/dc/1.7.0/dc.js"></script>
-<link rel="stylesheet" type="text/css" href="http://cdnjs.cloudflare.com/ajax/libs/dc/1.7.0/dc.css
-">
-<script>
-  var committee          = {{ committee_json }};
-  committee.filings       = {{ filing_set_json }};
-  committee.expenditures  = {{ expenditure_set_json }};
-  committee.expenditures_by_year = {{ expenditure_by_year|safe }};
-  committee.contributions = {{ contribs_set_json }};
-  committee.contributions_by_year = {{contribs_by_year|safe }};
-
-  committee.contributionsMade = {{ filing_set_json }};
-
-  App.chartViz(committee.contributions_by_year, committee.expenditures_by_year);
-  App.contribViz(committee.filings);
-</script>
-
-<script>
-  jQuery(document).ready(function($) {
-    $('.searchable-list').sieve();
-  });
-</script>
 {% endblock %}

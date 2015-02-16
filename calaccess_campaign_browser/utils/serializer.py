@@ -30,7 +30,6 @@ class CIRCustomSerializer(Serializer):
     def to_csv(self, data, options=None):
         """
         Given some Python data, produces JSON output.
-
         """
         response = HttpResponse()
         options = options or {}

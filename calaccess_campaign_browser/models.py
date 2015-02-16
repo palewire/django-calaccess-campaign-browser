@@ -1,3 +1,4 @@
+import json
 import managers
 from django.db import models
 from django.db.models import Sum
@@ -5,6 +6,7 @@ from django.utils.text import slugify
 from django.core.urlresolvers import reverse
 from django.utils.datastructures import SortedDict
 from .utils.models import AllCapsNameMixin, BaseModel
+from .templatetags.calaccesscampaignbrowser import jsonify
 from django.template.defaultfilters import date as dateformat
 
 
@@ -322,6 +324,14 @@ or was filed unnecessarily. Should be excluded from most analysis."
 
     def get_absolute_url(self):
         return reverse('filing_detail', args=[str(self.pk)])
+
+    def to_json(self):
+        js = json.loads(jsonify(self))
+        s = self.summary or {}
+        if s:
+            s = json.loads(jsonify(s))
+        js['summary'] = s
+        return json.dumps(js)
 
     def get_calaccess_pdf_url(self):
         url = "http://cal-access.ss.ca.gov/PDFGen/pdfgen.prg"
