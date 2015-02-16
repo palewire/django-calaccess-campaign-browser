@@ -8,11 +8,7 @@ class Command(CalAccessCommand):
 
     def handle(self, *args, **options):
         self.header("Flushing CAL-ACCESS campaign browser database tables")
-
         c = connection.cursor()
-        c.execute("""SET @OLD_SQL_NOTES=@@SQL_NOTES, SQL_NOTES=0;""")
-        c.execute("""SET FOREIGN_KEY_CHECKS = 0;""")
-
         model_list = [
             models.Filer,
             models.Filing,
@@ -32,7 +28,3 @@ class Command(CalAccessCommand):
         for m in model_list:
             self.log(" %s" % m.__name__)
             c.execute(sql % m._meta.db_table)
-
-        # Revert database to default "note" warning behavior
-        c.execute("""SET SQL_NOTES=@OLD_SQL_NOTES;""")
-        c.execute("""SET FOREIGN_KEY_CHECKS = 1;""")
