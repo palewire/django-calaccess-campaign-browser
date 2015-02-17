@@ -10,7 +10,7 @@ for investigative analysis.
 
 .. image:: /_static/application-layers.png
 
-.. warning:: 
+.. warning::
 
     This is a work in progress. Its analysis should be considered as provisional
     until it is further tested and debugged.
@@ -25,6 +25,7 @@ Documentation
    managementcommands
    models
    howtocontribute
+   changelog
 
 Open-source resources
 ---------------------
