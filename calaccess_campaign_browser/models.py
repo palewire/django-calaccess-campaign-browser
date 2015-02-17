@@ -737,9 +737,9 @@ class Election(BaseModel):
         ordering = ('-sort_index',)
 
     def __unicode__(self):
-        return u'%s (%s)' % (
+        return u'%s %s' % (
+            self.year,
             self.get_election_type_display(),
-            self.year
         )
 
     @property
@@ -852,3 +852,6 @@ class PropositionFiler(BaseModel):
         choices=POSITION_CHOICES,
         max_length=50
     )
+
+    def __unicode__(self):
+        return '%s %s' % (self.proposition, self.filer)
