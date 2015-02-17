@@ -836,6 +836,7 @@ class Proposition(BaseModel):
     A proposition or ballot measure decided by voters.
     """
     name = models.CharField(max_length=255, null=True)
+    description = models.TextField(blank=True)
     id_raw = models.IntegerField(db_index=True)
     election = models.ForeignKey(Election, null=True, default=None)
     filers = models.ManyToManyField(Filer, through='PropositionFiler')
@@ -845,6 +846,12 @@ class Proposition(BaseModel):
 
     def __unicode__(self):
         return self.name
+
+    @property
+    def short_description(self, character_limit=60):
+        if len(self.description) > character_limit:
+            return self.description[:character_limit] + "..."
+        return self.description
 
 
 class PropositionFiler(BaseModel):

@@ -213,6 +213,7 @@ class CandidateAdmin(BaseAdmin):
 class PropositionAdmin(BaseAdmin):
     list_display = (
         "name",
+        "short_description",
         "id_raw",
         "election",
     )
@@ -221,8 +222,9 @@ class PropositionAdmin(BaseAdmin):
     )
     search_fields = (
         "name",
+        "short_description",
     )
-    list_per_page = 200
+    list_per_page = 500
 
 
 @admin.register(PropositionFiler)

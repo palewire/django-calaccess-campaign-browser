@@ -117,6 +117,14 @@ the CAL-ACCESS site"
 
         # Add the title and id out of the page
         data_dict['name'] = soup.find('span', id='measureName').text
+        data_dict['description'] = ''
+
+        # If there is a " - " separating a name from a description
+        # split it out below.
+        if ' - ' in data_dict['name']:
+            data_dict['name'], data_dict['description'] = data_dict['name'].split(" - ", 1)
+            data_dict['name'] = data_dict['name'].strip()
+            data_dict['description'] = data_dict['description'].strip()
         data_dict['id'] = re.match(r'.+id=(\d+)', url).group(1)
 
         data_dict['committees'] = []
@@ -184,6 +192,7 @@ the CAL-ACCESS site"
                     # Get or create it
                     prop_obj, c = Proposition.objects.get_or_create(
                         name=prop['name'],
+                        description=prop['description'],
                         id_raw=prop['id']
                     )
 
