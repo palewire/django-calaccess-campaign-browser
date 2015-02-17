@@ -124,9 +124,13 @@ the CAL-ACCESS site"
         # If there is a " - " separating a name from a description
         # split it out below.
         if ' - ' in data_dict['name']:
-            data_dict['name'], data_dict['description'] = data_dict['name'].split(" - ", 1)
+            split = data_dict['name'].split(" - ", 1)
+            data_dict['name'], data_dict['description'] = split
             data_dict['name'] = data_dict['name'].strip()
-            data_dict['name'] = data_dict['name'].replace("PROPOSITION", "").strip()
+            data_dict['name'] = data_dict['name'].replace(
+                "PROPOSITION",
+                ""
+            ).strip()
             data_dict['name'] = data_dict['name'].replace("PROP", "").strip()
             data_dict['description'] = data_dict['description'].strip()
         data_dict['id'] = re.match(r'.+id=(\d+)', url).group(1)
@@ -213,7 +217,7 @@ the CAL-ACCESS site"
                     except (
                         Election.MultipleObjectsReturned,
                         Election.DoesNotExist
-                    ) as e:
+                    ):
                         if prop['id'] in [
                             '1316044',
                             '1316047',
@@ -250,7 +254,7 @@ the CAL-ACCESS site"
                                     xref_filer_id=filer_id
                                 )
                             except Filer.DoesNotExist:
-                                msg = ' Could not find existing filer for %s (%s)'
+                                msg = ' Could not find filer for %s (%s)'
                                 msg = msg % (
                                     committee['name'],
                                     committee['id'],
