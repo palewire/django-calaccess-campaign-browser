@@ -213,11 +213,12 @@ the CAL-ACCESS site"
                         if not election.date:
                             election.date = date
                             election.save()
-                    # Can't figure out to connect ambiguous elections, so None.
+                    # Can't figure out to connect ambiguous elections...
                     except (
                         Election.MultipleObjectsReturned,
                         Election.DoesNotExist
                     ):
+                        # Hardcode in some ones we've looked up
                         if prop['id'] in [
                             '1316044',
                             '1316047',
@@ -233,10 +234,11 @@ the CAL-ACCESS site"
                             if not election.date:
                                 election.date = datetime(2009, 5, 19)
                                 election.save()
+                        # Put the other ones in with a null link
                         else:
                             election = None
 
-                    # Add it in
+                    # Make the connection
                     if election:
                         prop_obj.election = election
                         prop_obj.save()
