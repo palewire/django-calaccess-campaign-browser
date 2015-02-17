@@ -711,7 +711,7 @@ class Election(BaseModel):
     """
     A grouping of election contests administered by the state.
     """
-    NAME_CHOICES = (
+    ELECTION_TYPE_CHOICES = (
         ("GENERAL", "General"),
         ("PRIMARY", "Primary"),
         ("RECALL", "Recall"),
@@ -719,29 +719,27 @@ class Election(BaseModel):
         ("SPECIAL_RUNOFF", "Special Runoff"),
         ("OTHER", "Other"),
     )
-    name = models.CharField(
-        choices=NAME_CHOICES,
+    election_type = models.CharField(
+        choices=ELECTION_TYPE_CHOICES,
         max_length=50
     )
     year = models.IntegerField()
     date = models.DateField(null=True, default=None)
-
     id_raw = models.IntegerField(
         verbose_name="UID (CAL-ACCESS)",
         help_text="The unique identifer from the CAL-ACCESS site"
     )
     sort_index = models.IntegerField(
-        help_text="The order of the election specified on the CAL-ACCESS site",
+        help_text="The order of the election on the CAL-ACCESS site",
     )
 
     class Meta:
         ordering = ('-sort_index',)
 
     def __unicode__(self):
-        return u'%s (%s) [%s]' % (
-            self.get_name_display(),
-            self.year,
-            self.id_raw
+        return u'%s (%s)' % (
+            self.get_election_type_display(),
+            self.year
         )
 
     @property
@@ -822,7 +820,7 @@ class Candidate(BaseModel):
         ordering = ("election", "office", "filer")
 
     def __unicode__(self):
-        return u'%s : %s [%s]' % (self.filer, self.office, self.election)
+        return u'%s: %s [%s]' % (self.filer, self.office, self.election)
 
     @property
     def election_year(self):

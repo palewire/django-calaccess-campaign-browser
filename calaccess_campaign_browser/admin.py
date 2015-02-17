@@ -168,14 +168,14 @@ class ElectionAdmin(BaseAdmin):
     list_display = (
         "id_raw",
         "year",
-        "name",
+        "election_type",
         "date",
         "office_count",
         "candidate_count",
     )
     list_filter = (
         "year",
-        "name",
+        "election_type",
     )
 
 

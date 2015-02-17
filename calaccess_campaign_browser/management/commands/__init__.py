@@ -46,12 +46,10 @@ class ScrapeCommand(CalAccessCommand):
         """
         raise NotImplementedError
 
-    def make_request(self, url, retries=1):
+    def get(self, url, retries=1):
         """
-        Convenience method for making a request
-        to a url relative to the `base_url`,
-        with built-in support for retries.
-        Specify `abs=True` if passing an absolute url.
+        Makes a request for a URL and returns the HTML
+        as a BeautifulSoup object.
         """
         if self.verbosity > 2:
             self.log(" Retrieving %s" % url)
@@ -84,38 +82,41 @@ class ScrapeCommand(CalAccessCommand):
         else:
             return 'OTHER'
 
-    def parse_office_name(self, name):
+    def parse_office_name(self, raw_name):
         """
         Translates a raw office name into one of
         our canonical names and a seat (if available).
         """
         seat = None
-        name = name.upper()
-        if 'LIEUTENANT GOVERNOR' in name:
-            office_type = 'LIEUTENANT_GOVERNOR'
-        elif 'GOVERNOR' in name:
-            office_type = 'GOVERNOR'
-        elif 'SECRETARY OF STATE' in name:
-            office_type = 'SECRETARY_OF_STATE'
-        elif 'CONTROLLER' in name:
-            office_type = 'CONTROLLER'
-        elif 'TREASURER' in name:
-            office_type = 'TREASURER'
-        elif 'ATTORNEY GENERAL' in name:
-            office_type = 'ATTORNEY_GENERAL'
-        elif 'SUPERINTENDENT OF PUBLIC INSTRUCTION' in name:
-            office_type = 'SUPERINTENDENT_OF_PUBLIC_INSTRUCTION'
-        elif 'INSURANCE COMMISSIONER' in name:
-            office_type = 'INSURANCE_COMMISSIONER'
-        elif 'MEMBER BOARD OF EQUALIZATION' in name:
-            office_type = 'BOARD_OF_EQUALIZATION'
-            seat = name.split()[-1]
-        elif 'SENATE' in name:
-            office_type = 'SENATE'
-            seat = name.split()[-1]
-        elif 'ASSEMBLY' in name:
-            office_type = 'ASSEMBLY'
-            seat = name.split()[-1]
+        raw_name = raw_name.upper()
+        if 'LIEUTENANT GOVERNOR' in raw_name:
+            clean_name = 'LIEUTENANT_GOVERNOR'
+        elif 'GOVERNOR' in raw_name:
+            clean_name = 'GOVERNOR'
+        elif 'SECRETARY OF STATE' in raw_name:
+            clean_name = 'SECRETARY_OF_STATE'
+        elif 'CONTROLLER' in raw_name:
+            clean_name = 'CONTROLLER'
+        elif 'TREASURER' in raw_name:
+            clean_name = 'TREASURER'
+        elif 'ATTORNEY GENERAL' in raw_name:
+            clean_name = 'ATTORNEY_GENERAL'
+        elif 'SUPERINTENDENT OF PUBLIC INSTRUCTION' in raw_name:
+            clean_name = 'SUPERINTENDENT_OF_PUBLIC_INSTRUCTION'
+        elif 'INSURANCE COMMISSIONER' in raw_name:
+            clean_name = 'INSURANCE_COMMISSIONER'
+        elif 'MEMBER BOARD OF EQUALIZATION' in raw_name:
+            clean_name = 'BOARD_OF_EQUALIZATION'
+            seat = raw_name.split()[-1]
+        elif 'SENATE' in raw_name:
+            clean_name = 'SENATE'
+            seat = raw_name.split()[-1]
+        elif 'ASSEMBLY' in raw_name:
+            clean_name = 'ASSEMBLY'
+            seat = raw_name.split()[-1]
         else:
-            office_type = 'OTHER'
-        return office_type, seat
+            clean_name = 'OTHER'
+        return {
+            'name': clean_name,
+            'seat': seat
+        }
