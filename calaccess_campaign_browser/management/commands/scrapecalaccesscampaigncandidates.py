@@ -31,7 +31,7 @@ class Command(ScrapeCommand):
         # Drop the link that says "prior elections" because it's a duplicate
         links = [
             l for l in links
-                if l.find_next_sibling('span').text != 'Prior Elections'
+            if l.find_next_sibling('span').text != 'Prior Elections'
         ]
 
         # Loop through the links...

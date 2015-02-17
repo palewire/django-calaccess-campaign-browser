@@ -127,7 +127,7 @@ id %s' % filer_id)
             if self.verbose:
                 self.log('\tScraping election %s...' % election_title)
 
-            election_type = parse_election_name(election_type)
+            election_type = self.parse_election_name(election_type)
 
             elections[election_date] = {
                 'type': election_type,

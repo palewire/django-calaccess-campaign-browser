@@ -57,7 +57,7 @@ Candidates/list.aspx?view=certified',
                     date = datetime.strptime(date, '%B %d, %Y').date()
 
                     # Figure out which id matches this election.
-                    office, target_seat = parse_office_name(office_name)
+                    office, target_seat = self.parse_office_name(office_name)
                     if target_seat:
                         # Convert to int to avoid '4' != '04'.
                         target_seat = int(target_seat)
