@@ -52,8 +52,6 @@ the CAL-ACCESS site"
         of propositions in a particular election year.
         """
         # Get the URL of the year page
-        if self.verbosity > 2:
-            self.log(' Scraping from %s' % url)
         soup = self.get(url)
 
         # Loop through all the tables on the page
@@ -66,10 +64,6 @@ the CAL-ACCESS site"
 
             # Pull the title
             election_title = table.select('caption span')[0].text
-
-            # Log what we're up to
-            if self.verbosity > 2:
-                self.log('  Scraping %s' % election_title)
 
             # Pull the date
             election_date = re.match(
@@ -84,6 +78,16 @@ the CAL-ACCESS site"
             # Get a list of the propositions in this table
             prop_links = table.findAll('a')
 
+            # Log what we're up to
+            if self.verbosity > 2:
+                msg = " Scraped: %s %s (%s props)"
+                msg = msg % (
+                    election_date,
+                    election_type,
+                    len(prop_links),
+                )
+                self.log(msg)
+
             # Scrape them one by one
             prop_list = [
                 self.scrape_prop_page(
@@ -95,7 +99,7 @@ the CAL-ACCESS site"
             ]
 
             # Add the data to our data dict
-            data_dict[election_date] = {
+            data_dict["%s|%s" % (election_date, election_type)] = {
                 'type': election_type,
                 'props': prop_list,
             }
@@ -108,8 +112,6 @@ the CAL-ACCESS site"
         Scrape data from a proposition detail page
         """
         # Pull the page
-        if self.verbosity > 2:
-            self.log(' Scraping %s' % url)
         soup = self.get(url)
 
         # Create a data dictionary to put the good stuff in
@@ -124,6 +126,8 @@ the CAL-ACCESS site"
         if ' - ' in data_dict['name']:
             data_dict['name'], data_dict['description'] = data_dict['name'].split(" - ", 1)
             data_dict['name'] = data_dict['name'].strip()
+            data_dict['name'] = data_dict['name'].replace("PROPOSITION", "").strip()
+            data_dict['name'] = data_dict['name'].replace("PROP", "").strip()
             data_dict['description'] = data_dict['description'].strip()
         data_dict['id'] = re.match(r'.+id=(\d+)', url).group(1)
 
@@ -154,6 +158,15 @@ the CAL-ACCESS site"
                 'support': support
             })
 
+        if self.verbosity > 2:
+            msg = " Scraped: %s %s (%s committees)"
+            msg = msg % (
+                data_dict['name'],
+                data_dict['description'],
+                len(data_dict['committees'])
+            )
+            self.log(msg)
+
         # Pass the data out
         return data_dict
 
@@ -162,29 +175,14 @@ the CAL-ACCESS site"
         Add the data to the database.
         """
         for d in results:
-            for date, election_dict in d.items():
+            for datekey, election_dict in d.items():
 
                 # The years as extracted from the urls are actually not always
                 # right, so get it from the date.
+                date = datekey.split("|")[0].strip()
                 if date == 'year':
                     continue
                 date = datetime.strptime(date, '%B %d, %Y').date()
-                try:
-                    election = Election.objects.get(
-                        year=date.year,
-                        election_type=election_dict['type']
-                    )
-                    # Set the election date since we have it here
-                    election.date = date
-                    election.save()
-                # Can't figure out to connect ambiguous elections, so None.
-                except Election.MultipleObjectsReturned:
-                    election = None
-                    self.warn('  Multiple elections found')
-                # If it doesn't exist, the same thing
-                except Election.DoesNotExist:
-                    election = None
-                    self.warn('  Election does not exist')
 
                 # Loop through the propositions
                 for prop in election_dict['props']:
@@ -199,9 +197,42 @@ the CAL-ACCESS site"
                     # Log it
                     if self.verbosity > 2:
                         if c:
-                            self.log('  Created %s' % prop_obj)
+                            self.log(' Created %s' % prop_obj)
 
                     # Set the election if we have it
+                    try:
+                        election = Election.objects.get(
+                            year=date.year,
+                            election_type=election_dict['type']
+                        )
+                        # Set the election date since we have it here
+                        if not election.date:
+                            election.date = date
+                            election.save()
+                    # Can't figure out to connect ambiguous elections, so None.
+                    except (
+                        Election.MultipleObjectsReturned,
+                        Election.DoesNotExist
+                    ) as e:
+                        if prop['id'] in [
+                            '1316044',
+                            '1316047',
+                            '1316048',
+                            '1316060',
+                            '1316061',
+                            '1316062'
+                        ]:
+                            election = Election.objects.get(
+                                year=2009,
+                                election_type='SPECIAL_RUNOFF'
+                            )
+                            if not election.date:
+                                election.date = datetime(2009, 5, 19)
+                                election.save()
+                        else:
+                            election = None
+
+                    # Add it in
                     if election:
                         prop_obj.election = election
                         prop_obj.save()
@@ -219,7 +250,12 @@ the CAL-ACCESS site"
                                     xref_filer_id=filer_id
                                 )
                             except Filer.DoesNotExist:
-                                self.warn(' Could not find existing filer')
+                                msg = ' Could not find existing filer for %s (%s)'
+                                msg = msg % (
+                                    committee['name'],
+                                    committee['id'],
+                                )
+                                self.warn(msg)
                                 continue
 
                         # Set the position
@@ -237,4 +273,4 @@ the CAL-ACCESS site"
 
                         # Log it
                         if self.verbosity > 2:
-                            self.log('   Linked %s' % pf)
+                            self.log(' Linked %s' % pf)
