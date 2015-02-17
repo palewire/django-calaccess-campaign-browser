@@ -212,7 +212,12 @@ class CandidateAdmin(BaseAdmin):
 @admin.register(Proposition)
 class PropositionAdmin(BaseAdmin):
     list_display = (
-        "name", "filer_id_raw", "election",
+        "name",
+        "id_raw",
+        "election",
+    )
+    list_filter = (
+        "election",
     )
     search_fields = (
         "name",
@@ -223,5 +228,7 @@ class PropositionAdmin(BaseAdmin):
 @admin.register(PropositionFiler)
 class PropositionFilerAdmin(BaseAdmin):
     list_display = (
-        "proposition", "filer", "position",
+        "proposition",
+        "filer",
+        "position",
     )

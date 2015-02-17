@@ -184,7 +184,7 @@ the CAL-ACCESS site"
                     # Get or create it
                     prop_obj, c = Proposition.objects.get_or_create(
                         name=prop['name'],
-                        filer_id_raw=prop['id']
+                        id_raw=prop['id']
                     )
 
                     # Log it

@@ -832,16 +832,25 @@ class Candidate(BaseModel):
 
 
 class Proposition(BaseModel):
+    """
+    A proposition or ballot measure decided by voters.
+    """
     name = models.CharField(max_length=255, null=True)
-    filer_id_raw = models.IntegerField(db_index=True)
+    id_raw = models.IntegerField(db_index=True)
     election = models.ForeignKey(Election, null=True, default=None)
     filers = models.ManyToManyField(Filer, through='PropositionFiler')
 
+    class Meta:
+        ordering = ("election", "name")
+
     def __unicode__(self):
-        return u'%s (%s)' % (self.name, self.filer_id_raw)
+        return self.name
 
 
 class PropositionFiler(BaseModel):
+    """
+    The relationship between filers and propositions.
+    """
     POSITION_CHOICES = (
         ('SUPPORT', 'Support'),
         ('OPPOSE', 'Oppose'),
