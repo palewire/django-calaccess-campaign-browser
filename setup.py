@@ -34,7 +34,7 @@ class TestCommand(Command):
 
 setup(
     name='django-calaccess-campaign-browser',
-    version='0.1.0',
+    version='0.1.1',
     license='MIT',
     description='A Django app to refine and investigate campaign finance data \
 drawn from the California Secretary of State’s CAL-ACCESS database. \
