@@ -7,6 +7,9 @@ class BaseRealManager(models.Manager):
     records from data models.
     """
     def get_queryset(self):
+        """
+        Excludes records with an ``is_duplicate`` field set to True.
+        """
         qs = super(BaseRealManager, self).get_queryset()
         return qs.exclude(is_duplicate=True)
 
