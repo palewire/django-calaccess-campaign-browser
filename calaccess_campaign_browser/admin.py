@@ -3,7 +3,6 @@ from calaccess_campaign_browser import models
 
 
 class BaseAdmin(admin.ModelAdmin):
-    save_on_top = True
     list_per_page = 500
 
     def get_readonly_fields(self, *args, **kwargs):
