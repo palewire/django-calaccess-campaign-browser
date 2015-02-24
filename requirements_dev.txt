@@ -12,4 +12,6 @@ pep8
 django-debug-toolbar
 six
 pyflakes
+tox
+coverage
 -e git+ssh://git@github.com/california-civic-data-coalition/django-calaccess-raw-data.git@HEAD#egg=django-calaccess-raw-data
