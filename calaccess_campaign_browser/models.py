@@ -676,8 +676,9 @@ class Contribution(BaseModel):
     objects = models.Manager()
     real = managers.RealContributionManager()
 
+    @models.permalink
     def get_absolute_url(self):
-        return reverse('contribution_detail', args=[str(self.pk)])
+        return ('contribution_detail', [str(self.pk)])
 
     @property
     def raw(self):
