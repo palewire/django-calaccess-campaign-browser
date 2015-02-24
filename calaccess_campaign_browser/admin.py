@@ -1,19 +1,5 @@
 from django.contrib import admin
-from calaccess_campaign_browser.models import (
-    Committee,
-    Filer,
-    Summary,
-    Expenditure,
-    Contribution,
-    Cycle,
-    FilingPeriod,
-    Filing,
-    Election,
-    Office,
-    Candidate,
-    Proposition,
-    PropositionFiler,
-)
+from calaccess_campaign_browser import models
 
 
 class BaseAdmin(admin.ModelAdmin):
@@ -23,7 +9,7 @@ class BaseAdmin(admin.ModelAdmin):
         return [f.name for f in self.model._meta.fields]
 
 
-@admin.register(Filing)
+@admin.register(models.Filing)
 class FilingAdmin(BaseAdmin):
     list_display = (
         "filing_id_raw",
@@ -44,7 +30,7 @@ class FilingAdmin(BaseAdmin):
     )
 
 
-@admin.register(Filer)
+@admin.register(models.Filer)
 class FilerAdmin(BaseAdmin):
     list_display = (
         "filer_id_raw",
@@ -68,7 +54,7 @@ class FilerAdmin(BaseAdmin):
     date_hierarchy = "effective_date"
 
 
-@admin.register(Committee)
+@admin.register(models.Committee)
 class CommitteeAdmin(BaseAdmin):
     list_display = (
         "filer_id_raw",
@@ -93,12 +79,12 @@ class CommitteeAdmin(BaseAdmin):
     date_hierarchy = "effective_date"
 
 
-@admin.register(Cycle)
+@admin.register(models.Cycle)
 class CycleAdmin(BaseAdmin):
     list_display = ("name",)
 
 
-@admin.register(FilingPeriod)
+@admin.register(models.FilingPeriod)
 class FilingPeriodAdmin(BaseAdmin):
     list_display = (
         "period_id", "name", "start_date", "end_date", "deadline",
@@ -108,7 +94,7 @@ class FilingPeriodAdmin(BaseAdmin):
     )
 
 
-@admin.register(Contribution)
+@admin.register(models.Contribution)
 class ContributionAdmin(BaseAdmin):
     list_display = (
         "id",
@@ -127,7 +113,7 @@ class ContributionAdmin(BaseAdmin):
     date_hierarchy = "date_received"
 
 
-@admin.register(Expenditure)
+@admin.register(models.Expenditure)
 class ExpenditureAdmin(BaseAdmin):
     list_display = (
         "id",
@@ -147,7 +133,7 @@ class ExpenditureAdmin(BaseAdmin):
     date_hierarchy = "expn_date"
 
 
-@admin.register(Summary)
+@admin.register(models.Summary)
 class SummaryAdmin(BaseAdmin):
     list_display = (
         "filing_id_raw",
@@ -163,7 +149,7 @@ class SummaryAdmin(BaseAdmin):
     )
 
 
-@admin.register(Election)
+@admin.register(models.Election)
 class ElectionAdmin(BaseAdmin):
     list_display = (
         "id_raw",
@@ -179,7 +165,7 @@ class ElectionAdmin(BaseAdmin):
     )
 
 
-@admin.register(Office)
+@admin.register(models.Office)
 class OfficeAdmin(BaseAdmin):
     list_display = (
         "__unicode__",
@@ -196,7 +182,7 @@ class OfficeAdmin(BaseAdmin):
     list_per_page = 200
 
 
-@admin.register(Candidate)
+@admin.register(models.Candidate)
 class CandidateAdmin(BaseAdmin):
     list_display = (
         "filer", "election_year", "election_name", "office"
@@ -209,7 +195,7 @@ class CandidateAdmin(BaseAdmin):
     )
 
 
-@admin.register(Proposition)
+@admin.register(models.Proposition)
 class PropositionAdmin(BaseAdmin):
     list_display = (
         "name",
@@ -227,7 +213,7 @@ class PropositionAdmin(BaseAdmin):
     list_per_page = 500
 
 
-@admin.register(PropositionFiler)
+@admin.register(models.PropositionFiler)
 class PropositionFilerAdmin(BaseAdmin):
     list_display = (
         "proposition",
