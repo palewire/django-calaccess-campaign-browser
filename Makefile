@@ -1,3 +1,4 @@
+
 .PHONY: bootstrap docs reload rs runserver shell test
 
 bootstrap:
@@ -27,7 +28,8 @@ shell:
 	python example/manage.py shell
 
 test:
-	pep8 campaign_finance
-	pyflakes campaign_finance
+	clear
+	pep8 calaccess_campaign_browser
+	pyflakes calaccess_campaign_browser
 	coverage run setup.py test
 	coverage report -m
