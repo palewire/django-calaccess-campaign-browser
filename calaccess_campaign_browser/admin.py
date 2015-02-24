@@ -109,7 +109,11 @@ class CycleAdmin(BaseAdmin):
 @admin.register(models.FilingPeriod)
 class FilingPeriodAdmin(BaseAdmin):
     list_display = (
-        "period_id", "name", "start_date", "end_date", "deadline",
+        "period_id",
+        "name",
+        "start_date",
+        "end_date",
+        "deadline",
     )
     search_fields = (
         "period_id",
