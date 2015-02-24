@@ -2,12 +2,11 @@ import json
 import managers
 from django.db import models
 from django.db.models import Sum
-from django.utils.text import slugify
 from django.core.urlresolvers import reverse
 from django.utils.datastructures import SortedDict
 from .utils.models import AllCapsNameMixin, BaseModel
 from .templatetags.calaccesscampaignbrowser import jsonify
-from django.template.defaultfilters import date as dateformat
+from django.template.defaultfilters import slugify, date as dateformat
 
 
 class Filer(AllCapsNameMixin):
