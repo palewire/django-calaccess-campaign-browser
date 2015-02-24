@@ -7,7 +7,7 @@ class ModelTest(TestCase):
     """
     Create model objects and try out their attributes.
     """
-    def test_filer(self):
+    def test_models(self):
         obj = models.Filer.objects.create(
             name="FooPAC",
             filer_id_raw=1,
@@ -30,7 +30,27 @@ class ModelTest(TestCase):
         obj.clean_name
 
     def test_committee(self):
-        pass
+        filer = models.Filer.objects.create(
+            name="Foo Nixon",
+            filer_id_raw=1,
+            xref_filer_id=1,
+            filer_type="cand",
+            party='16002',
+            status='A',
+            effective_date=datetime.now()
+        )
+        committee = models.Committee.objects.create(
+            name='Nixon for Governor',
+            filer=filer,
+            filer_id_raw=filer.filer_id_raw,
+            xref_filer_id=filer.xref_filer_id,
+            committee_type=filer.filer_type,
+            party=filer.party,
+            status='Y',
+            level_of_government='40502',
+            effective_date=filer.effective_date,
+        )
+        committee.__unicode__()
 
     def test_cycle(self):
         pass
