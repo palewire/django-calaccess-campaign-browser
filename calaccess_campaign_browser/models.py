@@ -736,6 +736,10 @@ class Election(BaseModel):
         ordering = ('-sort_index',)
 
     def __unicode__(self):
+        return self.name
+
+    @property
+    def name(self):
         return u'%s %s' % (
             self.year,
             self.get_election_type_display(),
@@ -826,8 +830,8 @@ class Candidate(BaseModel):
         return self.election.year
 
     @property
-    def election_name(self):
-        return self.election.get_name_display()
+    def election_type(self):
+        return self.election.get_election_type_display()
 
 
 class Proposition(BaseModel):

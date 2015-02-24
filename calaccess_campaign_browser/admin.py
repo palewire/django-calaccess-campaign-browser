@@ -4,6 +4,7 @@ from calaccess_campaign_browser import models
 
 class BaseAdmin(admin.ModelAdmin):
     save_on_top = True
+    list_per_page = 500
 
     def get_readonly_fields(self, *args, **kwargs):
         return [f.name for f in self.model._meta.fields]
@@ -13,6 +14,22 @@ class BaseAdmin(admin.ModelAdmin):
 
     def has_delete_permission(self, request, obj=None):
         return False
+
+
+@admin.register(models.Candidate)
+class CandidateAdmin(BaseAdmin):
+    list_display = (
+        "filer",
+        "election_year",
+        "election_type",
+        "office"
+    )
+    list_filter = (
+        "election",
+    )
+    search_fields = (
+        "filer__name",
+    )
 
 
 @admin.register(models.Filing)
@@ -186,19 +203,6 @@ class OfficeAdmin(BaseAdmin):
         "seat",
     )
     list_per_page = 200
-
-
-@admin.register(models.Candidate)
-class CandidateAdmin(BaseAdmin):
-    list_display = (
-        "filer", "election_year", "election_name", "office"
-    )
-    list_filter = (
-        "election",
-    )
-    search_fields = (
-        "filer__name",
-    )
 
 
 @admin.register(models.Proposition)
