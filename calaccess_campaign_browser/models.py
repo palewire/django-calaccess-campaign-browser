@@ -676,6 +676,9 @@ class Contribution(BaseModel):
     objects = models.Manager()
     real = managers.RealContributionManager()
 
+    def get_absolute_url(self):
+        return reverse('contribution_detail', args=[str(self.pk)])
+
     @property
     def raw(self):
         from calaccess_raw.models import RcptCd
@@ -701,9 +704,6 @@ class Contribution(BaseModel):
             if k.startswith("intermediary"):
                 d[k.replace("intermediary ", "")] = v
         return d
-
-    def get_absolute_url(self):
-        return reverse('contribution_detail', args=[str(self.pk)])
 
 
 class Election(BaseModel):
