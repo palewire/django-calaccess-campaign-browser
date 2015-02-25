@@ -33,7 +33,7 @@ Move into it and install the Python dependencies.
 Make sure you have MySQL installed. If you don't, now is the time to hit Google and figure out how. If
 you're using Apple's OSX operating system, you can `install via Homebrew <http://benjsicam.me/blog/how-to-install-mysql-on-mac-os-x-using-homebrew-tutorial/>`_. If you need to clean up after a previous MySQL installation, `this might help <http://stackoverflow.com/questions/4359131/brew-install-mysql-on-mac-os/6378429#6378429>`_.
 
-Then create a new database named ``campaign_browser``.
+Then create a new database named ``calaccess``.
 
 .. code-block:: bash
 
