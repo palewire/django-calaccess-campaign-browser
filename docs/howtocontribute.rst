@@ -45,7 +45,7 @@ Create a file to store your custom database credentials.
 
 Open that file and add the following configuration, which will connect to a cloud-hosted database we’ve prepared.
 
-.. code-block:: bash
+.. code-block:: python
 
     DATABASES = {
         'default': {
@@ -83,11 +83,50 @@ Move into the repository and install the Python dependencies.
 Make sure you have MySQL installed. If you don't, now is the time to hit Google and figure out how. If
 you're using Apple's OSX operating system, you can `install via Homebrew <http://thisdotlife.com/2013/05/30/how-to-install-mysql-on-mac-os-x-using-homebrew-tutorial/>`_. If you need to clean up after a previous MySQL installation, `this might help <http://stackoverflow.com/questions/4359131/brew-install-mysql-on-mac-os/6378429#6378429>`_.
 
+Downloading an archive from the web
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+Run a custom management command that will download the MySQL database archive and install it.
+
+.. code-block:: bash
+
+    $ make downloaddb
+
+Then create a file at ``example/project/settings_local.py`` to save your custom database credentials. They need to look like this.
+
+.. code-block:: python
+
+    DATABASES = {
+        'default': {
+            'ENGINE': 'django.db.backends.mysql',
+            'NAME': 'ccdc',
+            'USER': 'ccdc',
+            'PASSWORD': 'ccdcccdc',
+            'HOST': 'localhost',
+            'PORT': '3306',
+        }
+    }
+
+Do this one bit of arcane Django housekeeping.
+
+.. code-block:: bash
+
+    $ python example/manage.py collectstatic  --noinput
+
+Activate Django’s web server and visit `http://localhost:8000 <http://localhost:8000>`_ in your web browser.
+
+.. code-block:: bash
+
+    $ python example/manage.py runserver
+
+Creating the database yourself
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
 Then create a new database named ``calaccess``.
 
 .. code-block:: bash
 
-    mysqladmin -h localhost -u root -p create calaccess
+    $ mysqladmin -h localhost -u root -p create calaccess
 
 If you have a different username, substitute it above. You'll be prompted for that user's mysql password.
 

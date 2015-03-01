@@ -33,3 +33,12 @@ test:
 	pyflakes calaccess_campaign_browser
 	coverage run setup.py test
 	coverage report -m
+
+downloaddb:
+	echo "Downloading database archive"
+	curl -O https://dl.dropboxusercontent.com/u/3640647/nicar15/ccdc.sql.gz
+	echo "Installing database archive to local database 'calaccess'"
+	gunzip < ccdc.sql.gz | mysql calaccess -u ccdc -pccdcccdc
+	echo "Deleting database archive"
+	rm ccdc.sql.gz
+	echo "Success!"
