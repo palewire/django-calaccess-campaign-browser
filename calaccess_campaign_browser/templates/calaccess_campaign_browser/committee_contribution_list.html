@@ -6,7 +6,7 @@
 {% block javascript %}
     <script>
         $('.pagination').twbsPagination({
-            totalPages: {{ paginator.count }},
+            totalPages: {{ paginator.num_pages }},
             visiblePages: 5,
             startPage: {{ page_obj.number }},
             prev: '&laquo;',
