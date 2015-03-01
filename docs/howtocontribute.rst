@@ -23,7 +23,57 @@ Clone the repository from `GitHub <https://github.com/california-civic-data-coal
 
     $ git clone https://github.com/california-civic-data-coalition/django-calaccess-campaign-browser.git repo
 
-Move into it and install the Python dependencies.
+.. warning::
+
+    At this point you need a make a choice. Do you want to install a copy of the database on your computer, or do you want to offload that work to the cloud? If you've never installed MySQL before, you might want to let the cloud handle this one for you.
+
+Relying on a cloud database
+---------------------------
+
+Move into the repository and install only enough Python dependencies to use the cloud database.
+
+.. code-block:: bash
+
+    $ cd repo
+    $ pip install -r requirements_cloudmysql.txt
+
+Create a file to store your custom database credentials.
+
+.. code-block:: bash
+
+    $ touch example/project/settings_local.py
+
+Open that file and add the following configuration, which will connect to a cloud-hosted database we’ve prepared.
+
+.. code-block:: bash
+
+    DATABASES = {
+        'default': {
+            'ENGINE': 'django.db.backends.mysql',
+            'NAME': 'ccdc',
+            'USER': 'ccdc',
+            'PASSWORD': 'ccdcccdc',
+            'HOST': '<HOST NAMES GOES HERE>',
+            'PORT': '3306',
+        }
+    }
+
+Do this one bit of arcane Django housekeeping.
+
+.. code-block:: bash
+
+    $ python example/manage.py collectstatic  --noinput
+
+Activate Django’s web server and visit `http://localhost:8000 <http://localhost:8000>`_ in your web browser.
+
+.. code-block:: bash
+
+    $ python example/manage.py runserver
+
+Installing a copy of the database to your computer
+--------------------------------------------------
+
+Move into the repository and install the Python dependencies.
 
 .. code-block:: bash
 
@@ -33,7 +83,7 @@ Move into it and install the Python dependencies.
 Make sure you have MySQL installed. If you don't, now is the time to hit Google and figure out how. If
 you're using Apple's OSX operating system, you can `install via Homebrew <http://benjsicam.me/blog/how-to-install-mysql-on-mac-os-x-using-homebrew-tutorial/>`_. If you need to clean up after a previous MySQL installation, `this might help <http://stackoverflow.com/questions/4359131/brew-install-mysql-on-mac-os/6378429#6378429>`_.
 
-Then create a new database named ``campaign_browser``.
+Then create a new database named ``calaccess``.
 
 .. code-block:: bash
 
