@@ -53,7 +53,7 @@ Open that file and add the following configuration, which will connect to a clou
             'NAME': 'ccdc',
             'USER': 'ccdc',
             'PASSWORD': 'ccdcccdc',
-            'HOST': '<HOST NAMES GOES HERE>',
+            'HOST': 'ccdc-backend-restored.cgwywxzrooap.us-west-2.rds.amazonaws.com',
             'PORT': '3306',
         }
     }
