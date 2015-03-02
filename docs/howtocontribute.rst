@@ -83,14 +83,38 @@ Move into the repository and install the Python dependencies.
 Make sure you have MySQL installed. If you don't, now is the time to hit Google and figure out how. If
 you're using Apple's OSX operating system, you can `install via Homebrew <http://thisdotlife.com/2013/05/30/how-to-install-mysql-on-mac-os-x-using-homebrew-tutorial/>`_. If you need to clean up after a previous MySQL installation, `this might help <http://stackoverflow.com/questions/4359131/brew-install-mysql-on-mac-os/6378429#6378429>`_.
 
-Downloading an archive from the web
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-
-Run a custom management command that will download the MySQL database archive and install it.
+Then create a new database named ``calaccess``.
 
 .. code-block:: bash
 
-    $ make downloaddb
+    $ mysqladmin -h localhost -u root -p create calaccess1
+
+If you have a different username, substitute it above. You'll be prompted for that user's mysql password.
+
+.. note::
+
+    Next you must choose one of two paths. Do you want to download an install a ready-to-serve database backup, or do you want to download, parse and load the freshest data from the state. Neither will be quick, but the backup is probably faster and will should "just work" if you are in a hurry.
+
+Downloading an archive from the web
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+Download the database archive
+
+.. code-block:: bash
+
+    $ curl -O https://dl.dropboxusercontent.com/u/3640647/nicar15/ccdc.sql.gz
+
+Install the archive into your local database. If your MySQL user isn't ``root`` subsitute it in below.
+
+.. code-block:: bash
+
+    $ gunzip < ccdc.sql.gz | mysql calaccess -u root -p
+
+Delete the database archive.
+
+.. code-block:: bash
+
+    $ rm ccdc.sql.gz
 
 Then create a file at ``example/project/settings_local.py`` to save your custom database credentials. They need to look like this.
 
@@ -99,9 +123,9 @@ Then create a file at ``example/project/settings_local.py`` to save your custom 
     DATABASES = {
         'default': {
             'ENGINE': 'django.db.backends.mysql',
-            'NAME': 'ccdc',
-            'USER': 'ccdc',
-            'PASSWORD': 'ccdcccdc',
+            'NAME': 'calaccess',
+            'USER': 'root',
+            'PASSWORD': '<YOUR ROOT MYSQL PASSWORD HERE>',
             'HOST': 'localhost',
             'PORT': '3306',
         }
@@ -122,15 +146,7 @@ Activate Django’s web server and visit `http://localhost:8000 <http://localhos
 Creating the database yourself
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-Then create a new database named ``calaccess``.
-
-.. code-block:: bash
-
-    $ mysqladmin -h localhost -u root -p create calaccess
-
-If you have a different username, substitute it above. You'll be prompted for that user's mysql password.
-
-Then create a file at ``example/project/settings_local.py`` to save your custom database credentials. That
+Create a file at ``example/project/settings_local.py`` to save your custom database credentials. That
 might look something like this.
 
 .. code-block:: python

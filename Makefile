@@ -37,8 +37,10 @@ test:
 downloaddb:
 	echo "Downloading database archive"
 	curl -O https://dl.dropboxusercontent.com/u/3640647/nicar15/ccdc.sql.gz
-	echo "Installing database archive to local database 'calaccess'"
-	gunzip < ccdc.sql.gz | mysql calaccess -u ccdc -pccdcccdc
+	echo "Creating local database named 'calaccess'"
+	mysqladmin -h localhost -u root -p create calaccess
+	echo "Installing database archive to local database"
+	gunzip < ccdc.sql.gz | mysql calaccess -u root -p
 	echo "Deleting database archive"
 	rm ccdc.sql.gz
 	echo "Success!"
