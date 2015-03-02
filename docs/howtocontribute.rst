@@ -93,7 +93,7 @@ If you have a different username, substitute it above. You'll be prompted for th
 
 .. note::
 
-    Next you must choose one of two paths. Do you want to download an install a ready-to-serve database backup, or do you want to download, parse and load the freshest data from the state. Neither will be quick, but the backup is probably faster and will should "just work" if you are in a hurry.
+    Next you must choose one of two paths. Do you want to download and install a ready-to-serve database backup, or do you want to download, parse and load the freshest data from the state's raw download. Neither will be quick, but the backup is faster and should "just work" if you are in a hurry.
 
 Downloading an archive from the web
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
