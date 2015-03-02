@@ -87,7 +87,7 @@ Then create a new database named ``calaccess``.
 
 .. code-block:: bash
 
-    $ mysqladmin -h localhost -u root -p create calaccess1
+    $ mysqladmin -h localhost -u root -p create calaccess
 
 If you have a different username, substitute it above. You'll be prompted for that user's mysql password.
 
