@@ -2,6 +2,7 @@ from .filings import Filing
 from django.db import models
 from django.template.defaultfilters import slugify
 from calaccess_campaign_browser.utils.models import AllCapsNameMixin
+import time
 
 
 class Filer(AllCapsNameMixin):
@@ -255,3 +256,15 @@ class Committee(AllCapsNameMixin):
     @property
     def total_cashflow_balance(self):
         return self.total_contributions - self.total_expenditures
+
+    @property
+    def years_active(self):
+        start_filing = self.real_filings.order_by('start_date').first().start_date.year
+        end_filing = self.real_filings.order_by('end_date').last().end_date.year
+        if end_filing == int(time.strftime("%Y")):
+            end_filing = "Present"
+        if start_filing == end_filing:
+            active_years = "("+str(end_filing)+")"
+        else:
+            active_years = "("+str(start_filing) + ' - '+ str(end_filing)+")"
+        return active_years
