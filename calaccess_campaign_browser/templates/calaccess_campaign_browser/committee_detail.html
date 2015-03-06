@@ -13,7 +13,11 @@
   </div>
   <div class="col-lg-4 col-md-4 col-sm-4 col-xs-12">
     <p><strong>Type:</strong> {{ object.get_committee_type_display }}</p>
-    <p><strong>Party:</strong> {{ object.get_party_display }}</p>
+    <p class="party-label"><strong>Party:</strong></p>
+    <div class="party-label-container">
+      <img height='20px;' class="party-image {{ object.get_party_display|slugify }}" src="{{ STATIC_URL }}calaccess_campaign_browser/images/party_icons/{{ object.get_party_display|slugify }}_icon_white.png" alt="">
+      <span class="party {{ object.get_party_display|slugify }}">{{ object.get_party_display }}</span>
+    </div>
   </div>
   <div class="col-lg-4 col-md-4 col-sm-4 col-xs-12">
     <p><strong>ID:</strong> {{ object.filer_id_raw }}</p>

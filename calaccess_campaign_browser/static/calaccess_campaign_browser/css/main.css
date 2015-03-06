@@ -180,6 +180,128 @@ ul.legend li {
     color: #fff;
     padding: 2px 4px;
 }
+p.party-label{
+  display:inline;
+}
+.party-label-container{
+  display:inline-block;
+}
+.party{
+  white-space:nowrap;
+  padding:2px 3px 2px 0px;
+  border-style:solid;
+  border-width:1px;
+  margin-left: -5px;
+  padding: 1px 3px;
+  border-radius: 0px 2px 2px 0px;
+  -moz-border-radius: 0px 2px 2px 0px;
+  -webkit-border-radius: 0px 2px 2px 0px;
+}
+.party.republican{
+  border-color:#ba0a35;
+  color:#ba0a35;
+}
+.party.democratic{
+  border-color:#08009C;
+  color:#08009C;
+}
+.party.libertarian{
+  border-color:#DCB732;
+  color:#DCB732;
+}
+.party.americans-elect{
+  border-color:#97AEBD;
+  color:#97AEBD;
+}
+.party.natural-law{
+  border-color:#CC0066;
+  color:#CC0066;
+}
+.party.american-independent{
+  border-color:#042c72;
+  color:#042c72;
+}
+.party.independent{
+  border-color:#7000B5;
+  color:#7000B5;
+}
+.party.peace-and-freedom{
+  border-color:#000000;
+  color:#000000;
+}
+.party.green{
+  border-color:#17ab5c;
+  color:#17ab5c;
+}
+.party.reform{
+  border-color:#2a609e;
+  color:#2a609e;
+}
+.party.non-partisan{
+  border-color:#969696;
+  color:#969696;
+}
+.party.unknown{
+  border-color:#11A6A3;
+  color:#11A6A3;
+}
+.party.no-party-preference{
+  border-color:#E6A100;
+  color:#E6A100;
+}
+.party.na{
+  border-color:#C9C9C9;
+  color:#C9C9C9;
+}
+.party-image{
+  padding:2px 3px;
+  vertical-align: top;
+  border-radius: 2px 0px 0px 2px;
+  -moz-border-radius: 2px 0px 0px 2px;
+  -webkit-border-radius: 2px 0px 0px 2px;
+}
+.party-image.republican{
+  background-color:#ba0a35;
+}
+.party-image.democratic{
+  background-color:#08009C;
+}
+.party-image.libertarian{
+  background-color:#DCB732;
+}
+.party-image.americans-elect{
+  background-color:#97AEBD;
+}
+.party-image.natural-law{
+  background-color:#CC0066;
+}
+.party-image.american-independent{
+  background-color:#042c72;
+}
+.party-image.independent{
+  background-color:#7000B5;
+}
+.party-image.peace-and-freedom{
+  background-color:#000000;
+}
+.party-image.green{
+  background-color:#17ab5c;
+}
+.party-image.reform{
+  background-color:#2a609e;
+}
+.party-image.non-partisan{
+  background-color:#969696;
+}
+.party-image.unknown{
+  background-color:#11A6A3;
+}
+.party-image.no-party-preference{
+  background-color:#E6A100;
+}
+.party-image.na{
+  background-color:#C9C9C9;
+}
 
 @media only screen
 and (max-width : 992px) {
