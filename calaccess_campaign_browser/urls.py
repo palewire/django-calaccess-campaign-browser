@@ -4,6 +4,7 @@ from django.views.generic.base import RedirectView
 from calaccess_campaign_browser.api import FilerResource
 from calaccess_campaign_browser import views
 from calaccess_campaign_browser.views import search
+from django.views.generic import TemplateView
 
 v1_api = Api(api_name='v1')
 v1_api.register(FilerResource())
@@ -80,4 +81,9 @@ urlpatterns = patterns(
 
     # API
     url(r'^api/', include(v1_api.urls)),
+
+    url(
+        r'^robots\.txt$',
+        TemplateView.as_view(template_name='robots.txt', content_type='text/plain')),
+
 )
