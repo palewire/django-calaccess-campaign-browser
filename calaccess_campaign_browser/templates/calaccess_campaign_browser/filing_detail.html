@@ -13,76 +13,88 @@
           </ol>
     </div>
   </div>
-        <h2>Filing No. {{ filing.filing_id_raw }}</h2>
+        <h2>Filing No. {{ filing.filing_id_raw }}
+            <a target="_blank" class="btn btn-default view-filing" href="{{ filing.get_calaccess_pdf_url }}">
+                <i class="fa fa-file-pdf-o"></i> View Filing
+            </a>
+        </h2>
 
     <div class="row">
-        <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
-            <table class="table table-bordered table-hover">
-                <tr>
-                    <th>Form</th>
-                    <th>Date filed</th>
-                    <th>Date received</th>
-                    <th>Start date</th>
-                    <th>End date</th>
-                    <th>Amendment</th>
-                    <th>Duplicate</th>
-                    <th>CAL-ACCESS</th>
-                </tr>
-                <tr>
-                    <td>{{ filing.get_form_type_display }}</td>
-                    <td>{{ filing.date_filed|date:'Y-m-d' }}</td>
-                    <td>{{ filing.date_received|date:'Y-m-d' }}</td>
-                    <td>{{ filing.start_date|date:'Y-m-d' }}</td>
-                    <td>{{ filing.end_date|date:'Y-m-d' }}</td>
-                    <td>{{ filing.is_amendment }}</td>
-                    <td>{{ filing.is_duplicate }}</td>
-                    <td>
-                        <a target="_blank" href="{{ filing.get_calaccess_pdf_url }}">
-                            {{ filing.get_calaccess_pdf_url|truncatechars:40 }}
-                        </a>
-                    </td>
-                </tr>
-            </table>
+        <div class="col-sm-4">
+            <p><strong>Type:</strong> {{ filing.get_form_type_display }}</p>
+            <p><strong>Duplicate:</strong> <span class="{{ filing.is_duplicate }}">{{ filing.is_duplicate }}</span></p>
+            <p><strong>Amendment:</strong> <span class="{{ filing.is_amendment }}">{{ filing.is_amendment }}</span></p>
+        </div>
+        <div class="col-sm-4">
+            <p><strong>Start date:</strong> {{ filing.start_date|date:'Y-m-d' }}</p>
+            <p><strong>End date:</strong> {{ filing.end_date|date:'Y-m-d' }}</p>
+            <p><strong>Cycle:</strong> {{ filing.cycle.name }}</p>
+        </div>
+        <div class="col-sm-4">
+            <p><strong>Date filed:</strong> {{ filing.date_filed|date:'Y-m-d' }}</p>
+            <p><strong>Date received:</strong> {{ filing.date_received|date:'Y-m-d' }}</p>
         </div>
     </div>
 
-  <div class="row">
-    <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
-      <table class="table table-bordered table-hover">
-        <thead>
-          <tr>
-            <th>Start Date</th>
-            <th>End Date</th>
-            <th>Cycle</th>
-            <th>itemized expn</th>
-            <th>itemized mon. contributions</th>
-            <th>non mon. contributions</th>
-            <th>outstanding debts</th>
-            <th>total contributions</th>
-            <th>total expn</th>
-            <th>total mon. contributions</th>
-            <th>unitemized expn</th>
-            <th>unitemized mon. contributions</th>
-          </tr>
-        </thead>
-        <tbody>
-          <tr>
-            <td>{{ filing.start_date }}</td>
-            <td>{{ filing.end_date }}</td>
-            <td>{{ filing.cycle.name }}</td>
-            <td>{{ filing.summary.itemized_expenditures | intcomma }}</td>
-            <td>{{ filing.summary.itemized_monetary_contributions | intcomma }}</td>
-            <td>{{ filing.summary.non_monetary_contributions | intcomma }}</td>
-            <td>{{ filing.summary.outstanding_debts | intcomma }}</td>
-            <td>{{ filing.summary.total_contributions | intcomma }}</td>
-            <td>{{ filing.summary.total_expenditures | intcomma }}</td>
-            <td>{{ filing.summary.total_monetary_contributions | intcomma }}</td>
-            <td>{{ filing.summary.unitemized_expenditures | intcomma }}</td>
-            <td>{{ filing.summary.unitemized_monetary_contributions | intcomma }}</td>
-          </tr>
-        </tbody>
-      </table>
-
+    <div class="row">
+        <div class="col-sm-6">
+          <table class="table table-bordered table-hover">
+            <thead>
+              <tr>
+                <th colspan="2">Contributions</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td>Itemized monetary contributions</td><td>{{ filing.summary.itemized_monetary_contributions | intcomma }}</td>
+              </tr>
+              <tr>
+                <td>Unitemized monetary contributions</td><td>{{ filing.summary.unitemized_monetary_contributions | intcomma }}</td>
+              </tr>
+              <tr>
+                <td>Total monetary contributions</td><td>{{ filing.summary.total_monetary_contributions | intcomma }}</td>
+              </tr>
+              <tr>
+                <td>Non-monetary contributions</td><td>{{ filing.summary.non_monetary_contributions | intcomma }}</td>
+              </tr>
+              <tr>
+                <td>Total contributions</td><td>{{ filing.summary.total_contributions | intcomma }}</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+        <div class="col-sm-6">
+          <table class="table table-bordered table-hover">
+            <thead>
+              <tr>
+                <th colspan="2">Expenditures</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td>Itemized expenditures</td><td>{{ filing.summary.itemized_expenditures | intcomma }}</td>
+              </tr>
+              <tr>
+                <td>Unitemized expenditures</td><td>{{ filing.summary.unitemized_expenditures | intcomma }}</td>
+              </tr>
+              <tr>
+                <td>Total expenditures</td><td>{{ filing.summary.total_expenditures | intcomma }}</td>
+              </tr>
+            </tbody>
+          </table>
+          <table class="table table-bordered table-hover">
+            <thead>
+              <tr>
+                <th colspan="2">Debts</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td>Outstanding debts</td><td>{{ filing.summary.outstanding_debts | intcomma }}</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
     </div>
   </div>
 {% endblock %}

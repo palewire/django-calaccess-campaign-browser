@@ -103,7 +103,14 @@ ol {
     color:#fff;
     background-color:#ba0a35;
 }
-a{
+.btn-default, .btn-default:hover{
+    border-color: #ba0a35;
+}
+.btn-default:hover{
+    background-color: #ba0a35;
+    color: #ffffff;
+}
+a, a.btn-default{
     color:#ba0a35;
 }
 a:hover{
@@ -301,6 +308,18 @@ p.party-label{
 }
 .party-image.na{
   background-color:#C9C9C9;
+}
+
+.view-filing{
+  vertical-align: top;
+  margin-left: 5px;
+}
+.True{
+  color: #438238;
+  font-weight: 500;
+}
+.False{
+  color: #333;
 }
 
 @media only screen
