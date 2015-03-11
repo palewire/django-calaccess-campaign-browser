@@ -183,7 +183,7 @@ class Command(BaseCommand):
 
         csv_reader = csv.reader(infile, delimiter=',')
 
-        csv_reader.next() # skip headers
+        csv_reader.next()  # skip headers
 
         for line in csv_reader:
             line = [l.replace("'", "''") for l in line]
