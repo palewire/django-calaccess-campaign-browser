@@ -23,55 +23,8 @@ Clone the repository from `GitHub <https://github.com/california-civic-data-coal
 
     $ git clone https://github.com/california-civic-data-coalition/django-calaccess-campaign-browser.git repo
 
-.. warning::
-
-    At this point you need a make a choice. Do you want to install a copy of the database on your computer, or do you want to offload that work to the cloud? If you've never installed MySQL before, you might want to let the cloud handle this one for you.
-
-Relying on a cloud database
----------------------------
-
-Move into the repository and install only enough Python dependencies to use the cloud database.
-
-.. code-block:: bash
-
-    $ cd repo
-    $ pip install -r requirements_cloudmysql.txt
-
-Create a file to store your custom database credentials.
-
-.. code-block:: bash
-
-    $ touch example/project/settings_local.py
-
-Open that file and add the following configuration, which will connect to a cloud-hosted database we’ve prepared.
-
-.. code-block:: python
-
-    DATABASES = {
-        'default': {
-            'ENGINE': 'django.db.backends.mysql',
-            'NAME': 'ccdc',
-            'USER': 'ccdc',
-            'PASSWORD': 'ccdcccdc',
-            'HOST': 'ccdc-backend-restored.cgwywxzrooap.us-west-2.rds.amazonaws.com',
-            'PORT': '3306',
-        }
-    }
-
-Do this one bit of arcane Django housekeeping.
-
-.. code-block:: bash
-
-    $ python example/manage.py collectstatic  --noinput
-
-Activate Django’s web server and visit `http://localhost:8000 <http://localhost:8000>`_ in your web browser.
-
-.. code-block:: bash
-
-    $ python example/manage.py runserver
-
-Installing a copy of the database to your computer
---------------------------------------------------
+Installing the database
+-----------------------
 
 Move into the repository and install the Python dependencies.
 
@@ -91,32 +44,7 @@ Then create a new database named ``calaccess``.
 
 If you have a different username, substitute it above. You'll be prompted for that user's mysql password.
 
-.. note::
-
-    Next you must choose one of two paths. Do you want to download and install a ready-to-serve database backup, or do you want to download, parse and load the freshest data from the state's raw download. Neither will be quick, but the backup is faster and should "just work" if you are in a hurry.
-
-Downloading an archive from the web
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-
-Download the database archive
-
-.. code-block:: bash
-
-    $ curl -O https://dl.dropboxusercontent.com/u/3640647/nicar15/ccdc.sql.gz
-
-Install the archive into your local database. If your MySQL user isn't ``root`` subsitute it in below.
-
-.. code-block:: bash
-
-    $ gunzip < ccdc.sql.gz | mysql calaccess -u root -p
-
-Delete the database archive.
-
-.. code-block:: bash
-
-    $ rm ccdc.sql.gz
-
-Then create a file at ``example/project/settings_local.py`` to save your custom database credentials. They need to look like this.
+Create a file at ``example/project/settings_local.py`` to save your custom database credentials. That might look something like this.
 
 .. code-block:: python
 
@@ -124,39 +52,8 @@ Then create a file at ``example/project/settings_local.py`` to save your custom 
         'default': {
             'ENGINE': 'django.db.backends.mysql',
             'NAME': 'calaccess',
-            'USER': 'root',
-            'PASSWORD': '<YOUR ROOT MYSQL PASSWORD HERE>',
-            'HOST': 'localhost',
-            'PORT': '3306',
-        }
-    }
-
-Do this one bit of arcane Django housekeeping.
-
-.. code-block:: bash
-
-    $ python example/manage.py collectstatic  --noinput
-
-Activate Django’s web server and visit `http://localhost:8000 <http://localhost:8000>`_ in your web browser.
-
-.. code-block:: bash
-
-    $ python example/manage.py runserver
-
-Creating the database yourself
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-
-Create a file at ``example/project/settings_local.py`` to save your custom database credentials. That
-might look something like this.
-
-.. code-block:: python
-
-    DATABASES = {
-        'default': {
-            'ENGINE': 'django.db.backends.mysql',
-            'NAME': 'calaccess',
-            'USER': 'yourusername',
-            'PASSWORD': 'yourpassword',
+            'USER': 'your-username-here',
+            'PASSWORD': 'your-password-here',
             'HOST': 'localhost',
             'PORT': '3306',
             'OPTIONS': {
@@ -170,6 +67,9 @@ Finally create your database and get to work.
 .. code-block:: bash
 
     $ python example/manage.py migrate
+
+Loading the data
+----------------
 
 You might start by loading the data dump from the web.
 
