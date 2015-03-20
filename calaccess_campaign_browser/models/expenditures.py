@@ -1,4 +1,6 @@
 from django.db import models
+from django.utils.datastructures import SortedDict
+
 from calaccess_campaign_browser import managers
 from calaccess_campaign_browser.utils.models import BaseModel
 
@@ -10,7 +12,7 @@ class Expenditure(BaseModel):
     cycle = models.ForeignKey('Cycle')
     committee = models.ForeignKey(
         'Committee',
-        related_name='expenditure_to'
+        related_name='expenditures_to'
     )
     filing = models.ForeignKey('Filing')
 
