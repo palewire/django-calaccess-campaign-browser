@@ -27,6 +27,9 @@ runserver:
 shell:
 	python example/manage.py shell
 
+sh:
+	python example/manage.py shell_plus
+
 test:
 	clear
 	pep8 --exclude='*/migrations' calaccess_campaign_browser
