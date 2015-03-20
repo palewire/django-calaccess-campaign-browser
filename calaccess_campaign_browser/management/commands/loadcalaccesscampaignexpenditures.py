@@ -193,7 +193,7 @@ class Command(CalAccessCommand):
             "xref_schnm"
         ]
         OUTHEADERS = copy.copy(INHEADERS)
-        OUTHEADERS.append("IS_DUPLICATE")
+        OUTHEADERS.append("is_duplicate")
 
         self.log("   Marking duplicates in a new CSV")
         # `rU` is read Universal
