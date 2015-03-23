@@ -6,11 +6,10 @@ import warnings
 from optparse import make_option
 
 import MySQLdb
-from ipdb import set_trace as debugger
 
 from django.db import connection
 
-from calaccess_raw.models import ExpnCd, S496Cd, S498Cd
+from calaccess_raw.models import ExpnCd, S496Cd  # S498Cd
 from calaccess_raw import get_download_directory
 from calaccess_campaign_browser.management.commands import CalAccessCommand
 from calaccess_campaign_browser.models import Expenditure, Filing, Committee
@@ -32,6 +31,7 @@ custom_options = (
         help="Skip loading quarterly CSV to db"
     ),
 )
+
 
 class Command(CalAccessCommand):
     help = "Load refined campaign expenditures from CAL-ACCESS raw data"
@@ -224,7 +224,7 @@ class Command(CalAccessCommand):
                 try:
                     fout.writerow(row)
 
-                except ValueError, e:
+                except ValueError:
                     continue
 
     def load_quarterly_expenditures(self):
@@ -452,7 +452,6 @@ class Command(CalAccessCommand):
         )
         self.cursor.execute(sql)
         self.cursor.execute('DROP TABLE TMP_EXPN_CD;')
-
 
     def handle(self, *args, **options):
         self.header("Loading expenditures")
