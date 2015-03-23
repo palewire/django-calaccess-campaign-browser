@@ -29,7 +29,7 @@ shell:
 
 test:
 	clear
-	pep8 calaccess_campaign_browser
+	pep8 --exclude='*/migrations' calaccess_campaign_browser
 	pyflakes calaccess_campaign_browser
 	coverage run setup.py test
 	coverage report -m
