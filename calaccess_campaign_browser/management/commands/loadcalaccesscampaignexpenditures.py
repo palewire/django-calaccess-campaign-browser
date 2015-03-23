@@ -9,7 +9,7 @@ import MySQLdb
 
 from django.db import connection
 
-from calaccess_raw.models import ExpnCd, S496Cd  # S498Cd
+from calaccess_raw.models import ExpnCd
 from calaccess_raw import get_download_directory
 from calaccess_campaign_browser.management.commands import CalAccessCommand
 from calaccess_campaign_browser.models import Expenditure, Filing, Committee
@@ -51,13 +51,6 @@ class Command(CalAccessCommand):
             self.data_dir,
             'expn_cd_transformed.csv'
         )
-        # Late filings stuff
-        self.late_tmp_csv = tempfile.NamedTemporaryFile().name
-        self.late_target_csv = os.path.join(
-            self.data_dir,
-            's496_cd_transformed.csv'
-        )
-        self.late_tmp_table = "TMP_%s" % S496Cd._meta.db_table
 
     def transform_quarterly_expenditures_csv(self):
         self.log("  Marking duplicates")
@@ -465,7 +458,3 @@ class Command(CalAccessCommand):
 
         if options['load_quarterly']:
             self.load_quarterly_expenditures()
-
-        # self.log(" Late filings")
-        # self.transform_late_expenditures_csv()
-        # self.load_late_expenditures()
