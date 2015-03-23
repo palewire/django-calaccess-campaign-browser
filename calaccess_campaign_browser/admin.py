@@ -143,20 +143,19 @@ class ContributionAdmin(BaseAdmin):
 class ExpenditureAdmin(BaseAdmin):
     list_display = (
         "id",
-        "name",
-        "raw_org_name",
+        "candidate_full_name",
         "committee",
-        "expn_date",
-        "dupe",
+        "date_received",
+        "amount",
+        "is_duplicate"
     )
     list_filter = (
-        "dupe",
+        "is_duplicate",
     )
     search_fields = (
-        "name",
-        "raw_org_name",
+        "candidate_full_name",
     )
-    date_hierarchy = "expn_date"
+    date_hierarchy = "date_received"
 
 
 @admin.register(models.Summary)

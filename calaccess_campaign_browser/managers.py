@@ -121,6 +121,46 @@ class RealExpenditureManager(models.Manager):
     """
     Only returns records that are not duplicates.
     """
-    def get_queryset(self):
-        qs = super(RealExpenditureManager, self).get_queryset()
-        return qs.exclude(dupe=True)
+    def by_committee_to(self, obj_or_id):
+        """
+        Returns the "real" or valid expenditures received by
+        a particular committee.
+        """
+        from .models import Filing
+
+        # Pull the committee object
+        cmte = self.get_committee(obj_or_id)
+
+        # Get a list of the valid filings for this committee
+        filing_list = Filing.real.by_committee(cmte)
+
+        # Filer to only expenditures from real filings by this committee
+        qs = self.get_queryset().filter(
+            committee=cmte,
+            filing__in=filing_list
+        )
+
+        # Retun the result
+        return qs
+
+    def by_committee_from(self, obj_or_id):
+        """
+        Returns the "real" or valid expenditures made by
+        a particular committee.
+        """
+        from .models import Filing
+
+        # Pull the committee object
+        cmte = self.get_committee(obj_or_id)
+
+        # Get a list of the valid filings for this committee
+        filing_list = Filing.real.by_committee(cmte)
+
+        # Filer to only expenditures from real filings by this committee
+        qs = self.get_queryset().filter(
+            payee_committee=cmte,
+            filing__in=filing_list
+        )
+
+        # Retun the result
+        return qs

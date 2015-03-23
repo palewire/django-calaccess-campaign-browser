@@ -85,6 +85,7 @@ urlpatterns = patterns(
     url(
         r'^robots\.txt$',
         TemplateView.as_view(
-            template_name='robots.txt', content_type='text/plain')),
-
+            template_name='robots.txt',
+            content_type='text/plain')
+    ),
 )

@@ -1,12 +1,16 @@
 How to use it
 =============
 
-This library is intended to be plugged into project created with the Django web
-framework. Before you can begin, you'll need to get one of those up and running.
-If you don't know how, go `check out the official Django documentation <https://docs.djangoproject.com/en/dev/intro/tutorial01/>`_. 
+This guide will walk users through the process of installing the latest official release `from the Python Package Index <https://pypi.python.org/pypi/django-calaccess-campaign-browser/>`_. If you want to install the raw source code or contribute as a developer refer to the `"How to contribute" <howtocontribute.html>`__ page.
 
+.. warning::
 
-Once you've got that going, install this application and its dependencies with ``pip``.
+    This library is intended to be plugged into a project created with the Django web framework. Before you can begin, you'll need to have one up and running. If you don't know how, `check out the official Django documentation <https://docs.djangoproject.com/en/dev/intro/tutorial01/>`_.
+
+Installing the Django app
+-------------------------
+
+The latest official release of the application can be installed from the Python Package Index using ``pip``.
 
 .. code-block:: bash
 
@@ -23,16 +27,25 @@ that contains the raw government database to your Django project's ``settings.py
        'calaccess_campaign_browser',
    )
 
-Make sure you have MySQL installed. If you don't, now is the time to hit Google and figure out how. If
-you're using Apple's OSX operating system, you can `install via 
-Homebrew <http://benjsicam.me/blog/how-to-install-mysql-on-mac-os-x-using-homebrew-tutorial/>`_.
-Then create a new database named ``calaccess``.
+Connecting to a local database
+------------------------------
+
+Also in the ``settings.py`` file, you will need to configure Django so it can connect to a database.
+
+Unlike a typical Django project, this application only supports the MySQL database backend. This is because we enlist specialized tools to load the immense amount of source data more quickly than Django typically allows. We haven't worked out those routines for PostgreSQL, SQLite and the other Django backends yet, but we're working on it.
+
+Preparing MySQL
+~~~~~~~~~~~~~~~
+
+Before you begin, make sure you have a MySQL server installed. If you don't, now is the time to hit Google and figure out how. If you're using Apple's OSX operating system, you can `install via Homebrew <http://thisdotlife.com/2013/05/30/how-to-install-mysql-on-mac-os-x-using-homebrew-tutorial/>`_. `Here <http://dev.mysql.com/doc/refman/5.5/en/installing.html>`_ is the official MySQL documentation for how to get it done.
+
+Once that is handled, create a new database named ``calaccess``.
 
 .. code-block:: bash
 
-    $ mysqladmin -h localhost -u root -p create calaccess
+    $ mysqladmin -h localhost -u your-username-here -p create calaccess
 
-Also in the Django settings, configure a database connection. Currently this application only supports MySQL backends.
+Also in the Django ``settings.py``, configure a database connection.
 
 .. code-block:: python
 
@@ -40,8 +53,8 @@ Also in the Django settings, configure a database connection. Currently this app
         'default': {
             'ENGINE': 'django.db.backends.mysql',
             'NAME': 'calaccess',
-            'USER': 'username',
-            'PASSWORD': 'password',
+            'USER': 'your-username-here',
+            'PASSWORD': 'your-password-here',
             'HOST': 'localhost',
             'PORT': '3306',
             # You'll need this to use our data loading tricks
@@ -51,23 +64,29 @@ Also in the Django settings, configure a database connection. Currently this app
         }
     }
 
-Now you're ready to sync the database tables.
+Loading the data
+----------------
+
+Now you're ready to create the database tables with Django using its ``manage.py`` utility belt.
 
 .. code-block:: bash
 
     $ python manage.py migrate
 
-Run the management command that installs the raw data dump from the California Secretary of State.
+Once everything is set up, this management command will download the latest bulk data release from the state and load it in the database. It'll take a while. Go grab some coffee.
 
 .. code-block:: bash
 
     $ python manage.py downloadcalaccessrawdata
 
-Run the management command that extracts and refines campaign finance data from from the raw CAL-ACCESS data dump.
+Next, run the management command that extracts and refines campaign finance data from from the raw CAL-ACCESS data dump.
 
 .. code-block:: bash
 
    $ python manage.py buildcalaccesscampaignbrowser
+
+Exploring the data
+------------------
 
 In your project ``urls.py`` file, add this app's URLs:
 
@@ -77,8 +96,7 @@ In your project ``urls.py`` file, add this app's URLs:
        url(r'^', include('calaccess_campaign_browser.urls')),
    )
 
-Start the development server and visit ``http://127.0.0.1:8000/`` to
-inspect the data.
+Finally start the development server and visit `localhost:8000 <http://localhost:8000/>`_ in your browser to start using the app.
 
 .. code-block:: bash
 
