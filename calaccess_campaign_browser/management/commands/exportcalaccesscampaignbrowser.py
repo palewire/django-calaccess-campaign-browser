@@ -84,7 +84,8 @@ class Command(CalAccessCommand):
                 for cycle in Cycle.objects.all():
                     self.log('    Looking at cycle {} ...'.format(cycle.name))
                     rows = model.objects.filter(cycle=cycle)\
-                        .exclude(is_duplicate=True).values_list(*relation_names)
+                        .exclude(is_duplicate=True)\
+                        .values_list(*relation_names)
 
                     if not rows:
                         self.failure('      No data for {}'.format(cycle.name))
