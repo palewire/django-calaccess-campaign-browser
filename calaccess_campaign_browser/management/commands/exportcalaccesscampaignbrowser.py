@@ -38,14 +38,17 @@ class Command(CalAccessCommand):
     help = 'Export refined CAL-ACCESS campaign browser data as CSV files'
     option_list = CalAccessCommand.option_list + custom_options
 
-    # Take a list of lists and make every row utf-8
-    # http://stackoverflow.com/a/17527101/868724
-    encoded = lambda x: [[unicode(s).encode('utf-8') for s in t] for t in x]
-
     def set_options(self, *args, **kwargs):
         self.data_dir = os.path.join(
             settings.BASE_DIR, 'data')
         os.path.exists(self.data_dir) or os.mkdir(self.data_dir)
+
+    def encoded(self, x):
+        """
+        Take x, a list of lists, and make every row utf-8
+        http://stackoverflow.com/a/17527101/868724
+        """
+        return [[unicode(s).encode('utf-8') for s in t] for t in x]
 
     def export_to_csv(self, model_name):
         self.header('Exporting models ...')
