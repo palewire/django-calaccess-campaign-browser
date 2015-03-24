@@ -45,7 +45,7 @@ class Command(CalAccessCommand):
 
     def encoded(self, x):
         """
-        Take x, a list of lists, and make every row utf-8
+        Take x, a list of lists, and encode each list item as utf-8
         http://stackoverflow.com/a/17527101/868724
         """
         return [[unicode(s).encode('utf-8') for s in t] for t in x]
@@ -70,7 +70,7 @@ class Command(CalAccessCommand):
             writer = csv.writer(csvfile, delimiter=",")
             writer.writerow(fieldnames)
 
-            if model_name != 'summary' or model_name != 'Summary':
+            if model_name != 'summary':
                 for cycle in Cycle.objects.all():
                     self.log('    Looking at cycle {} ...'.format(cycle.name))
                     rows = model.objects.filter(cycle=cycle)\
