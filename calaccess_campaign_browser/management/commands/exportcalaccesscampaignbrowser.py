@@ -43,19 +43,29 @@ class Command(CalAccessCommand):
             settings.BASE_DIR, 'data')
         os.path.exists(self.data_dir) or os.mkdir(self.data_dir)
 
-    def encoded(self, x):
+    def encoded(self, list_of_lists):
         """
-        Take x, a list of lists, and encode each list item as utf-8
+        Take a list of lists, and encode each list item as utf-8
         http://stackoverflow.com/a/17527101/868724
         """
-        return [[unicode(s).encode('utf-8') for s in t] for t in x]
+        return [[unicode(s).encode('utf-8') for s in t] for t in list_of_lists]
 
     def export_to_csv(self, model_name):
         self.header('Exporting models ...')
 
         today = datetime.datetime.today()
         model = get_model('calaccess_campaign_browser', model_name)
-        fieldnames = [f.name for f in model._meta.fields]
+
+        fieldnames = [f.name for f in model._meta.fields] + [
+            'committee_name', 'filer_name', 'filer_id', 'filer_id_raw']
+
+        relation_names = [f.name for f in model._meta.fields] + [
+            'committee__name',
+            'committee__filer__name',
+            'committee__filer__id',
+            'committee__filer__filer_id_raw'
+        ]
+
         filename = '{}-{}-{}-{}.csv'.format(
             today.year,
             today.month,
@@ -74,7 +84,7 @@ class Command(CalAccessCommand):
                 for cycle in Cycle.objects.all():
                     self.log('    Looking at cycle {} ...'.format(cycle.name))
                     rows = model.objects.filter(cycle=cycle)\
-                        .exclude(is_duplicate=True).values_list(flat=True)
+                        .exclude(is_duplicate=True).values_list(*relation_names)
 
                     if not rows:
                         self.failure('      No data for {}'.format(cycle.name))
@@ -84,6 +94,9 @@ class Command(CalAccessCommand):
                         writer.writerows(rows)
                         self.success('      Added {} {} data'.format(
                             cycle.name, model_name))
+            else:
+                rows = self.encoded(model.objects.values_list())
+                writer.writerows(rows)
 
         self.success('  Exported {}!'.format(model_name.capitalize()))
 
