@@ -88,5 +88,4 @@ urlpatterns = patterns(
             template_name='robots.txt',
             content_type='text/plain')
     ),
-
 )

@@ -264,8 +264,10 @@ class Committee(AllCapsNameMixin):
             return None
         start_filing = filings.order_by('start_date').first().start_date.year
         end_filing = filings.order_by('end_date').last().end_date.year
+
         if end_filing == int(time.strftime("%Y")):
             end_filing = "Present"
+
         if start_filing == end_filing:
             return "(%s)" % end_filing
         else:
