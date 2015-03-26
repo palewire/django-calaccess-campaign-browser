@@ -6,7 +6,8 @@ from collections import OrderedDict
 import pypyodbc
 
 from django.conf import settings
-from django.core.management.base import BaseCommand
+
+from calaccess_campaign_browser.management.commands import CalAccessCommand
 
 contributions_header = OrderedDict([
     ('amount', 'amount'),
@@ -97,9 +98,12 @@ custom_options = (
 )
 
 
-class Command(BaseCommand):
-    help = 'descriptive text'
-    option_list = BaseCommand.option_list + custom_options
+class Command(CalAccessCommand):
+    """
+    Send CSVs exported from `exportcalaccesscampaignbrowser` to
+    Microsoft SQL Server
+    """
+    option_list = CalAccessCommand.option_list + custom_options
     connection_path = (
         'Driver=%s;Server=%s;port=%s;uid=%s;pwd=%s;database=%s;autocommit=1'
     ) % (
