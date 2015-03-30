@@ -2,11 +2,9 @@ import os
 import re
 import csv
 import fnmatch
-import datetime
 from optparse import make_option
 
 import pypyodbc
-from ipdb import set_trace as debugger
 
 from django.conf import settings
 from django.db import connection
@@ -39,6 +37,7 @@ custom_options = (
     ),
 )
 
+
 def all_files(root, patterns='*', single_level=False, yield_folders=False):
     """
     Expand patterns form semicolon-separated string to list
@@ -60,6 +59,7 @@ def all_files(root, patterns='*', single_level=False, yield_folders=False):
 
         if single_level:
             break
+
 
 class Command(CalAccessCommand):
     """
@@ -94,14 +94,10 @@ class Command(CalAccessCommand):
         """
         self.log('  Creating database schema for {} ...'.format(model_name))
         style = self.app.style
-        today = datetime.datetime.today()
 
         model = get_model('calaccess_campaign_browser', model_name)
 
         table_name = 'dbo.{}'.format(model._meta.db_table)
-
-        fieldnames = [f.name for f in model._meta.fields] + [
-            'committee_name', 'filer_name', 'filer_id', 'filer_id_raw']
 
         raw_statement = connection.creation\
             .sql_create_model(model, style)[0][0]
@@ -110,7 +106,7 @@ class Command(CalAccessCommand):
         ansi_escape = re.compile(r'\x1b[^m]*m')
         strip_ansi_statement = (ansi_escape.sub('', raw_statement))
         statement = strip_ansi_statement.replace('\n', '')\
-            .replace('`','')\
+            .replace('`', '')\
             .replace('bool', 'bit')\
             .replace(' AUTO_INCREMENT', '')\
             .replace(model._meta.db_table, table_name)\
@@ -176,7 +172,8 @@ class Command(CalAccessCommand):
                     self.log('      loading {} ID:{} ...'.format(
                         model_name, row[0]))
                 except pypyodbc.Error, e:
-                    debugger()
+                    self.failure('      Encountered an arror')
+                    raise e
 
             self.cursor.commit()
             self.success('    Loaded {} with data from {}'.format(
