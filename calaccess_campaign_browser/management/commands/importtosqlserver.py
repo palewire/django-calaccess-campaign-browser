@@ -1,77 +1,19 @@
 import os
+import re
 import csv
+import fnmatch
+import datetime
 from optparse import make_option
-from collections import OrderedDict
 
 import pypyodbc
+from ipdb import set_trace as debugger
 
 from django.conf import settings
+from django.db import connection
+from django.db.models import get_model
+from django.core.management.base import AppCommand
 
 from calaccess_campaign_browser.management.commands import CalAccessCommand
-
-contributions_header = OrderedDict([
-    ('amount', 'amount'),
-    ('filing_id', 'filing_id'),
-    ('committee__name', 'committee_name'),
-    ('cycle_id', 'cycle'),
-    ('date_received', 'date_received'),
-    ('contributor_first_name', 'contributor_first_name'),
-    ('contributor_last_name', 'contributor_last_name'),
-    ('contributor_full_name', 'contributor_full_name'),
-    ('contributor_occupation', 'contributor_occupation'),
-    ('contributor_employer', 'contributor_employer'),
-    ('contributor_address_1', 'contributor_address_1'),
-    ('contributor_address_2', 'contributor_address_2'),
-    ('contributor_city', 'contributor_city'),
-    ('contributor_state', 'contributor_state'),
-    ('contributor_zipcode', 'contributor_zipcode'),
-])
-
-expenditures_header = OrderedDict([
-    ('amount', 'amount'),
-    ('filing_id', 'filing_id'),
-    ('committee__name', 'committee_name'),
-    ('cycle_id', 'cycle'),
-    ('expn_date', 'date_received'),
-    ('payee_namf', 'payee_first_name'),
-    ('payee_naml', 'payee_last_name'),
-    ('name', 'payee_full_name'),
-    ('payee_namt', 'payee_occupation'),
-    ('raw_org_name', 'payee_employer'),
-    ('payee_adr1', 'payee_address_1'),
-    ('payee_adr2', 'payee_address_2'),
-    ('payee_city', 'payee_city'),
-    ('payee_st', 'payee_state'),
-    ('payee_zip4', 'payee_zipcode'),
-])
-
-summary_header = OrderedDict([
-    # ('committee__filer__name', 'filer'),
-    # ('committee__filer__filer_id', 'filer_id'),
-    # ('committee__name', 'committee'),
-    # ('committee__filer_id_raw', 'committee_id'),
-    # ('cycle__name', 'cycle'),
-    ('ending_cash_balance', 'ending_cash_balance'),
-    ('filing_id_raw', 'filing_id'),
-    ('amend_id', 'amend_id'),
-    # ('filing__start_date', 'filing_start_date'),
-    # ('filing__end_date', 'filing_end_date'),
-    ('itemized_expenditures', 'itemized_expenditures'),
-    (
-        'itemized_monetary_contributions',
-        'itemized_monetary_contributions'
-    ),
-    ('non_monetary_contributions', 'non_monetary_contributions'),
-    ('outstanding_debts', 'outstanding_debts'),
-    ('total_contributions', 'total_contributions'),
-    ('total_expenditures', 'total_expenditures'),
-    ('total_monetary_contributions', 'total_monetary_contributions'),
-    ('unitemized_expenditures', 'unitemized_expenditures'),
-    (
-        'unitemized_monetary_contributions',
-        'unitemized_monetary_contributions'
-    ),
-])
 
 custom_options = (
     make_option(
@@ -97,6 +39,27 @@ custom_options = (
     ),
 )
 
+def all_files(root, patterns='*', single_level=False, yield_folders=False):
+    """
+    Expand patterns form semicolon-separated string to list
+    example usage: thefiles = list(all_files('/tmp', '*.py;*.htm;*.html'))
+    """
+    patterns = patterns.split(';')
+
+    for path, subdirs, files in os.walk(root):
+        if yield_folders:
+            files.extend(subdirs)
+
+        files.sort()
+
+        for name in files:
+            for pattern in patterns:
+                if fnmatch.fnmatch(name, pattern):
+                    yield os.path.join(path, name)
+                    break
+
+        if single_level:
+            break
 
 class Command(CalAccessCommand):
     """
@@ -104,7 +67,7 @@ class Command(CalAccessCommand):
     Microsoft SQL Server
     """
     option_list = CalAccessCommand.option_list + custom_options
-    connection_path = (
+    conn_path = (
         'Driver=%s;Server=%s;port=%s;uid=%s;pwd=%s;database=%s;autocommit=1'
     ) % (
         settings.SQL_SERVER_DRIVER,
@@ -115,106 +78,116 @@ class Command(CalAccessCommand):
         settings.SQL_SERVER_DATABASE
     )
 
-    connection = pypyodbc.connect(connection_path)
+    conn = pypyodbc.connect(conn_path)
+    cursor = conn.cursor()
+    app = AppCommand()
 
-    cursor = connection.cursor()
+    def set_options(self, *args, **kwargs):
+        self.data_dir = os.path.join(
+            settings.BASE_DIR, 'data')
+        os.path.exists(self.data_dir) or os.mkdir(self.data_dir)
 
-    def handle(self, *args, **options):
-        sql_contributions = '''
-            CREATE TABLE [dbo].[new_contributions] (
-                [amount] decimal(14,2),
-                [filing_id] int,
-                [committee_name] nvarchar(600),
-                [cycle] int,
-                [date_received] date,
-                [contributor_first_name] nvarchar(255),
-                [contributor_last_name] nvarchar(600),
-                [contributor_full_name] nvarchar(50),
-                [contributor_occupation] nvarchar(50),
-                [contributor_employer] nvarchar(60),
-                [contributor_address_1] nvarchar(55),
-                [contributor_address_2] nvarchar(55),
-                [contributor_city] nvarchar(50),
-                [contributor_state] nvarchar(90),
-                [contributor_zipcode] nvarchar(200)
-        )
-        '''
+    def generate_table_schema(self, model_name):
+        """
+        Take Expenditure, Contribution or Summary models; grab their db schema,
+        and create MS SQL Server compatible schema
+        """
+        self.log('  Creating database schema for {} ...'.format(model_name))
+        style = self.app.style
+        today = datetime.datetime.today()
 
-        sql_expenditures = '''
-            CREATE TABLE [dbo].[new_expenditures] (
-                [amount] decimal(14,2),
-                [filing_id] int,
-                [committee_name] nvarchar(600),
-                [cycle] int,
-                [date_received] date,
-                [payee_first_name] nvarchar(255),
-                [payee_last_name] nvarchar(600),
-                [payee_full_name] nvarchar(50),
-                [payee_occupation] nvarchar(50),
-                [payee_employer] nvarchar(60),
-                [payee_address_1] nvarchar(55),
-                [payee_address_2] nvarchar(55),
-                [payee_city] nvarchar(50),
-                [payee_state] nvarchar(90),
-                [payee_zipcode] nvarchar(200)
-            )
-        '''
+        model = get_model('calaccess_campaign_browser', model_name)
 
-        if options['contributions']:
-            self.construct_tables('contributions', sql_contributions)
+        table_name = 'dbo.{}'.format(model._meta.db_table)
 
-            self.load_tables('contributions')
-        if options['expenditures']:
-            self.construct_tables('expenditures', sql_expenditures)
+        fieldnames = [f.name for f in model._meta.fields] + [
+            'committee_name', 'filer_name', 'filer_id', 'filer_id_raw']
 
-            self.load_tables('expenditures')
+        raw_statement = connection.creation\
+            .sql_create_model(model, style)[0][0]
 
-    def construct_tables(self, table_name, query):
-        drop_path = "IF object_id('dbo.new_%s') \
-        IS NOT NULL DROP TABLE new_%s" % (table_name, table_name)
+        # http://stackoverflow.com/a/14693789/868724
+        ansi_escape = re.compile(r'\x1b[^m]*m')
+        strip_ansi_statement = (ansi_escape.sub('', raw_statement))
+        statement = strip_ansi_statement.replace('\n', '')\
+            .replace('`','')\
+            .replace('bool', 'bit')\
+            .replace(' AUTO_INCREMENT', '')\
+            .replace(model._meta.db_table, table_name)\
+            .replace('NOT NULL', '')
+
+        statement = """{}, committee_name varchar(255),\
+            filer_name varchar(255), filer_id integer,\
+            filer_id_raw integer );""".format(statement[:-3])
+
+        self.construct_table(model_name, table_name, statement)
+
+    def construct_table(self, model_name, table_name, query):
+        """
+        Create matching MS SQL Server database table
+        """
+        statement = str(query)
+        self.log('  Creating {} table ...'.format(table_name))
+        drop_path = "IF object_id('{}') IS NOT NULL DROP TABLE {}".format(
+            table_name, table_name)
 
         self.cursor.execute(drop_path)
-
-        self.cursor.execute(query)
-
+        self.cursor.execute(statement)
         self.cursor.commit()
 
-    def load_tables(self, table_name):
-        self.cursor.execute('DELETE FROM new_%s' % table_name)
-        # path to data dir
-        path = os.path.join(settings.BASE_DIR, 'data', '%s.csv') % table_name
-        infile = open(path)
+        self.success('    {} created'.format(table_name))
 
-        csv_reader = csv.reader(infile, delimiter=',')
+        self.load_table(table_name, model_name)
 
-        csv_reader.next()  # skip headers
+    def load_table(self, table_name, model_name):
+        """
+        Load Table with CSVs generated from `exportcalaccesscampaignbrowser`
+        See: https://msdn.microsoft.com/en-us/library/ms188609.aspx
+        """
+        self.log('  Loading table {} ...'.format(table_name))
+        all_csvs = list(all_files(self.data_dir, '*.csv'))
 
-        for line in csv_reader:
-            line = [l.replace("'", "''") for l in line]
+        csv_ = [f for f in all_csvs if fnmatch.fnmatch(f, '*-{}.csv'.format(
+            model_name))]
 
-            if table_name == 'contributions':
-                headers = ','.join(contributions_header.values())
-            elif table_name == 'expenditures':
-                headers = ','.join(expenditures_header.values())
-            else:
-                pass
+        if len(csv_) > 1:
+            self.log('  There are multiple files matching {}'.format(
+                model_name))
+            self.log('  We only support one match at the moment. Sorry!')
 
-            insert_sql = '''
-                INSERT INTO new_%s(%s)
-                VALUES ('%s', '%s', '%s', '%s', '%s', \
-                    '%s', '%s', '%s', '%s', '%s', '%s', \
-                    '%s', '%s', '%s', '%s')
-            '''.format(
-                table_name, headers, line[0].strip(), line[1].strip(),
-                line[2].strip(), line[3].strip(), line[4].strip(),
-                line[5].strip(), line[6].strip(), line[7].strip(),
-                line[8].strip(), line[9].strip(), line[10].strip(),
-                line[11].strip(), line[12].strip(), line[13].strip(),
-                line[14].strip()
-            )
+            raise NotImplementedError
 
-            self.cursor.execute(insert_sql)
-            print csv_reader.line_num
+        with open(csv_[0]) as csvfile:
+            reader = csv.reader(csvfile, delimiter='\t')
+            reader.next()  # skip headers
 
-        infile.close()
-        self.cursor.commit()
+            for row in reader:
+                # Remove none values and turn booleans into bit type
+                row = [r.replace('"', '') for r in row]
+                row = [r.replace('None', '') for r in row]
+                row = [r.replace('True', '0') for r in row]
+                row = [r.replace('False', '1') for r in row]
+
+                sql = """INSERT INTO {} VALUES {};""".format(
+                    table_name, tuple(row))
+
+                try:
+                    self.cursor.execute(sql)
+                    self.log('      loading {} ID:{} ...'.format(
+                        model_name, row[0]))
+                except pypyodbc.Error, e:
+                    debugger()
+
+            self.cursor.commit()
+            self.success('    Loaded {} with data from {}'.format(
+                table_name, os.path.split(csv_[0])[1]))
+
+    def handle(self, *args, **options):
+        self.header('Importing models ...')
+        self.set_options(*args, **options)
+
+        if options['contributions']:
+            self.generate_table_schema('contribution')
+
+        if options['expenditures']:
+            self.generate_table_schema('expenditure')
