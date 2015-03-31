@@ -77,7 +77,7 @@ class Command(CalAccessCommand):
         self.header('  Exporting {} model ...'.format(model_name.capitalize()))
 
         with open(filepath, 'wb') as csvfile:
-            writer = csv.writer(csvfile, delimiter=",")
+            writer = csv.writer(csvfile, delimiter="\t")
             writer.writerow(fieldnames)
 
             if model_name != 'summary':

@@ -26,6 +26,7 @@ Documentation
    models
    howtocontribute
    exportingthedata
+   sqlserver
    changelog
 
 Open-source resources
