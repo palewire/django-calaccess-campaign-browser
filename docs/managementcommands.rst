@@ -13,7 +13,7 @@ update the database.
 
 .. code-block:: bash
 
-    Usage: example/manage.py buildcalaccesscampaignbrowser [options] 
+    Usage: example/manage.py buildcalaccesscampaignbrowser [options]
 
     Transforms and loads refined data from raw CAL-ACCESS source files
 
@@ -65,7 +65,7 @@ loadcalaccesscampaignexpenditures
 
 .. code-block:: bash
 
-    Usage: example/manage.py loadcalaccesscampaignexpenditures [options] 
+    Usage: example/manage.py loadcalaccesscampaignexpenditures [options]
 
     Load refined campaign expenditures from CAL-ACCESS raw data
 
@@ -91,7 +91,7 @@ loadcalaccesscampaignfilers
 
 .. code-block:: bash
 
-    Usage: example/manage.py loadcalaccesscampaignfilers [options] 
+    Usage: example/manage.py loadcalaccesscampaignfilers [options]
 
     Load refined CAL-ACCESS campaign filers and committees
 
@@ -117,7 +117,7 @@ loadcalaccesscampaignfilings
 
 .. code-block:: bash
 
-    Usage: example/manage.py loadcalaccesscampaignfilings [options] 
+    Usage: example/manage.py loadcalaccesscampaignfilings [options]
 
     Load refined CAL-ACCESS campaign filings
 
@@ -144,7 +144,7 @@ loadcalaccesscampaignsummaries
 
 .. code-block:: bash
 
-    Usage: example/manage.py loadcalaccesscampaignsummaries [options] 
+    Usage: example/manage.py loadcalaccesscampaignsummaries [options]
 
     Load refined CAL-ACCESS campaign filing summaries
 
@@ -173,7 +173,7 @@ exportcalaccesscampaignbrowser
 
 .. code-block:: bash
 
-    Usage: example/manage.py exportcalaccesscampaignbrowser [options] 
+    Usage: example/manage.py exportcalaccesscampaignbrowser [options]
 
     Export refined CAL-ACCESS campaign browser data as CSV files
 
@@ -205,7 +205,7 @@ scrapecalaccesscampaigncandidates
 
 .. code-block:: bash
 
-    Usage: example/manage.py scrapecalaccesscampaigncandidates [options] 
+    Usage: example/manage.py scrapecalaccesscampaigncandidates [options]
 
     Scrape links between filers and elections from the CAL-ACCESS site
 
@@ -231,7 +231,7 @@ scrapecalaccesscampaignpropositions
 
 .. code-block:: bash
 
-    Usage: example/manage.py scrapecalaccesscampaignpropositions [options] 
+    Usage: example/manage.py scrapecalaccesscampaignpropositions [options]
 
     Scrape links between filers and propositions from the CAL-ACCESS site
 
@@ -257,7 +257,7 @@ scrapecalaccesscampaignelectiondates
 
 .. code-block:: bash
 
-    Usage: example/manage.py scrapecalaccesscampaignelectiondates [options] 
+    Usage: example/manage.py scrapecalaccesscampaignelectiondates [options]
 
     Scrape election dates from the Secretary of State's site
 
@@ -286,7 +286,7 @@ dropcalaccesscampaignbrowser
 
 .. code-block:: bash
 
-    Usage: example/manage.py dropcalaccesscampaignbrowser [options] 
+    Usage: example/manage.py dropcalaccesscampaignbrowser [options]
 
     Drops all CAL-ACCESS campaign browser database tables
 
@@ -312,7 +312,7 @@ flushcalaccesscampaignbrowser
 
 .. code-block:: bash
 
-    Usage: example/manage.py flushcalaccesscampaignbrowser [options] 
+    Usage: example/manage.py flushcalaccesscampaignbrowser [options]
 
     Flush CAL-ACCESS campaign browser database tables
 

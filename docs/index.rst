@@ -25,6 +25,7 @@ Documentation
    managementcommands
    models
    howtocontribute
+   exportingthedata
    changelog
 
 Open-source resources
