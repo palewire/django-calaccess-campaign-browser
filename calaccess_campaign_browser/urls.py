@@ -6,9 +6,20 @@ from calaccess_campaign_browser import views
 from calaccess_campaign_browser.views import search
 from django.views.generic import TemplateView
 
+# Set up the endpoints for the REST service.
+#
+# Usage:
+#
+#    http://<hostname>:<port>//api/v1/
+#    http://<hostname>:<port>//api/v1/filer/
+#    http://<hostname>:<port>//api/v1/filing/?filing_id_raw=1852192'
+#
 v1_api = Api(api_name='v1')
 v1_api.register(FilerResource())
+v1_api.register(FilingResource())
 
+# Set up the endpoints for the web application.
+#
 urlpatterns = patterns(
     '',
     url(r'^$', RedirectView.as_view(url='/latest/', permanent=False)),
