@@ -1,7 +1,7 @@
 from django.conf.urls import patterns, include, url
 from tastypie.api import Api
 from django.views.generic.base import RedirectView
-from calaccess_campaign_browser.api import FilerResource
+from calaccess_campaign_browser.api import FilerResource, FilingResource
 from calaccess_campaign_browser import views
 from calaccess_campaign_browser.views import search
 from django.views.generic import TemplateView
