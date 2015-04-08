@@ -3,6 +3,7 @@ python:
  - "2.7"
 env:
  - DJANGO_VERSION=1.7.3
+ - DJANGO_VERSION=1.8
 install:
  - pip install pep8 pyflakes coverage python-coveralls
  - pip install -q Django==$DJANGO_VERSION
