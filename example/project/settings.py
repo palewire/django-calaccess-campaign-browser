@@ -27,6 +27,7 @@ INSTALLED_APPS = (
     'django.contrib.humanize',
     'calaccess_raw',
     'calaccess_campaign_browser',
+    'toolbox',
 )
 
 MIDDLEWARE_CLASSES = (
