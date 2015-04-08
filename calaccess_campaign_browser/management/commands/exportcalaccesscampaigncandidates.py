@@ -1,4 +1,3 @@
-import os
 from csvkit import CSVKitWriter
 from django.db import connection
 from calaccess_campaign_browser import models
