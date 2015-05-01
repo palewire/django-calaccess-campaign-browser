@@ -7,7 +7,7 @@ from elections import (
     PropositionFiler
 )
 from expenditures import Expenditure
-from filers import Filer, Committee
+from filers import Filer, Committee, Name, Identity
 from filings import Filing, Cycle, FilingPeriod, Summary
 
 __all__ = (
@@ -23,5 +23,7 @@ __all__ = (
     'Filing',
     'Cycle',
     'FilingPeriod',
-    'Summary'
+    'Summary',
+    'Name',
+    'Identity'
 )

@@ -92,6 +92,43 @@ class Filer(AllCapsNameMixin):
         ])
 
 
+class Name(AllCapsNameMixin):
+    """
+    Something that is named, with the key to link the name back to the
+    originating table. From this we may be able to derive identities and
+    disambiguate names found in the filings.
+    """
+    ext_pk = models.IntegerField(db_index=True)
+    ext_table = models.CharField(max_length=255)
+    ext_prefix = models.CharField(max_length=255)
+    naml = models.CharField(max_length=255, null=True)
+    namf = models.CharField(max_length=255, null=True)
+    nams = models.CharField(max_length=255, null=True)
+    namt = models.CharField(max_length=255, null=True)
+    name = models.CharField(max_length=1023, null=True)
+    prob_people = models.NullBooleanField(
+        help_text='Identified as probably a person by the library at \
+https://github.com/datamade/probablepeople'
+    )
+    identity_id = models.IntegerField(db_index=True)
+
+    class Meta:
+        app_label = 'calaccess_campaign_browser'
+
+    def __unicode__(self):
+        return unicode(self.name)
+
+
+class Identity(AllCapsNameMixin):
+    name = models.CharField(max_length=1023)
+
+    class Meta:
+        app_label = 'calaccess_campaign_browser'
+
+    def __unicode__(self):
+        return unicode(self.name)
+
+
 class Committee(AllCapsNameMixin):
     """
     If a Candidate controls the committee, the filer is associated with the
