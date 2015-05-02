@@ -29,12 +29,12 @@ class Command(CalAccessCommand):
         """
         self.header("Loading filings")
         # Ignore MySQL warnings so this can be run with DEBUG=True
-        warnings.filterwarnings("ignore", category=MySQLdb.Warning)
-        if options['flush']:
-            self.flush()
-        self.load_periods()
-        self.load_filings()
-        self.mark_duplicates()
+        #warnings.filterwarnings("ignore", category=MySQLdb.Warning)
+        #if options['flush']:
+        #    self.flush()
+        #self.load_periods()
+        #self.load_filings()
+        #self.mark_duplicates()
         self.find_high_amendments()
 
     def load_periods(self):
@@ -232,8 +232,8 @@ class Command(CalAccessCommand):
         c = connection.cursor()
 
         sql = """
-            insert calaccess_campaign_browser_filingamendment (filing_id_raw)
-            select filing_id from FILER_FILINGS_CD;
+            insert into calaccess_campaign_browser_filingamendment (filing_id_raw, ff_amend_id)
+            select FILING_ID, max(FILING_SEQUENCE) from FILER_FILINGS_CD group by FILING_ID;
         """
 
         c.execute(sql)
@@ -246,10 +246,10 @@ class Command(CalAccessCommand):
 
             sql = """
                 update calaccess_campaign_browser_filingamendment fa1, %s t1
-                set fa1.amend_id = t1.amend_id
+                set fa1.other_amend_id = t1.amend_id
                 where
                    fa1.filing_id_raw = t1.filing_id and
-                   (fa1.amend_id is NULL or fa1.amend_id < t1.amend_id);
+                   (fa1.other_amend_id is NULL or fa1.other_amend_id < t1.amend_id);
             """ % table
 
             c.execute(sql)

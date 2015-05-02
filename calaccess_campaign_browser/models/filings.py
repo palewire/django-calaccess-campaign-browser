@@ -152,7 +152,8 @@ or was filed unnecessarily. Should be excluded from most analysis."
 
 class FilingAmendment(models.Model):
     filing_id_raw = models.IntegerField('filing ID', db_index=True)
-    amend_id = models.IntegerField('amendment', db_index=True, null=True)
+    ff_amend_id = models.IntegerField('filerFiling Amendment', db_index=True, null=True)
+    other_amend_id = models.IntegerField('others Amendment', db_index=True, null=True)
 
     class Meta:
         verbose_name_plural = "filingAmendments"
