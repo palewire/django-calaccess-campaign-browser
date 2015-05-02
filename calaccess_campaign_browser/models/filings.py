@@ -150,6 +150,15 @@ or was filed unnecessarily. Should be excluded from most analysis."
             ).aggregate(total=Sum('amount'))['total']
 
 
+class FilingAmendment(models.Model):
+    filing_id_raw = models.IntegerField('filing ID', db_index=True)
+    amend_id = models.IntegerField('amendment', db_index=True, null=True)
+
+    class Meta:
+        verbose_name_plural = "filingAmendments"
+        app_label = 'calaccess_campaign_browser'
+
+
 class Summary(BaseModel):
     """
     A set of summary totals provided by a filing's cover sheet.
