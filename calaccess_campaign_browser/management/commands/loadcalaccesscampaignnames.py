@@ -4,6 +4,7 @@ from django.db.models import get_model
 from django.db.utils import OperationalError
 from django.core.management.base import LabelCommand
 from calaccess_campaign_browser.management.commands import CalAccessCommand
+import sys
 
 
 def concat_stm(pref, idxs):
@@ -82,6 +83,13 @@ class Command(CalAccessCommand):
             dest="pre_delete",
             help="Delete values from tables being processed before processing."
         ),
+        make_option(
+            '--only-identities',
+            dest="only_identities",
+            action="store_true",
+            default=False,
+            help="If the Names table is already filled out, only find Identity linkages"
+        ),
     )
 
     def handle(self, *args, **options):
@@ -89,6 +97,7 @@ class Command(CalAccessCommand):
 
         only_tables = options['only_tables']
         pre_delete = options['pre_delete']
+        process_names = not options['only_identities']
 
         # TODO: get this dict automatically by iterating through
         # the tables, finding columns that end in '_NAML' and getting
@@ -121,6 +130,8 @@ class Command(CalAccessCommand):
             ('S497Cd', ['enty', 'cand']),
             ('S498Cd', ['payor', 'cand'])])
 
+        # First, take the names out of all the tables to the one.
+        #
         tables = prefixes.keys()
 
         if only_tables is not None:
@@ -128,51 +139,22 @@ class Command(CalAccessCommand):
 
         self.success('    tables: %s' % tables)
 
-        tables_left = tables;
+        if process_names:
 
-        for table in tables:
+            tables_left = tables;
 
-            target_table = str(get_model('calaccess_campaign_browser', 'Name')._meta.db_table)
-            big_table = str(get_model('calaccess_raw', table)._meta.db_table)
+            for table in tables:
 
-            self.success('    table %s: %s' % (table, prefixes[table]))
+                target_table = str(get_model('calaccess_campaign_browser', 'Name')._meta.db_table)
+                big_table = str(get_model('calaccess_raw', table)._meta.db_table)
 
-            c = connection.cursor()
+                self.success('    table %s: %s' % (table, prefixes[table]))
 
-            if pre_delete:
-                sql = "delete from %s where ext_table = '%s'" % (target_table, table)
+                c = connection.cursor()
 
-                try:
-                    c.execute(sql)
-                except OperationalError:
-                    self.failure('BAD SQL: %s' % sql)
-                    self.failure('tables left: %s' % tables_left)
-                    exit()
+                if pre_delete:
+                    sql = "delete from %s where ext_table = '%s'" % (target_table, table)
 
-            for prefix in prefixes[table]:
-                self.success('    current prefix: %s' % prefix)
-
-                prefix = prefix.upper()
-
-                for indexes in indexes_list:
-                    sql = """
-                        insert into %s
-                        (ext_pk, ext_table, ext_prefix, namt, namf, naml, nams, name)
-                        select id, '%s', '%s', %s_NAMT, %s_NAMF, %s_NAML, %s_NAMS,
-                               %s
-                        from %s
-                        where %s
-                        """ % (target_table,
-                               table,
-                               prefix.lower(),
-                               prefix, prefix, prefix, prefix,
-                               concat_stm(prefix,indexes),
-                               big_table,
-                               where_stm(prefix,indexes))
-                        
-                    sql = despace(sql).strip()
-
-                    self.success('      %s' % indexes)
                     try:
                         c.execute(sql)
                     except OperationalError:
@@ -180,6 +162,97 @@ class Command(CalAccessCommand):
                         self.failure('tables left: %s' % tables_left)
                         exit()
 
+                for prefix in prefixes[table]:
+                    self.success('    current prefix: %s' % prefix)
+
+                    prefix = prefix.upper()
+
+                    for indexes in indexes_list:
+                        sql = """
+                            insert into %s
+                            (ext_pk, ext_table, ext_prefix, namt, namf, naml, nams, name)
+                            select id, '%s', '%s', %s_NAMT, %s_NAMF, %s_NAML, %s_NAMS,
+                                   %s
+                            from %s
+                            where %s
+                            """ % (target_table,
+                                   table,
+                                   prefix.lower(),
+                                   prefix, prefix, prefix, prefix,
+                                   concat_stm(prefix,indexes),
+                                   big_table,
+                                   where_stm(prefix,indexes))
+
+                        sql = despace(sql).strip()
+
+                        self.success('      %s' % indexes)
+                        try:
+                            c.execute(sql)
+                        except OperationalError:
+                            self.failure('BAD SQL: %s' % sql)
+                            self.failure('tables left: %s' % tables_left)
+                            exit()
+
+                tables_left.remove(table)
+
+                c.close()
+
+            # This actually does not take more than a few minutes.
+            #
+            sql = """
+                insert into calaccess_campaign_browser_identity (name) select distinct(name) from calaccess_campaign_browser_name
+            """
+
+            c = connection.cursor()
+            c.execute(sql)
             c.close()
 
-            tables_left.remove(table)
+        # Done processing names
+
+        dotted = 0
+
+        while True:
+
+            try:
+                sql = """
+                    select distinct(name) from calaccess_campaign_browser_name where identity_id is NULL limit 10
+                """
+
+                c = connection.cursor()
+
+                c.execute(sql)
+
+                rows = c.fetchall()
+
+                if len(rows) == 0:
+                    print ''
+                    break
+
+                for row in rows:
+                    name = row[0].replace("'", "''")
+                    sql = """
+                        select id from calaccess_campaign_browser_identity where name = '%s'
+                    """ % name
+                    c.execute(sql)
+                    id = c.fetchone()
+                    # print 'id = "%s"' % id[0]
+
+                    sql = """
+                        update calaccess_campaign_browser_name set identity_id = %s where name = '%s'
+                    """ % (id[0], name)
+
+                    # print sql
+                    sys.stdout.write('.')
+                    sys.stdout.flush()
+                    dotted = dotted + 1
+                    if dotted > 100:
+                        dotted = 0
+                        print ''
+                    c.execute(sql)
+
+            except KeyboardInterrupt:
+                print '\nok! taking a break'
+                c.close()
+                exit()
+
+            c.close()
