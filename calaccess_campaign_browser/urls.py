@@ -4,6 +4,7 @@ from django.views.generic.base import RedirectView
 from calaccess_campaign_browser.api import FilerResource, FilingResource
 from calaccess_campaign_browser import views
 from calaccess_campaign_browser.views import search
+from calaccess_campaign_browser.views import identities
 from django.views.generic import TemplateView
 
 # Set up the endpoints for the REST service.
@@ -88,6 +89,16 @@ urlpatterns = patterns(
         r'^parties/$',
         views.PartyListView.as_view(),
         name='party_list'
+    ),
+    url(
+        r'^identities/$',
+        identities.IdentitiesList.as_view(),
+        name='identities-list'
+    ),
+    url(
+        r'^identities/identities-by-name/$',
+        identities.search_identities_by_name,
+        name='search-identities-by-name'
     ),
 
     # API
