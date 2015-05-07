@@ -1,6 +1,9 @@
+import MySQLdb
+import warnings
 from django.db import connection
 from django.db.models import get_model
 from optparse import make_option
+from calaccess_raw import get_model_list
 from calaccess_campaign_browser.models import Filing, FilingPeriod
 from calaccess_campaign_browser.models import FilingAmendment
 from calaccess_campaign_browser.management.commands import CalAccessCommand
@@ -27,7 +30,7 @@ class Command(CalAccessCommand):
         """
         self.header("Loading filings")
         # Ignore MySQL warnings so this can be run with DEBUG=True
-        # warnings.filterwarnings("ignore", category=MySQLdb.Warning)
+        warnings.filterwarnings("ignore", category=MySQLdb.Warning)
         if options['flush']:
             self.flush()
         self.load_periods()
@@ -188,44 +191,15 @@ class Command(CalAccessCommand):
     def find_high_amendments(self):
         self.log(' Finding high amend_id values')
 
-        # TODO I _really_ need to get better at iterating through
-        # the models for these things instead of cons-ing up
-        # the lists myself.
+        amendeds = []
+
+        # Get the list of tables that have an amend_id field.
         #
-        amendeds = [
-            'CvrCampaignDisclosureCd',
-            'CvrE530Cd',
-            'CvrLobbyDisclosureCd',
-            'CvrRegistrationCd',
-            'CvrSoCd',
-            'Cvr2CampaignDisclosureCd',
-            'Cvr2LobbyDisclosureCd',
-            'Cvr2RegistrationCd',
-            'Cvr2SoCd',
-            'Cvr3VerificationInfoCd',
-            'DebtCd',
-            'ExpnCd',
-            'F495P2Cd',
-            'F501502Cd',
-            'F690P2Cd',
-            'HdrCd',
-            'LattCd',
-            'LccmCd',
-            'LempCd',
-            'LexpCd',
-            'LoanCd',
-            'LobbyAmendmentsCd',
-            'LothCd',
-            'LpayCd',
-            'RcptCd',
-            'S401Cd',
-            'S496Cd',
-            'S497Cd',
-            'S498Cd',
-            'SmryCd',
-            'SpltCd',
-            'TextMemoCd'
-        ]
+        for m in get_model_list():
+            if m.__name__.endswith('Cd'):
+                for f in m._meta.get_all_field_names():
+                    if f == 'amend_id':
+                        amendeds.append(m.__name__)
 
         c = connection.cursor()
 

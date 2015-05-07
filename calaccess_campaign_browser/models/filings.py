@@ -162,6 +162,7 @@ class FilingAmendment(models.Model):
     class Meta:
         verbose_name_plural = "filingAmendments"
         app_label = 'calaccess_campaign_browser'
+        db_table = 'filing_amendment'
 
 
 class Summary(BaseModel):
