@@ -29,7 +29,7 @@ class Command(CalAccessCommand):
         # Ignore MySQL warnings so this can be run with DEBUG=True
         # warnings.filterwarnings("ignore", category=MySQLdb.Warning)
         if options['flush']:
-           self.flush()
+            self.flush()
         self.load_periods()
         self.load_filings()
         self.mark_duplicates()
