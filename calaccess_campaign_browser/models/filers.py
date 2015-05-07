@@ -141,7 +141,8 @@ class IdentityRelate(AllCapsNameMixin):
     The first one implemented is the 'is synonym for' relation. For example:
         'Stewart Resnick' -> is synonym for -> 'Stewart A. Resnick'
         'Steward Resnick' -> is synonym for -> 'Stewart A. Resnick' (sp err?)
-        'Stewart A. Resnick & Paramount Farming Company LLC' -> is synonym for -> 'Stewart A. Resnick'
+        'Stewart A. Resnick & Paramount Farming Company LLC'
+            -> is synonym for -> 'Stewart A. Resnick'
 
     Other examples of relation types that can be created are:
         personId -> 'is on the Board of' -> orgId

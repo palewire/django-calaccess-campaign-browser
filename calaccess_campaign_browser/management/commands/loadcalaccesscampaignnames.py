@@ -51,21 +51,21 @@ def despace(str):
 # from 1 to 15 in binary.
 #
 indexes_list = [
-    [0,0,0,1],
-    [0,0,1,0],
-    [0,0,1,1],
-    [0,1,0,0],
-    [0,1,0,1],
-    [0,1,1,0],
-    [0,1,1,1],
-    [1,0,0,0],
-    [1,0,0,1],
-    [1,0,1,0],
-    [1,0,1,1],
-    [1,1,0,0],
-    [1,1,0,1],
-    [1,1,1,0],
-    [1,1,1,1]
+    [0, 0, 0, 1],
+    [0, 0, 1, 0],
+    [0, 0, 1, 1],
+    [0, 1, 0, 0],
+    [0, 1, 0, 1],
+    [0, 1, 1, 0],
+    [0, 1, 1, 1],
+    [1, 0, 0, 0],
+    [1, 0, 0, 1],
+    [1, 0, 1, 0],
+    [1, 0, 1, 1],
+    [1, 1, 0, 0],
+    [1, 1, 0, 1],
+    [1, 1, 1, 0],
+    [1, 1, 1, 1]
 ]
 
 
@@ -88,14 +88,22 @@ class Command(CalAccessCommand):
             dest="only_identities",
             action="store_true",
             default=False,
-            help="If the Names table is already filled out, only find Identity linkages"
+            help="If the Names table is already filled out, \
+only find Identity linkages"
         ),
     )
+
+    def selectedTables(self):
+        if self.options['only_tables'] is not None:
+            all = set(self.tables)
+            selected = set(self.only_tables.split(','))
+            return list(all.intersection(selected))
+        else:
+            return self.tables
 
     def handle(self, *args, **options):
         self.header("Loading names")
 
-        only_tables = options['only_tables']
         pre_delete = options['pre_delete']
         process_names = not options['only_identities']
 
@@ -134,26 +142,29 @@ class Command(CalAccessCommand):
         #
         tables = prefixes.keys()
 
-        if only_tables is not None:
-            tables = list(set(tables).intersection(set(only_tables.split(','))))
-
-        self.success('    tables: %s' % tables)
+        self.success('    tables: %s' % self.selectedTables())
 
         if process_names:
 
-            tables_left = tables;
+            tables_left = tables
 
-            for table in tables:
+            for table in self.selectedTables():
 
-                target_table = str(get_model('calaccess_campaign_browser', 'Name')._meta.db_table)
-                big_table = str(get_model('calaccess_raw', table)._meta.db_table)
+                target_table = str(
+                    get_model('calaccess_campaign_browser', 'Name').
+                    db_table
+                )
+
+                big_table = str(
+                    get_model('calaccess_raw', table)._meta.db_table)
 
                 self.success('    table %s: %s' % (table, prefixes[table]))
 
                 c = connection.cursor()
 
                 if pre_delete:
-                    sql = "delete from %s where ext_table = '%s'" % (target_table, table)
+                    sql = "delete from %s where ext_table = '%s'" % (
+                        target_table, table)
 
                     try:
                         c.execute(sql)
@@ -170,8 +181,10 @@ class Command(CalAccessCommand):
                     for indexes in indexes_list:
                         sql = """
                             insert into %s
-                            (ext_pk, ext_table, ext_prefix, namt, namf, naml, nams, name)
-                            select id, '%s', '%s', %s_NAMT, %s_NAMF, %s_NAML, %s_NAMS,
+                            (ext_pk, ext_table, ext_prefix,
+                             namt, namf, naml, nams, name)
+                            select id, '%s', '%s',
+                                   %s_NAMT, %s_NAMF, %s_NAML, %s_NAMS,
                                    %s
                             from %s
                             where %s
@@ -179,9 +192,9 @@ class Command(CalAccessCommand):
                                    table,
                                    prefix.lower(),
                                    prefix, prefix, prefix, prefix,
-                                   concat_stm(prefix,indexes),
+                                   concat_stm(prefix, indexes),
                                    big_table,
-                                   where_stm(prefix,indexes))
+                                   where_stm(prefix, indexes))
 
                         sql = despace(sql).strip()
 
@@ -200,7 +213,8 @@ class Command(CalAccessCommand):
             # This actually does not take more than a few minutes.
             #
             sql = """
-                insert into calaccess_campaign_browser_identity (name) select distinct(name) from calaccess_campaign_browser_name
+                insert into calaccess_campaign_browser_identity (name)
+                select distinct(name) from calaccess_campaign_browser_name
             """
 
             c = connection.cursor()
@@ -215,7 +229,8 @@ class Command(CalAccessCommand):
 
             try:
                 sql = """
-                    select distinct(name) from calaccess_campaign_browser_name where identity_id is NULL limit 10
+                    select distinct(name) from calaccess_campaign_browser_name
+                    where identity_id is NULL limit 10
                 """
 
                 c = connection.cursor()
@@ -231,14 +246,16 @@ class Command(CalAccessCommand):
                 for row in rows:
                     name = row[0].replace("'", "''")
                     sql = """
-                        select id from calaccess_campaign_browser_identity where name = '%s'
+                        select id from calaccess_campaign_browser_identity
+                        where name = '%s'
                     """ % name
                     c.execute(sql)
                     id = c.fetchone()
                     # print 'id = "%s"' % id[0]
 
                     sql = """
-                        update calaccess_campaign_browser_name set identity_id = %s where name = '%s'
+                        update calaccess_campaign_browser_name
+                        set identity_id = %s where name = '%s'
                     """ % (id[0], name)
 
                     # print sql
