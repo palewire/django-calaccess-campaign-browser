@@ -1,8 +1,11 @@
 import MySQLdb
 import warnings
 from django.db import connection
+from django.db.models import get_model
 from optparse import make_option
+from calaccess_raw import get_model_list
 from calaccess_campaign_browser.models import Filing, FilingPeriod
+from calaccess_campaign_browser.models import FilingAmendment
 from calaccess_campaign_browser.management.commands import CalAccessCommand
 
 
@@ -33,6 +36,7 @@ class Command(CalAccessCommand):
         self.load_periods()
         self.load_filings()
         self.mark_duplicates()
+        self.find_high_amendments()
 
     def load_periods(self):
         self.log(" Loading filing periods")
@@ -64,10 +68,16 @@ class Command(CalAccessCommand):
         c = connection.cursor()
         c.execute("""SET @OLD_SQL_NOTES=@@SQL_NOTES, SQL_NOTES=0;""")
         c.execute("""SET FOREIGN_KEY_CHECKS = 0;""")
+
         sql = """TRUNCATE `%s`;""" % (FilingPeriod._meta.db_table)
         c.execute(sql)
+
         sql = """TRUNCATE `%s`;""" % (Filing._meta.db_table)
         c.execute(sql)
+
+        sql = """TRUNCATE `%s`;""" % (FilingAmendment._meta.db_table)
+        c.execute(sql)
+
         c.execute("""SET SQL_NOTES=@OLD_SQL_NOTES;""")
         c.execute("""SET FOREIGN_KEY_CHECKS = 1;""")
 
@@ -177,3 +187,50 @@ class Command(CalAccessCommand):
 
         # And then anything without a period should go down as a dupe too
         Filing.objects.filter(period_id=None).update(is_duplicate=True)
+
+    def find_high_amendments(self):
+        self.log(' Finding high amend_id values')
+
+        amendeds = []
+
+        # Get the list of tables that have an amend_id field.
+        #
+        for m in get_model_list():
+            if m.__name__.endswith('Cd'):
+                for f in m._meta.get_all_field_names():
+                    if f == 'amend_id':
+                        amendeds.append(m.__name__)
+
+        c = connection.cursor()
+
+        sql = """
+            insert into calaccess_campaign_browser_filingamendment
+            (filing_id_raw, ff_amend_id)
+            select FILING_ID, max(FILING_SEQUENCE)
+            from FILER_FILINGS_CD group by FILING_ID;
+        """
+
+        c.execute(sql)
+
+        for amended in amendeds:
+
+            self.success('    %s...' % amended)
+
+            table = str(get_model('calaccess_raw', amended)._meta.db_table)
+
+            sql = """
+                update calaccess_campaign_browser_filingamendment fa1, %s t1
+                set fa1.other_amend_id = t1.amend_id
+                where
+                   fa1.filing_id_raw = t1.filing_id and
+                   (
+                       fa1.other_amend_id is NULL or
+                       fa1.other_amend_id < t1.amend_id
+                   );
+            """ % table
+
+            c.execute(sql)
+
+        self.success('    Ok')
+
+        c.close()
