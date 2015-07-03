@@ -347,7 +347,7 @@ class Command(CalAccessCommand):
                 '  ',
                 ' '
             ) as name,
-            tmp_max_filer_metadata.`party`
+            COALESCE(tmp_max_filer_metadata.`party`, '') as party
         FROM FILERNAME_CD as fn
         INNER JOIN tmp_max_other_filers as max
         ON fn.`id` = max.`max_id`

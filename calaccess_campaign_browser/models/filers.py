@@ -43,12 +43,10 @@ class Filer(AllCapsNameMixin):
         ('16002', 'Republican'),
         ('16001', 'Democratic'),
         ('0', 'N/A'),
-        ('', 'None'),
     )
     party = models.CharField(
         max_length=255,
         choices=PARTY_CHOICES,
-        default='',
     )
     STATUS_CHOICES = (
         ('A', 'Active'),
