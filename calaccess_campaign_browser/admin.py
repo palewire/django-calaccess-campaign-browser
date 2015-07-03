@@ -38,7 +38,6 @@ class FilingAdmin(BaseAdmin):
         "committee_short_name",
         "form_type",
         "cycle",
-        "period",
         "amend_id",
         "is_duplicate",
     )
