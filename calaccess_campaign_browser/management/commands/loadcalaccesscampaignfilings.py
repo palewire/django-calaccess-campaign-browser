@@ -2,7 +2,7 @@ import MySQLdb
 import warnings
 from django.db import connection
 from optparse import make_option
-from calaccess_campaign_browser.models import Filing, FilingPeriod
+from calaccess_campaign_browser.models import Filing
 from calaccess_campaign_browser.management.commands import CalAccessCommand
 
 
@@ -30,42 +30,14 @@ class Command(CalAccessCommand):
         warnings.filterwarnings("ignore", category=MySQLdb.Warning)
         if options['flush']:
             self.flush()
-        self.load_periods()
         self.load_filings()
         self.mark_duplicates()
 
-    def load_periods(self):
-        self.log(" Loading filing periods")
-        c = connection.cursor()
-        sql = """
-            INSERT INTO %(clean_table)s (
-                `period_id`,
-                `name`,
-                `start_date`,
-                `end_date`,
-                `deadline`
-            )
-            SELECT DISTINCT
-                p.`period_id`,
-                p.`period_desc`,
-                p.`start_date`,
-                p.`end_date`,
-                p.`deadline`
-            FROM FILING_PERIOD_CD as p
-            INNER JOIN FILER_FILINGS_CD as ff
-            ON p.period_id = ff.period_id
-            WHERE ff.`FORM_ID` IN ('F450', 'F460', 'F497')
-        """
-        sql = sql % dict(clean_table=FilingPeriod._meta.db_table)
-        c.execute(sql)
-
     def flush(self):
-        self.log(" Flushing filings and filing periods")
+        self.log(" Flushing filings")
         c = connection.cursor()
         c.execute("""SET @OLD_SQL_NOTES=@@SQL_NOTES, SQL_NOTES=0;""")
         c.execute("""SET FOREIGN_KEY_CHECKS = 0;""")
-        sql = """TRUNCATE `%s`;""" % (FilingPeriod._meta.db_table)
-        c.execute(sql)
         sql = """TRUNCATE `%s`;""" % (Filing._meta.db_table)
         c.execute(sql)
         c.execute("""SET SQL_NOTES=@OLD_SQL_NOTES;""")
@@ -81,7 +53,6 @@ class Command(CalAccessCommand):
           filing_id_raw,
           form_type,
           amend_id,
-          period_id,
           start_date,
           end_date,
           date_received,
@@ -94,7 +65,6 @@ class Command(CalAccessCommand):
           ff.FILING_ID as filing_id_raw,
           ff.form_id as form_type,
           ff.filing_sequence as amend_id,
-          ff.real_period_id as period_id,
           ff.rpt_start as start_date,
           ff.rpt_end as end_date,
           ff.rpt_date as date_received,
@@ -106,11 +76,7 @@ class Command(CalAccessCommand):
                 CASE
                     WHEN `session_id` %% 2 = 0 THEN `session_id`
                     ELSE `session_id` + 1
-                END as cycle,
-                CASE
-                    WHEN `period_id` = 0 THEN null
-                    ELSE `period_id`
-                END as real_period_id
+                END as cycle
             FROM FILER_FILINGS_CD
         ) as ff
         INNER JOIN calaccess_campaign_browser_committee as c
@@ -174,6 +140,3 @@ class Command(CalAccessCommand):
 
         sql = """DROP TABLE tmp_filing_max_dupes;"""
         c.execute(sql)
-
-        # And then anything without a period should go down as a dupe too
-        Filing.objects.filter(period_id=None).update(is_duplicate=True)

@@ -21,27 +21,6 @@ class Cycle(BaseModel):
         return unicode(self.name)
 
 
-class FilingPeriod(BaseModel):
-    """
-    A required quarterly reporting period for committees.
-    """
-    period_id = models.IntegerField(primary_key=True)
-    name = models.CharField(max_length=25, blank=True)
-    start_date = models.DateField()
-    end_date = models.DateField()
-    deadline = models.DateField()
-
-    class Meta:
-        ordering = ("-end_date",)
-        app_label = 'calaccess_campaign_browser'
-
-    def __unicode__(self):
-        return "%s - %s" % (
-            dateformat(self.start_date, "Y-m-d"),
-            dateformat(self.end_date, "Y-m-d"),
-        )
-
-
 class Filing(models.Model):
     cycle = models.ForeignKey('Cycle')
     committee = models.ForeignKey('Committee')
@@ -57,7 +36,6 @@ class Filing(models.Model):
         db_index=True,
         choices=FORM_TYPE_CHOICES
     )
-    period = models.ForeignKey('FilingPeriod', null=True)
     start_date = models.DateField(null=True)
     end_date = models.DateField(null=True)
     date_received = models.DateField(null=True)

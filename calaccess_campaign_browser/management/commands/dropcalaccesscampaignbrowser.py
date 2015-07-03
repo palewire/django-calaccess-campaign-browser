@@ -19,7 +19,6 @@ class Command(CalAccessCommand):
             models.Expenditure,
             models.Summary,
             models.Filing,
-            models.FilingPeriod,
             models.Committee,
             models.Filer,
             models.Cycle,
