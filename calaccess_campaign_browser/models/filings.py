@@ -3,7 +3,6 @@ from django.db import models
 from django.db.models import Sum
 from calaccess_campaign_browser import managers
 from calaccess_campaign_browser.utils.models import BaseModel
-from django.template.defaultfilters import date as dateformat
 from calaccess_campaign_browser.models import Contribution, Expenditure
 from calaccess_campaign_browser.templatetags.calaccesscampaignbrowser import (
     jsonify
