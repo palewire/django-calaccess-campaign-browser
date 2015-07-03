@@ -94,6 +94,136 @@ class Filer(AllCapsNameMixin):
         ])
 
 
+class Name(AllCapsNameMixin):
+    """
+    Something that is named, with the key to link the name back to the
+    originating table. From this we may be able to derive identities and
+    disambiguate names found in the filings.
+    """
+    ext_pk = models.IntegerField(db_index=True)
+    ext_table = models.CharField(max_length=255)
+    ext_prefix = models.CharField(max_length=255)
+    naml = models.CharField(max_length=255, null=True)
+    namf = models.CharField(max_length=255, null=True)
+    nams = models.CharField(max_length=255, null=True)
+    namt = models.CharField(max_length=255, null=True)
+    name = models.CharField(max_length=1023, null=True)
+    prob_people = models.NullBooleanField(
+        help_text='Identified as probably a person by the library at \
+https://github.com/datamade/probablepeople'
+    )
+    identity_id = models.IntegerField(db_index=True)
+
+    class Meta:
+        app_label = 'calaccess_campaign_browser'
+
+    def __unicode__(self):
+        return unicode(self.name)
+
+
+class Identity(AllCapsNameMixin):
+    name = models.CharField(max_length=1023)
+
+    class Meta:
+        app_label = 'calaccess_campaign_browser'
+
+    def __unicode__(self):
+        return unicode(self.name)
+
+
+class IdentityRelate(AllCapsNameMixin):
+    """
+    This relates two rows in the identity table to each other. There
+    is a direction set by the 'from_id' and 'to_id', but the significance
+    of this is determined by the relation type.
+
+    The relation type column should probably be an enum, as there should
+    be only a limited set of these.
+
+    The first one implemented is the 'is synonym for' relation. For example:
+        'Stewart Resnick' -> is synonym for -> 'Stewart A. Resnick'
+        'Steward Resnick' -> is synonym for -> 'Stewart A. Resnick' (sp err?)
+        'Stewart A. Resnick & Paramount Farming Company LLC'
+            -> is synonym for -> 'Stewart A. Resnick'
+
+    Other examples of relation types that can be created are:
+        personId -> 'is on the Board of' -> orgId
+        personId -> 'is founder of' -> orgId
+        personId -> 'is an employee of' -> orgId
+
+    All of these relations establish a many-to-many relationship between
+    entities in the identity table.
+
+    Obviously the sense of these can be reversed. If one looks from the "to_id"
+    field to the "from_id" field using the 'is an employee of' relation, one
+    would logically get a relation, which does not need to be separately
+    stored:
+        orgId -> 'employs' -> personId
+
+    There are a few rules for this table. Enforcing these can be done in
+    different ways and it is probably best not to hard-code something now.
+
+    An example of a rule is that the 'is synonym for' relation should not
+    have any transitive relations. In other words, there should be no case
+    if an id A, an id B, and an id C for which it is true that:
+        A -> 'is a synonym for' -> B -> 'is a synonym for' -> C
+    If one tried to connect A to B, then the result should be that the
+    relation is followed to C and that is the relation created. In other
+    words, if one tried to create the linkages above, one should get:
+        B -> 'is a synonym for' -> C
+        A -> 'is a synonym for' -> C
+
+    C is, I would suggest, a canonical name for the identities represented
+    by A, B and C. In future, we can optimize the process of finding the
+    canonical names in the table. For now, one has to ask for ids which
+    do not have a 'is synonym for' relation to other ids.
+
+    Other relations will have different rules.
+
+    We may want columns for 'effective_date' and 'expiry_date'. One can
+    imagine the following scenario.
+        'Alfred' -> 'is on the Board of' -> 'Acme Inc'
+            eff: 2014-03-01, exp: null
+        'Bob' -> 'is on the Board of' -> 'Acme Inc'
+            eff: 2014-03-01, exp: 2014-06-01
+        'Charlie' -> 'is on the Board of' -> 'Acme Inc'
+            eff: 2014-05-01, exp: null
+    This captures the fact that the Board of 'Acme Inc' was 2 people
+    on April 1, 2014 (Alfred and Bob), was 3 people on May 31, 2014
+    (Alfred, Bob and Charlie) and is now 2 people (Alfred and Charlie).
+    Bob obviously did not work out. For some relations, values for the
+    dates would not be necessary.
+
+    One interesting relation might be
+        personId -> 'is authorized to withdraw money from' -> orgId
+    For example, Ron Calderon has 5 committees he can withdraw money
+    from. Two are committees created by him, one is a committee of
+    an LA Council member and two are organizations he is on the Board
+    of. FYI, as of now, this information is not stored anywhere.
+
+    The updater column is a link to the User table, so that users can
+    create these linkages and this can be tracked.
+    """
+    from_id = models.IntegerField(db_index=True)
+    to_id = models.IntegerField(db_index=True)
+    relation_type = models.CharField(max_length=15, null=False)
+    updated = models.DateField(null=False)
+    updater = models.IntegerField(null=False)
+
+    class Meta:
+        app_label = 'calaccess_campaign_browser'
+        db_table = 'identity_relate'
+        unique_together = ('from_id', 'to_id', 'relation_type')
+
+
+class User(AllCapsNameMixin):
+    userid = models.IntegerField(null=False)
+    username = models.CharField(max_length=31, null=False)
+
+    class Meta:
+        app_label = 'calaccess_campaign_browser'
+
+
 class Committee(AllCapsNameMixin):
     """
     If a Candidate controls the committee, the filer is associated with the
