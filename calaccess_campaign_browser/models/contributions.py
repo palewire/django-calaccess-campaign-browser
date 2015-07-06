@@ -26,6 +26,8 @@ class Contribution(BaseModel):
     backreference_transaction_id = models.CharField(
         'backreference transaction ID',
         max_length=20,
+        blank=True,
+        default='',
         db_index=True
     )
     is_crossreference = models.CharField(max_length=1, blank=True)
