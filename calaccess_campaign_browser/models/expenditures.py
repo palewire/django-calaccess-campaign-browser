@@ -116,8 +116,6 @@ class Expenditure(BaseModel):
     payee_first_name = models.CharField(max_length=255, blank=True)
     payee_last_name = models.CharField(max_length=200, blank=True)
     payee_suffix = models.CharField(max_length=10, blank=True)
-    payee_address_1 = models.CharField(max_length=55, blank=True)
-    payee_address_2 = models.CharField(max_length=55, blank=True)
     payee_city = models.CharField(max_length=30, blank=True)
     payee_state = models.CharField(max_length=2, blank=True)
     payee_zipcode = models.CharField(max_length=10, blank=True)
