@@ -374,7 +374,8 @@ class Command(CalAccessCommand):
                 payee_suffix,
                 payee_city,
                 payee_state,
-                payee_zipcode
+                payee_zipcode,
+                payee_committee_id
             )
             SELECT
                 f.cycle_id as cycle_id,
@@ -410,7 +411,8 @@ class Command(CalAccessCommand):
                 COALESCE(e.payee_nams, ''),
                 COALESCE(e.payee_city, ''),
                 COALESCE(e.payee_st, ''),
-                COALESCE(e.payee_zip4, '')
+                COALESCE(e.payee_zip4, ''),
+                ''
             FROM %(filing_model)s as f
             INNER JOIN %(raw_model)s as e
             ON f.filing_id_raw = e.filing_id
