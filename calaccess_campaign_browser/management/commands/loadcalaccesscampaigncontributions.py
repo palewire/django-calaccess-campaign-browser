@@ -150,7 +150,7 @@ class Command(CalAccessCommand):
         OUTHEADERS.append("IS_DUPLICATE")
 
         self.log("   Marking duplicates in a new CSV")
-        with open(self.late_tmp_csv, 'r') as fin:
+        with open(self.late_tmp_csv, 'rU') as fin:
             fout = csv.DictWriter(
                 open(self.late_target_csv, 'wb'),
                 fieldnames=OUTHEADERS
@@ -306,7 +306,27 @@ class Command(CalAccessCommand):
                 contributor_occupation,
                 contributor_employer,
                 contributor_selfemployed,
-                contributor_entity_type
+                contributor_entity_type,
+                backreference_transaction_id,
+                is_crossreference,
+                crossreference_schedule,
+                transaction_type,
+                contribution_description,
+                contributor_address_1,
+                contributor_address_2,
+                intermediary_address_1,
+                intermediary_address_2,
+                intermediary_city,
+                intermediary_committee_id,
+                intermediary_employer,
+                intermediary_first_name,
+                intermediary_last_name,
+                intermediary_occupation,
+                intermediary_prefix,
+                intermediary_selfemployed,
+                intermediary_state,
+                intermediary_suffix,
+                intermediary_zipcode
             )
             SELECT
                 f.cycle_id as cycle_id,
@@ -337,7 +357,27 @@ class Command(CalAccessCommand):
                 r.ctrib_occ,
                 r.ctrib_emp,
                 r.ctrib_self,
-                r.entity_cd
+                r.entity_cd,
+                '',
+                '',
+                '',
+                '',
+                '',
+                '',
+                '',
+                '',
+                '',
+                '',
+                '',
+                '',
+                '',
+                '',
+                '',
+                '',
+                '',
+                '',
+                '',
+                ''
             FROM %(filing_model)s as f
             INNER JOIN %(raw_model)s as r
             ON f.filing_id_raw = r.filing_id
@@ -503,7 +543,7 @@ class Command(CalAccessCommand):
         OUTHEADERS.append("IS_DUPLICATE")
 
         self.log("   Marking duplicates in a new CSV")
-        with open(self.quarterly_tmp_csv, 'r') as fin:
+        with open(self.quarterly_tmp_csv, 'rU') as fin:
             fout = csv.DictWriter(
                 open(self.quarterly_target_csv, 'wb'),
                 fieldnames=OUTHEADERS
