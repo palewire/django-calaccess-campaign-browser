@@ -150,7 +150,7 @@ class Command(CalAccessCommand):
         OUTHEADERS.append("IS_DUPLICATE")
 
         self.log("   Marking duplicates in a new CSV")
-        with open(self.late_tmp_csv, 'r') as fin:
+        with open(self.late_tmp_csv, 'rU') as fin:
             fout = csv.DictWriter(
                 open(self.late_target_csv, 'wb'),
                 fieldnames=OUTHEADERS
@@ -503,7 +503,7 @@ class Command(CalAccessCommand):
         OUTHEADERS.append("IS_DUPLICATE")
 
         self.log("   Marking duplicates in a new CSV")
-        with open(self.quarterly_tmp_csv, 'r') as fin:
+        with open(self.quarterly_tmp_csv, 'rU') as fin:
             fout = csv.DictWriter(
                 open(self.quarterly_target_csv, 'wb'),
                 fieldnames=OUTHEADERS
