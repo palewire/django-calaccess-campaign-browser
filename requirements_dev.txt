@@ -1,11 +1,11 @@
-Django
+Django==1.7
 Fabric
 MySQL-python
 Sphinx
 beautifulsoup4
 coverage
 csvkit
--e git+ssh://git@github.com/california-civic-data-coalition/django-calaccess-raw-data.git@HEAD#egg=django-calaccess-raw-data
+django-calaccess-raw-data==0.1.2
 django-debug-toolbar
 django-haystack
 django-tastypie

@@ -47,8 +47,8 @@ provisional until it is further tested and debugged.',
     include_package_data=True,
     zip_safe=False,  # because we're including static files
     install_requires=(
-        'django-calaccess-raw-data>=0.1.2',
-        'django>=1.6',
+        'django-calaccess-raw-data==0.1.2',
+        'django==1.7',
         'csvkit>=0.6.1',
         'python-dateutil==2.2',
         'mysqlclient>=1.3.6',
